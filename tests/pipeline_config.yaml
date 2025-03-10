@@ -1,0 +1,20 @@
+pipeline:
+  nodes:
+    - processor: "ImageAddition"
+
+    - processor: "BasicImageProbe"
+      context_keyword: "debug_info"
+
+    - processor: "ImageAddition"
+
+    - processor: "rename:debug_info:final_info"
+
+    - processor: "ImageCropper"
+      parameters:
+        x_start: 10
+        x_end: 20
+        y_start: 10
+        y_end: 20
+
+    - processor: "delete:image_to_add"
+

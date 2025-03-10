@@ -1,0 +1,60 @@
+[project]
+name = "semantiva-imaging"
+version = "0.1.0"
+description = "Image specialization of Semantiva framework."
+license = "MIT" 
+readme = "README.md" 
+requires-python = ">=3.10.12"
+dependencies = [
+    "black>=24.10.0",
+    "mypy>=1.14.1",
+    "numpy>=2.2.1",
+    "semantiva",
+    "pylint>=3.3.3",
+    "pytest>=8.3.4",
+    "coverage",
+    "numpy>=2.2.1",
+    "pillow>=11.1.0",
+    "scipy",
+    "matplotlib",
+    "ipywidgets",
+    "types-PyYAML",
+    "pyyaml",
+    "ipympl",
+]
+distribution = true
+
+[project.entry-points.'semantiva.specializations']
+imaging = "semantiva_imaging:ImagingSpecialization"
+
+[tool.black]
+# Configuration for the black code formatter
+
+
+[tool.pylint]
+# Configuration for pylint (static analysis)
+max-line-length = 100  
+fail-under = 7.5
+
+[tool.mypy]
+exclude = [
+    "^tests/test_string_specialization\\.py$",
+    "docs/", 
+]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["semantiva"]
+
+
+[tool.pdm.scripts]
+cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "-e file:///${PROJECT_ROOT}/../semantic-framework#egg=semantiva",
+]
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
