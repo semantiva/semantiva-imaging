@@ -1,4 +1,43 @@
-# Semantiva - Audio specialization
+# Semantiva - Image specialization
+
+## Overview
+
+The **Semantiva Image Specialization** extends **Semantiva** with structured, type-safe image processing tools. It provides **image data types, processing algorithms, and visualization tools** designed for modular workflows.  
+
+This specialization follows **Domain-Driven Design (DDD)** and **Type-Oriented Development**, ensuring consistency and flexibility for handling images and image stacks.
+
+---
+
+## Features
+
+- **Structured Image Data Types**  
+  - `ImageDataType`: Represents **2D images**  
+  - `ImageStackDataType`: Represents **stacks of images** (3D)
+
+- **Processing**  
+  - **Arithmetic:** `ImageAddition`, `ImageSubtraction`
+  - **Filtering & Normalization:** `ImageClipping`, `ImageNormalizerAlgorithm`
+  - **Image Stack Projections:** `StackToImageMeanProjector`, `ImageStackToSideBySideProjector`
+
+- **I/O and Image Generation**  
+  - Load and save images in **PNG** and **NPZ** formats  
+  - Generate synthetic images using `ImageDataRandomGenerator` and `TwoDGaussianImageGenerator`
+
+- **Visualization (Jupyter Notebook Compatible)**  
+  - **Interactive Cross-Section Viewer** (`ImageCrossSectionInteractiveViewer`) - Explore cross-sections of 2D images dynamically  
+  - **Image Stack Animator** (`ImageStackAnimator`) - Animate sequences of stacked images  
+  - **X-Y Projection Viewer** (`ImageXYProjectionViewer`) - View **intensity projections** along X and Y axes  
+  - **Standard & Interactive Image Display** (`ImageViewer`, `ImageInteractiveViewer`)
+
+- **Pipeline Support**  
+  - Define and run **image processing workflows** using Semantiva’s pipeline system  
+
+---
+
+## Installation
+```bash
+pip install semantiva semantiva-imaging
+
 
 ## Overview
 
@@ -14,8 +53,8 @@
 3. **Payload Operations (Pipelines)**
    - Orchestrates the execution of multiple operations, combining data transformations and context adaptations into a coherent workflow.
 
-4. **Data Types & Algorithm Types**
-   - Defines the structure and constraints of domain-specific data, alongside compatible algorithms (e.g., `Image` ↔ `ImageAlgorithm`), guaranteeing semantic integrity.
+4. **Data Types & Processing Types**
+   - Defines the structure and constraints of domain-specific data, alongside compatible data processors (e.g., `Image` ↔ `ImageProcessor`), guaranteeing semantic integrity.
 
 5. **Execution Tools**
    - Utilities for executing, monitoring, and debugging pipelines, supporting straightforward deployment and scaling.
