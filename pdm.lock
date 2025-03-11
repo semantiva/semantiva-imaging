@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:c00cf8e3b27acdca6ab63fd071230a482f51b081203f5359e2f61e46416f72c5"
+content_hash = "sha256:11b51b7d8f5831a1c0f371c1e504a6a666e6772df376738e6a42aaf521c6600b"
 
 [[metadata.targets]]
 requires_python = ">=3.10.12"
@@ -1088,9 +1088,9 @@ files = [
 
 [[package]]
 name = "semantiva"
-version = "0.2.1.dev0"
+version = "0.3.0"
 requires_python = ">=3.10.12"
-summary = "The Semantiva is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations."
+summary = "Semantiva: An HPC-ready, domain-driven, type-oriented framework that delivers semantic transparency to advanced scientific computing."
 groups = ["default"]
 dependencies = [
     "black>=24.10.0",
@@ -1103,8 +1103,8 @@ dependencies = [
     "types-PyYAML",
 ]
 files = [
-    {file = "semantiva-0.2.1.dev0-py3-none-any.whl", hash = "sha256:1590b7f3ddaba179ac391f72a5cdef0979932cff836940b1ac3b6fefe5dbb65e"},
-    {file = "semantiva-0.2.1.dev0.tar.gz", hash = "sha256:39d4e99f33863a89ffda3ccc4eea876a4d72dd1c543cdf3a0454fa1a7de4abe1"},
+    {file = "semantiva-0.3.0-py3-none-any.whl", hash = "sha256:51c05c59f9733f1936c37a051f4977e735cb77bcf0fb8c4459b34bfd53b4c9df"},
+    {file = "semantiva-0.3.0.tar.gz", hash = "sha256:20d076efb43d6b2491860f7925495923217fcfe5023b5829697ff49c4c5669f0"},
 ]
 
 [[package]]
