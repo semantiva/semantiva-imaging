@@ -1,10 +1,12 @@
-# Semantiva - Image specialization
+# Semantiva Imaging
+
 
 ## Overview
+**Semantiva Imaging** is a demonstration extension of the Semantiva framework, showcasing sophisticated image processing capabilities and highlighting Semantiva’s domain-driven, type-centric philosophy. By maintaining a transparent workflow and flexible pipelines, it demonstrates how complex imaging tasks can be tackled with clarity, making Semantiva Imaging a powerful proof-of-concept for Semantiva’s innovative approach.
 
-The **Semantiva Image Specialization** extends **Semantiva** with structured, type-safe image processing tools. It provides **image data types, processing algorithms, and visualization tools** designed for modular workflows.  
-
-This specialization follows **Domain-Driven Design (DDD)** and **Type-Oriented Development**, ensuring consistency and flexibility for handling images and image stacks.
+Visit the repositories:
+- [Semantiva Imaging](https://github.com/semantiva/semantiva-imaging)
+- [Semantiva Main](https://github.com/semantiva)
 
 ---
 
@@ -37,33 +39,8 @@ This specialization follows **Domain-Driven Design (DDD)** and **Type-Oriented D
 ## Installation
 ```bash
 pip install semantiva semantiva-imaging
+```
 
-
-## Overview
-
-
-## Core Components
-
-1. **Data Operations**
-   - Abstract classes that enforce type-safe transformations, ensuring data flows remain coherent and domain-accurate.
-
-2. **Context Operations**
-   - Manages contextual or environmental information affecting data processing, enhancing adaptability and domain awareness.
-
-3. **Payload Operations (Pipelines)**
-   - Orchestrates the execution of multiple operations, combining data transformations and context adaptations into a coherent workflow.
-
-4. **Data Types & Processing Types**
-   - Defines the structure and constraints of domain-specific data, alongside compatible data processors (e.g., `Image` ↔ `ImageProcessor`), guaranteeing semantic integrity.
-
-5. **Execution Tools**
-   - Utilities for executing, monitoring, and debugging pipelines, supporting straightforward deployment and scaling.
-
-## License
-
-Semantiva is released under the [MIT License](./LICENSE), promoting collaborative development and broad adoption.
-
----
 
 ## Getting Started: A Parameterized Feature Extract-and-Fit Workflow
 
@@ -161,9 +138,7 @@ print("Fitting Results for orientation:",
       output_context.get_value("orientation_coefficients"))
 ```
 
+## License
 
----
+Semantiva-imaging is released under the [MIT License](./LICENSE).
 
-## Acknowledgments
-
-This framework draws inspiration from the rigorous demands of transparency and traceability in data-driven systems, particularly exemplified by the ALICE O2 project at CERN. The lessons learned from managing large-scale, high-throughput data in that environment—combined with the need for robust, domain-aligned workflows—shaped Semantiva’s emphasis on type-safe design, semantic clarity, and modular extensibility. By blending these concepts with principles of ontology-driven computing, Semantiva aims to deliver the same level of reliability and interpretability for any domain requiring advanced data processing and HPC integration.
