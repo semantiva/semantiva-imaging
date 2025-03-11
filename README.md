@@ -41,7 +41,6 @@ Visit the repositories:
 pip install semantiva semantiva-imaging
 ```
 
-
 ## Getting Started: A Parameterized Feature Extract-and-Fit Workflow
 
 This is an advanced example demonstrating how Semantiva with Imaging specialization can generate images **based on metadata parameters**, extract features, and fit a simple model—all within a single pipeline. Notice how **context metadata** flows alongside **data**, allowing each operation to dynamically pull parameters from the context.
@@ -137,6 +136,16 @@ print("Fitting Results for std_dev_x:",
 print("Fitting Results for orientation:",
       output_context.get_value("orientation_coefficients"))
 ```
+
+### Key Takeaways
+
+* **Dual-Channel Processing**: Semantiva simultaneously processes **data** (the generated image stack) and **metadata** (like `t_values` and fitting parameters), ensuring each pipeline step can **dynamically** adapt based on evolving context.  
+* **Parametric Generation & Feature Extraction**: You can generate synthetic images via symbolic expressions, then extract domain-specific features (e.g., Gaussian parameters) in one coherent workflow.  
+* **Dynamic Parameter Injection**: Each node reads from and writes to a shared metadata context. That means you can modify or extend these parameters (e.g., changing the polynomial degree or image size) **without** altering code logic.  
+* **Multi-Stage Modeling**: By chaining multiple `ModelFittingContextProcessor` steps, you can fit various features to different independent variables—particularly useful for research or production pipelines where multiple relationships must be modeled.  
+* **Traceable & Auditable**: The final pipeline `context` retains the entire metadata history—including extracted features and fitted coefficients. This allows for transparent auditing, reproducibility, and potential handoff to subsequent pipelines or AI tools.
+
+> With Semantiva’s **dual-channel** approach, you gain the flexibility to adapt pipeline logic on the fly. Even advanced tasks—such as parametric signal generation, feature extraction, and multi-stage model fitting—become modular, maintainable, and straightforward to extend.
 
 ## License
 
