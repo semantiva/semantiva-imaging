@@ -50,10 +50,6 @@ source = ["semantiva"]
 [tool.pdm.scripts]
 cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
 
-[tool.pdm.dev-dependencies]
-dev = [
-    "-e file:///${PROJECT_ROOT}/../semantic-framework#egg=semantiva",
-]
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
