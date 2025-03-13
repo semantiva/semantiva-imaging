@@ -45,6 +45,15 @@ pip install semantiva semantiva-imaging
 
 This is an advanced example demonstrating how Semantiva with Imaging specialization can generate images **based on metadata parameters**, extract features, and fit a simple model—all within a single pipeline. Notice how **context metadata** flows alongside **data**, allowing each operation to dynamically pull parameters from the context.
 
+The parametrized generator bellow creates a stack of images with a time-varying 2D Gaussian signal. The signal's position, standard deviation, and orientation change over time. We then extract the Gaussian parameters from each frame and fit linear models to the standard deviation and orientation angle over time.
+
+
+The following GIF shows the generated image stack, where the 2D Gaussian signal's position, standard deviation, and orientation change over time:
+
+![](./docs/images/parametric_gaussian_signal.gif)
+
+
+
 ```python
 from semantiva.logger import Logger
 from semantiva_imaging.probes import (
@@ -80,7 +89,9 @@ generator = ParametricImageStackGenerator(
 )
 
 # Retrieve the generated stack of 2D images and the corresponding time values.
-image_stack = generator.get_data()
+image_stack = generator.get_data() # See above the animation of this image stack
+
+# Retrieve the 't' values used in generating the image stack.
 t_values = generator.t_values  # List/array of 't' values used in generation.
 
 # Prepare a context dictionary that includes 't_values' (the independent variable)
