@@ -2,12 +2,14 @@ import pytest
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
 from semantiva.payload_operations.pipeline import Pipeline
+from semantiva_imaging.data_types import ImageStackDataType
 
 from semantiva_imaging.probes import TwoDGaussianFitterProbe, ImageProbe
 from semantiva_imaging.data_io.loaders_savers import (
     TwoDGaussianImageGenerator,
     ParametricImageStackGenerator,
 )
+from semantiva.data_processors.data_slicer_factory import Slicer
 
 
 class TwoDGaussianStdDevProbe(ImageProbe):
@@ -44,7 +46,7 @@ def test_pipeline_single_string_key(image_stack):
     image_data, t_values = image_stack
     node_configurations = [
         {
-            "processor": TwoDGaussianStdDevProbe,
+            "processor": Slicer(TwoDGaussianStdDevProbe, ImageStackDataType),
             "context_keyword": "std_dev_features",
         },
         {
@@ -68,7 +70,7 @@ def test_pipeline_tuple_key(image_stack):
     image_data, t_values = image_stack
     node_configurations = [
         {
-            "processor": TwoDGaussianFitterProbe,
+            "processor": Slicer(TwoDGaussianFitterProbe, ImageStackDataType),
             "context_keyword": "gaussian_fit_parameters",
         },
         {

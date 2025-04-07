@@ -1,6 +1,6 @@
 from PIL import Image
 import numpy as np
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, List
 from semantiva.context_processors.context_types import ContextType
 from .io import (
     ImageDataSource,
@@ -491,6 +491,17 @@ class ImageStackPayloadRandomGenerator(ImageStackPayloadSource):
         get_payload(*args, **kwargs) -> tuple[ImageStackDataType, ContextType]:
             Generates and returns a dummy payload.
     """
+
+    def _injected_context_keys(self) -> List[str]:
+        """
+        Returns a list of context keys that are injected into the payload.
+
+        This method can be overridden by subclasses to specify additional context keys.
+
+        Returns:
+            List[str]: A list of context keys.
+        """
+        return ["image_stack_payload"]
 
     def _get_payload(self, *args, **kwargs) -> tuple[ImageStackDataType, ContextType]:
         """
