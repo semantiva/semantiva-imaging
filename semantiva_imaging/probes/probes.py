@@ -129,13 +129,14 @@ class TwoDGaussianFitterProbe(ImageProbe):
 
 class TwoDTiltedGaussianFitterProbe(ImageProbe):
     """
-    A probe that fits a **tilted 2D Gaussian function** to an image, extracting
-    Gaussian parameters including **rotation angle** (θ) and ensuring stable fitting.
-
-    This implementation improves **fit consistency** by:
-    - Using **second-moment (σ_x, σ_y) estimation** for better initial guesses.
-    - Ensuring **principal axes are uniquely defined** to prevent swaps.
-    - Incorporating **weighting techniques** from optical beam propagation.
+    A probe that fits a 2D Gaussian function to an image.
+    Fitted parameters:
+    - "x_0" (float): X-coordinate of the Gaussian center.
+    - "y_0" (float): Y-coordinate of the Gaussian center.
+    - "amplitude" (float): Peak intensity of the Gaussian.
+    - "std_dev_x" (float): Standard deviation along the **primary axis**.
+    - "std_dev_y" (float): Standard deviation along the **perpendicular axis**.
+    - "angle" (float): Rotation angle (in radians).
     """
 
     def _two_d_gaussian(self, xy, amplitude, xo, yo, sigma_x, sigma_y, theta):

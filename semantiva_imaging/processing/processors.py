@@ -25,7 +25,7 @@ class ImageOperation(DataOperation):
         return ImageDataType
 
     @classmethod
-    def output_data_type(cls):
+    def output_data_type(cls) -> type[ImageDataType]:
         """
         Specify the output data type for the operation.
 
@@ -58,7 +58,7 @@ class ImageStackAlgorithm(DataOperation):
         return ImageStackDataType
 
     @classmethod
-    def output_data_type(cls):
+    def output_data_type(cls) -> type[ImageStackDataType]:
         """
         Specify the output data type for the operation.
 
@@ -81,7 +81,7 @@ class ImageStackToImageProjector(DataOperation):
     """
 
     @classmethod
-    def input_data_type(cls):
+    def input_data_type(cls) -> type[ImageStackDataType]:
         """
         Specify the input data type for the operation.
 
@@ -91,7 +91,7 @@ class ImageStackToImageProjector(DataOperation):
         return ImageStackDataType
 
     @classmethod
-    def output_data_type(cls):
+    def output_data_type(cls) -> type[ImageDataType]:
         """
         Specify the output data type for the operation.
 
@@ -113,7 +113,7 @@ class ImageProbe(DataProbe):
     """
 
     @classmethod
-    def input_data_type(cls):
+    def input_data_type(cls) -> type[ImageDataType]:
         """
         Specify the input data type for the operation.
 
@@ -135,7 +135,7 @@ class ImageStackProbe(DataProbe):
     """
 
     @classmethod
-    def input_data_type(cls):
+    def input_data_type(cls) -> type[ImageStackDataType]:
         """
         Specify the input data type for the operation.
 

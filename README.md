@@ -59,9 +59,11 @@ from semantiva.logger import Logger
 from semantiva_imaging.probes import (
     TwoDTiltedGaussianFitterProbe,
 )
+from semantiva_imaging.data_types.data_types import ImageStackDataType
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
 from semantiva.payload_operations.pipeline import Pipeline
+from semantiva.data_processors.data_slicer_factory import Slicer
 
 from semantiva_imaging.data_io.loaders_savers import (
     TwoDGaussianImageGenerator,
@@ -105,7 +107,7 @@ context_dict = {"t_values": t_values}
 #   3. Another ModelFittingContextProcessor: Fits a polynomial model to the extracted angle feature vs. t_values.
 node_configurations = [
     {
-        "processor": TwoDTiltedGaussianFitterProbe,
+        "processor": Slicer(TwoDTiltedGaussianFitterProbe, ImageStackDataType),
         # This probe extracts best-fit parameters for the 2D Gaussian in each frame
         # and stores them in the pipeline context under 'gaussian_fit_parameters'.
         "context_keyword": "gaussian_fit_parameters",
@@ -135,6 +137,11 @@ node_configurations = [
 # --- 3) Create and Run the Pipeline ---
 pipeline = Pipeline(node_configurations)
 
+print("Pipeline inspection:")
+print(pipeline.inspect())
+for index, node in enumerate(pipeline.nodes, start=1):
+    print(f"\nNode {index}")
+    print(node.semantic_id())
 # Pass the image stack (data) and the context dictionary (metadata) to the pipeline.
 # Each pipeline step can read/write both data and context, enabling dynamic parameter injection.
 output_data, output_context = pipeline.process(image_stack, context_dict)
