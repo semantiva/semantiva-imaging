@@ -1,6 +1,6 @@
 [project]
 name = "semantiva-imaging"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Image specialization of Semantiva framework."
 license = "MIT" 
 readme = "README.md" 
@@ -54,3 +54,6 @@ cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
+[tool.pdm.version]
+source = "scm"
+fallback_version = "0.1.0-dev0+gUNKNOWN"
