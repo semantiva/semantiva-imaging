@@ -7,10 +7,7 @@ from ..data_types import ImageDataType
 
 class BasicImageProbe(ImageProbe):
     """
-    A basic image probe that computes essential image statistics.
-
-    This class provides a simple probe to calculate key statistical properties of an image,
-    such as mean, sum, minimum value, and maximum value.
+    A basic image probe that computes mean, sum, minimum and maximum pixel values.
     """
 
     def _process_logic(self, data):
