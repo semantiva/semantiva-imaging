@@ -280,14 +280,6 @@ class PNGImageStackSaver(ImageStackDataSink):
 class ImageDataRandomGenerator(ImageDataSource):
     """
     A random generator for creating `ImageDataType` objects with random data.
-
-    This class is used to generate dummy image data for testing and development purposes.
-    The generated data is a 2D NumPy array of random values between 0 and 1, wrapped in an
-    `ImageDataType` object.
-
-    Methods:
-        _get_data(shape: tuple[int, int]) -> ImageDataType:
-            Generates a dummy `ImageDataType` with the specified shape.
     """
 
     def _get_data(self, shape: tuple[int, int]) -> ImageDataType:
@@ -445,14 +437,6 @@ class ParametricImageStackGenerator(ImageStackSource):
 class ImageStackRandomGenerator(ImageStackSource):
     """
     A random generator for creating `ImageStackDataType` objects with random data.
-
-    This class is used to generate dummy image stack data for testing and development purposes.
-    The generated data is a 3D NumPy array of random values between 0 and 1, wrapped in an
-    `ImageStackDataType` object.
-
-    Methods:
-        _get_data(shape: tuple[int, int, int]) -> ImageStackDataType:
-            Generates a dummy `ImageStackDataType` with the specified shape.
     """
 
     def _get_data(self, shape: tuple[int, int, int]) -> ImageStackDataType:
@@ -481,18 +465,10 @@ class ImageStackRandomGenerator(ImageStackSource):
 class ImageStackPayloadRandomGenerator(ImageStackPayloadSource):
     """
     A random generator for producing payloads containing ImageStackDataType and ContextType.
-
-    This class generates dummy payloads for testing purposes or as a placeholder
-    in pipelines where input data is not yet available. The generated payloads
-    contain an `ImageStackDataType` object with random or placeholder data and an
-    associated `ContextType`.
-
-    Methods:
-        get_payload(*args, **kwargs) -> tuple[ImageStackDataType, ContextType]:
-            Generates and returns a dummy payload.
     """
 
-    def _injected_context_keys(self) -> List[str]:
+    @classmethod
+    def _injected_context_keys(cls) -> List[str]:
         """
         Returns a list of context keys that are injected into the payload.
 

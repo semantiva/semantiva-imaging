@@ -82,24 +82,32 @@ def test_pipeline_slicing_with_single_context(
 
     node_configurations = [
         {
-            "processor": Slicer(ImageAddition, ImageStackDataType),  # Adds a specified image to each slice of the input data
+            "processor": Slicer(
+                ImageAddition, ImageStackDataType
+            ),  # Adds a specified image to each slice of the input data
             "parameters": {
                 "image_to_add": random_image
             },  # Image to be added to each slice
         },
         {
-            "processor": Slicer(ImageSubtraction, ImageStackDataType),  # Subtracts a specified image from each slice of the input data
+            "processor": Slicer(
+                ImageSubtraction, ImageStackDataType
+            ),  # Subtracts a specified image from each slice of the input data
             "parameters": {
                 "image_to_subtract": another_random_image
             },  # Image to subtract
         },
         {
-            "processor": Slicer(BasicImageProbe, ImageStackDataType),  # Probe operation to extract and store data
+            "processor": Slicer(
+                BasicImageProbe, ImageStackDataType
+            ),  # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "processor": Slicer(BasicImageProbe, ImageStackDataType),  # Probe operation to collect results
+            "processor": Slicer(
+                BasicImageProbe, ImageStackDataType
+            ),  # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
         },
@@ -108,9 +116,9 @@ def test_pipeline_slicing_with_single_context(
     pipeline = Pipeline(node_configurations)
 
     output_data, output_context = pipeline.process(random_image_stack, random_context)
-    assert len(pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]) == len(
-        output_data
-    )
+    assert len(
+        pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]
+    ) == len(output_data)
 
     assert len(output_data) == len(
         output_context.get_value("mock_keyword")
@@ -138,24 +146,32 @@ def test_pipeline_slicing_with_context_collection(
 
     node_configurations = [
         {
-            "processor": Slicer(ImageAddition, ImageStackDataType),  # Adds a specified image to each slice of the input data
+            "processor": Slicer(
+                ImageAddition, ImageStackDataType
+            ),  # Adds a specified image to each slice of the input data
             "parameters": {
                 "image_to_add": random_image
             },  # Image to be added to each slice
         },
         {
-            "processor": Slicer(ImageSubtraction, ImageStackDataType),  # Subtracts a specified image from each slice of the input data
+            "processor": Slicer(
+                ImageSubtraction, ImageStackDataType
+            ),  # Subtracts a specified image from each slice of the input data
             "parameters": {
                 "image_to_subtract": another_random_image
             },  # Image to subtract
         },
         {
-            "processor": Slicer(BasicImageProbe, ImageStackDataType),  # Probe operation to extract and store data
+            "processor": Slicer(
+                BasicImageProbe, ImageStackDataType
+            ),  # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "processor": Slicer(BasicImageProbe, ImageStackDataType),  # Probe operation to collect results
+            "processor": Slicer(
+                BasicImageProbe, ImageStackDataType
+            ),  # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
         },
@@ -172,9 +188,9 @@ def test_pipeline_slicing_with_context_collection(
         random_image_stack, random_context_collection
     )
 
-    assert len(pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]) == len(
-        output_data
-    )
+    assert len(
+        pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]
+    ) == len(output_data)
     assert isinstance(
         output_data, ImageStackDataType
     ), "Output should be an ImageStackDataType"
