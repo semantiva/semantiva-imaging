@@ -17,6 +17,7 @@ from semantiva_imaging.data_types import (
     ImageDataType,
     ImageStackDataType,
 )
+from semantiva.data_processors.data_slicer_factory import Slicer
 
 
 @pytest.fixture
@@ -102,11 +103,11 @@ def test_pipeline_slicing(random_image_stack, random_image, another_random_image
 
     node_configurations = [
         {
-            "processor": ImageAddition,
+            "processor": Slicer(ImageAddition, ImageStackDataType),
             "parameters": {"image_to_add": random_image},
         },
         {
-            "processor": ImageSubtraction,
+            "processor": Slicer(ImageSubtraction, ImageStackDataType),
             "parameters": {"image_to_subtract": another_random_image},
         },
     ]

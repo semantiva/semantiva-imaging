@@ -11,15 +11,7 @@ from ..processing.processors import (
 
 class ImageSubtraction(ImageOperation):
     """
-    A class for performing image subtraction.
-
-    This class inherits from `ImageOperation` and implements an operation
-    to subtract one image from another. Both images must be instances of
-    `ImageDataType`, ensuring that they are 2D NumPy arrays.
-
-    Methods:
-        _operation(data: ImageDataType, subtracting_image: ImageDataType) -> ImageDataType:
-            Performs the subtraction operation between the input image and the subtracting image.
+    Substracts one image from another.
     """
 
     def _process_logic(
@@ -40,15 +32,7 @@ class ImageSubtraction(ImageOperation):
 
 class ImageAddition(ImageOperation):
     """
-    A class for performing image addition.
-
-    This class inherits from `ImageOperation` and implements an operation
-    to add one image to another. Both images must be instances of
-    `ImageDataType`, ensuring that they are 2D NumPy arrays.
-
-    Methods:
-        _operation(data: ImageDataType, added_image: ImageDataType) -> ImageDataType:
-            Performs the addition operation between the input image and the added image.
+    Adds two images together.
     """
 
     def _process_logic(
@@ -69,10 +53,7 @@ class ImageAddition(ImageOperation):
 
 class ImageCropper(ImageOperation):
     """
-    A class for cropping a region from an image.
-
-    This class inherits from `ImageOperation` and implements an operation
-    to crop a rectangular region from the input image.
+    Crops a rectangular region from the input image.
     """
 
     def _process_logic(
@@ -116,8 +97,7 @@ class ImageCropper(ImageOperation):
 
 class StackToImageMeanProjector(ImageStackToImageProjector):
     """
-    A concrete implementation of ImageStackFlattener that projects a stack of images
-    into a single image by taking the mean along the slices.
+    Projects a stack of images into a single image by computing the mean pixel value among the slices.
     """
 
     def _process_logic(self, data: ImageStackDataType) -> ImageDataType:
@@ -141,11 +121,8 @@ class StackToImageMeanProjector(ImageStackToImageProjector):
 
 class ImageNormalizerOperation(ImageOperation):
     """
-    A class to normalize image data to a specified range.
+    Linear normalization of an image data to a specified range.
 
-    This class inherits from the `ImageOperation` base class and performs
-    normalization on image data, scaling pixel values linearly to fit
-    within a given range `[min_value, max_value]`.
     """
 
     def _process_logic(
@@ -182,8 +159,7 @@ class ImageNormalizerOperation(ImageOperation):
 
 class ImageStackToSideBySideProjector(ImageStackToImageProjector):
     """
-    A concrete implementation of ImageStackToImageProjector that projects a stack of images
-    into a single image by concatenating the images side by side.
+    Projects a stack of images into a single image by concatenating the images side by side.
     """
 
     def _process_logic(self, data: ImageStackDataType) -> ImageDataType:

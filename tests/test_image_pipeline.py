@@ -6,10 +6,6 @@ from semantiva_imaging.data_types import (
     ImageDataType,
 )
 from semantiva.payload_operations import Pipeline
-from semantiva_imaging.processing.operations import (
-    ImageAddition,
-    StackToImageMeanProjector,
-)
 from semantiva_imaging.data_io.loaders_savers import (
     ImageDataRandomGenerator,
     ImageStackRandomGenerator,

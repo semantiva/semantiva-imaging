@@ -4,14 +4,7 @@ from ..data_types import ImageDataType, ImageStackDataType
 
 class ImageOperation(DataOperation):
     """
-    An operation specialized for processing ImageDataType data.
-
-    This class implements the `DataOperation` abstract base class to define
-    operations that accept and produce `ImageDataType`.
-
-    Methods:
-        input_data_type: Returns the expected input data type.
-        output_data_type: Returns the type of data output by the operation.
+    A DataOperation for ImageDataType data.
     """
 
     @classmethod
@@ -25,7 +18,7 @@ class ImageOperation(DataOperation):
         return ImageDataType
 
     @classmethod
-    def output_data_type(cls):
+    def output_data_type(cls) -> type[ImageDataType]:
         """
         Specify the output data type for the operation.
 
@@ -37,14 +30,7 @@ class ImageOperation(DataOperation):
 
 class ImageStackAlgorithm(DataOperation):
     """
-    An operation specialized for processing ImageStackDataType data.
-
-    This class implements the `DataOperation` abstract base class to define
-    operations that accept and produce `ImageStackDataType`.
-
-    Methods:
-        input_data_type: Returns the expected input data type.
-        output_data_type: Returns the type of data output by the operation.
+    A DataOperation for ImageStackDataType data.
     """
 
     @classmethod
@@ -58,7 +44,7 @@ class ImageStackAlgorithm(DataOperation):
         return ImageStackDataType
 
     @classmethod
-    def output_data_type(cls):
+    def output_data_type(cls) -> type[ImageStackDataType]:
         """
         Specify the output data type for the operation.
 
@@ -70,18 +56,11 @@ class ImageStackAlgorithm(DataOperation):
 
 class ImageStackToImageProjector(DataOperation):
     """
-    An operation specialized for flattening ImageStackDataType data.
-
-    This class implements the `DataOperation` abstract base class to define
-    operations that accept `ImageStackDataType` and produce `ImageDataType`.
-
-    Methods:
-        input_data_type: Returns the expected input data type.
-        output_data_type: Returns the type of data output by the operation.
+    A DataOperation for flattening ImageStackDataType data into a ImageDataType.
     """
 
     @classmethod
-    def input_data_type(cls):
+    def input_data_type(cls) -> type[ImageStackDataType]:
         """
         Specify the input data type for the operation.
 
@@ -91,7 +70,7 @@ class ImageStackToImageProjector(DataOperation):
         return ImageStackDataType
 
     @classmethod
-    def output_data_type(cls):
+    def output_data_type(cls) -> type[ImageDataType]:
         """
         Specify the output data type for the operation.
 
@@ -103,17 +82,11 @@ class ImageStackToImageProjector(DataOperation):
 
 class ImageProbe(DataProbe):
     """
-    A probe for inspecting or monitoring ImageDataType data.
-
-    This class implements the `DataProbe` abstract base class to define
-    operations that accept and produce `ImageDataType`.
-
-    Methods:
-        input_data_type: Returns the expected input data type.
+    A DataProbe for ImageDataType data.
     """
 
     @classmethod
-    def input_data_type(cls):
+    def input_data_type(cls) -> type[ImageDataType]:
         """
         Specify the input data type for the operation.
 
@@ -125,17 +98,11 @@ class ImageProbe(DataProbe):
 
 class ImageStackProbe(DataProbe):
     """
-    A probe for inspecting or monitoring ImageStackDataType data.
-
-    This class implements the `DataProbe` abstract base class to define
-    operations that accept and produce `ImageStackDataType`.
-
-    Methods:
-        input_data_type: Returns the expected input data type.
+    A DataProbe for ImageStackDataType data.
     """
 
     @classmethod
-    def input_data_type(cls):
+    def input_data_type(cls) -> type[ImageStackDataType]:
         """
         Specify the input data type for the operation.
 

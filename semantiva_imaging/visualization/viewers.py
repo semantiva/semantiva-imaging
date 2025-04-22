@@ -22,7 +22,7 @@ class FigureOption(TypedDict):
 
 class ImageViewer:
     """
-    A concrete implementation that processes an image with customizable settings.
+    ImageDataType viewer.
     """
 
     @classmethod
@@ -201,10 +201,7 @@ class ImageInteractiveViewer:
 
 class ImageStackAnimator:
     """
-    A concrete implementation that processes an image stack into an animation.
-
-    The generated animation cycles through each image in the stack, allowing visualization of
-    dynamic or sequential image data.
+    A viewer that animates an ImageStackType object
     """
 
     @classmethod

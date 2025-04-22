@@ -8,9 +8,6 @@ from ..data_types import ImageDataType, ImageStackDataType
 class ImageDataSource(DataSource):
     """
     Abstract base class for image data sources.
-
-    This class provides an interface for retrieving `ImageDataType` objects from a source.
-    Subclasses must implement the `_get_data` method to define how the data is retrieved.
     """
 
     @abstractmethod
@@ -38,17 +35,14 @@ class ImageDataSource(DataSource):
         """
         return cls()._get_data(*args, **kwargs)
 
-    @staticmethod
-    def output_data_type():
+    @classmethod
+    def output_data_type(cls) -> type[ImageDataType]:
         return ImageDataType
 
 
 class ImageStackSource(DataSource):
     """
     Abstract base class for image stack data sources.
-
-    This class provides an interface for retrieving `ImageStackDataType` objects from a source.
-    Subclasses must implement the `_get_data` method to define how the data is retrieved.
     """
 
     @abstractmethod
@@ -74,16 +68,14 @@ class ImageStackSource(DataSource):
         """
         return self._get_data(*args, **kwargs)
 
-    def output_data_type(self):
+    @classmethod
+    def output_data_type(cls) -> type[ImageStackDataType]:  # type: ignore
         return ImageStackDataType
 
 
 class ImageDataSink(DataSink):
     """
     Abstract base class for image data sinks.
-
-    This class provides an interface for consuming and storing `ImageDataType` objects.
-    Subclasses must implement the `_send_data` method to define how the data is stored or processed.
     """
 
     @abstractmethod
@@ -109,16 +101,13 @@ class ImageDataSink(DataSink):
         """
         self._send_data(data, *args, **kwargs)
 
-    def input_data_type(self):
+    def input_data_type(self) -> type[ImageDataType]:  # type: ignore
         return ImageDataType
 
 
 class ImageStackDataSink(DataSink):
     """
     Abstract base class for image stack data sinks.
-
-    This class provides an interface for consuming and storing `ImageStackDataType` objects.
-    Subclasses must implement the `_send_data` method to define how the data is stored or processed.
     """
 
     @abstractmethod
@@ -144,17 +133,13 @@ class ImageStackDataSink(DataSink):
         """
         self._send_data(data, *args, **kwargs)
 
-    def input_data_type(self):
+    def input_data_type(self) -> type[ImageStackDataType]:  # type: ignore
         return ImageStackDataType
 
 
 class ImagePayloadSink(PayloadSink):
     """
     Abstract base class for sinks that consume and store `ImageDataType` objects with associated context.
-
-    This class provides an interface for consuming and storing `ImageDataType` objects along with
-    their associated context. Subclasses must implement the `_send_payload` method to define how
-    the data and context are stored or processed.
     """
 
     @abstractmethod
@@ -183,7 +168,7 @@ class ImagePayloadSink(PayloadSink):
         """
         self._send_payload(data, context, *args, **kwargs)
 
-    def input_data_type(self):
+    def input_data_type(self) -> type[ImageDataType]:  # type: ignore
         """
         Returns the expected input data type for the data.
 
@@ -196,10 +181,6 @@ class ImagePayloadSink(PayloadSink):
 class ImageStackPayloadSource(PayloadSource):
     """
     Abstract base class for sources that provide `ImageStackDataType` objects with associated context.
-
-    This class provides an interface for generating and supplying `ImageStackDataType` objects
-    along with their associated context. Subclasses must implement the `_get_payload` method to
-    define how the data and context are generated or retrieved.
     """
 
     @abstractmethod
@@ -228,7 +209,7 @@ class ImageStackPayloadSource(PayloadSource):
         """
         return self._get_payload(*args, **kwargs)
 
-    def output_data_type(self):
+    def output_data_type(self) -> type[ImageStackDataType]:  # type: ignore
         """
         Returns the expected output data type for the data.
 
