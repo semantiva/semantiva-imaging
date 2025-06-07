@@ -9,7 +9,7 @@ dependencies = [
     "black>=24.10.0",
     "mypy>=1.14.1",
     "numpy>=2.2.1",
-    "semantiva=0.4.0rc1",
+    "semantiva==0.4.0rc1",
     "pylint>=3.3.3",
     "pytest>=8.3.4",
     "coverage",
