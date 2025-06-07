@@ -1,11 +1,11 @@
 import numpy as np
 from ..data_types import (
-    ImageDataType,
-    ImageStackDataType,
+    SingleChannelImage,
+    SingleChannelImageStack,
 )
 from ..processing.processors import (
     ImageOperation,
-    ImageStackToImageProjector,
+    SingleChannelImageStackToImageProjector,
 )
 
 
@@ -15,19 +15,19 @@ class ImageSubtraction(ImageOperation):
     """
 
     def _process_logic(
-        self, data: ImageDataType, image_to_subtract: ImageDataType
-    ) -> ImageDataType:
+        self, data: SingleChannelImage, image_to_subtract: SingleChannelImage
+    ) -> SingleChannelImage:
         """
         Subtracts one image from another.
 
         Parameters:
-            data (ImageDataType): The original image data.
-            image_to_subtract (ImageDataType): The image data to subtract.
+            data (SingleChannelImage): The original image data.
+            image_to_subtract (SingleChannelImage): The image data to subtract.
 
         Returns:
-            ImageDataType: The result of the subtraction operation.
+            SingleChannelImage: The result of the subtraction operation.
         """
-        return ImageDataType(np.subtract(data.data, image_to_subtract.data))
+        return SingleChannelImage(np.subtract(data.data, image_to_subtract.data))
 
 
 class ImageAddition(ImageOperation):
@@ -36,19 +36,19 @@ class ImageAddition(ImageOperation):
     """
 
     def _process_logic(
-        self, data: ImageDataType, image_to_add: ImageDataType
-    ) -> ImageDataType:
+        self, data: SingleChannelImage, image_to_add: SingleChannelImage
+    ) -> SingleChannelImage:
         """
         Adds one image to another.
 
         Parameters:
-            data (ImageDataType): The original image data.
-            image_to_add (ImageDataType): The image data to add.
+            data (SingleChannelImage): The original image data.
+            image_to_add (SingleChannelImage): The image data to add.
 
         Returns:
-            ImageDataType: The result of the addition operation.
+            SingleChannelImage: The result of the addition operation.
         """
-        return ImageDataType(np.add(data.data, image_to_add.data))
+        return SingleChannelImage(np.add(data.data, image_to_add.data))
 
 
 class ImageCropper(ImageOperation):
@@ -58,24 +58,24 @@ class ImageCropper(ImageOperation):
 
     def _process_logic(
         self,
-        data: ImageDataType,
+        data: SingleChannelImage,
         x_start: int,
         x_end: int,
         y_start: int,
         y_end: int,
-    ) -> ImageDataType:
+    ) -> SingleChannelImage:
         """
         Crop a rectangular region from the input image.
 
         Parameters:
-            data (ImageDataType): The original image data.
+            data (SingleChannelImage): The original image data.
             x_start (int): The starting x-coordinate of the cropped region.
             x_end (int): The ending x-coordinate of the cropped region.
             y_start (int): The starting y-coordinate of the cropped region.
             y_end (int): The ending y-coordinate of the cropped region.
 
         Returns:
-            ImageDataType: The cropped region of the image.
+            SingleChannelImage: The cropped region of the image.
 
         Raises:
             ValueError: If the specified cropped region is out of bounds.
@@ -92,31 +92,31 @@ class ImageCropper(ImageOperation):
             )
 
         cropped_array = data.data[y_start:y_end, x_start:x_end]
-        return ImageDataType(cropped_array)
+        return SingleChannelImage(cropped_array)
 
 
-class StackToImageMeanProjector(ImageStackToImageProjector):
+class StackToImageMeanProjector(SingleChannelImageStackToImageProjector):
     """
     Projects a stack of images into a single image by computing the mean pixel value among the slices.
     """
 
-    def _process_logic(self, data: ImageStackDataType) -> ImageDataType:
+    def _process_logic(self, data: SingleChannelImageStack) -> SingleChannelImage:
         """
         Computes the mean projection of an image stack.
 
         Parameters:
-            data (ImageStackDataType): The input image stack, represented as a 3D NumPy array
+            data (SingleChannelImageStack): The input image stack, represented as a 3D NumPy array
                                         (stack of 2D images).
 
         Returns:
-            ImageDataType: A single 2D image resulting from the mean projection of the stack.
+            SingleChannelImage: A single 2D image resulting from the mean projection of the stack.
 
         Raises:
             ValueError: If the input data is not a 3D NumPy array.
 
         """
         # Compute the mean along the stack (first axis)
-        return ImageDataType(np.mean(data.data, axis=0))
+        return SingleChannelImage(np.mean(data.data, axis=0))
 
 
 class ImageNormalizerOperation(ImageOperation):
@@ -126,20 +126,25 @@ class ImageNormalizerOperation(ImageOperation):
     """
 
     def _process_logic(
-        self, data: ImageDataType, min_value: float, max_value: float, *args, **kwargs
-    ) -> ImageDataType:
+        self,
+        data: SingleChannelImage,
+        min_value: float,
+        max_value: float,
+        *args,
+        **kwargs,
+    ) -> SingleChannelImage:
         """
         Perform normalization on the image data to scale its pixel values
         linearly to the specified range `[min_value, max_value]`.
 
         Parameters:
-            data (ImageDataType): The image data to normalize.
+            data (SingleChannelImage): The image data to normalize.
             min_value (float): The minimum value of the target range.
             max_value (float): The maximum value of the target range.
             *args, **kwargs: Additional parameters for compatibility.
 
         Returns:
-            ImageDataType: The normalized image data with values in `[min_value, max_value]`.
+            SingleChannelImage: The normalized image data with values in `[min_value, max_value]`.
         """
 
         image_array = data.data
@@ -148,34 +153,38 @@ class ImageNormalizerOperation(ImageOperation):
 
         # Avoid division by zero in case all values in the array are the same
         if arr_max - arr_min == 0:
-            return ImageDataType(np.full_like(image_array, (min_value + max_value) / 2))
+            return SingleChannelImage(
+                np.full_like(image_array, (min_value + max_value) / 2)
+            )
 
         # Linear scaling
         scaled_arr = min_value + (image_array - arr_min) * (max_value - min_value) / (
             arr_max - arr_min
         )
-        return ImageDataType(scaled_arr)
+        return SingleChannelImage(scaled_arr)
 
 
-class ImageStackToSideBySideProjector(ImageStackToImageProjector):
+class SingleChannelImageStackSideBySideProjector(
+    SingleChannelImageStackToImageProjector
+):
     """
     Projects a stack of images into a single image by concatenating the images side by side.
     """
 
-    def _process_logic(self, data: ImageStackDataType) -> ImageDataType:
+    def _process_logic(self, data: SingleChannelImageStack) -> SingleChannelImage:
         """
         Concatenates the images in the stack side by side.
 
         Parameters:
-            data (ImageStackDataType): The input image stack, represented as a 3D NumPy array
+            data (SingleChannelImageStack): The input image stack, represented as a 3D NumPy array
                                         (stack of 2D images).
 
         Returns:
-            ImageDataType: A single 2D image resulting from the concatenation of images in the stack.
+            SingleChannelImage: A single 2D image resulting from the concatenation of images in the stack.
 
         Raises:
             ValueError: If the input data is not a 3D NumPy array.
 
         """
         # Concatenate the images along the horizontal axis (axis=1)
-        return ImageDataType((np.hstack(tuple(data.data))))
+        return SingleChannelImage((np.hstack(tuple(data.data))))

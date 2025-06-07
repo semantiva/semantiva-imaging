@@ -1,1 +1,3 @@
-from .data_types import ImageDataType, ImageStackDataType
+from .data_types import SingleChannelImage, SingleChannelImageStack
+
+__all__ = ["SingleChannelImage", "SingleChannelImageStack"]

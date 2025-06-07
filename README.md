@@ -13,13 +13,15 @@ Visit the repositories:
 ## Features
 
 - **Structured Image Data Types**  
-  - `ImageDataType`: Represents **2D images**  
-  - `ImageStackDataType`: Represents **stacks of images** (3D)
+  - `SingleChannelImage`: Represents **2D images**
+  - `SingleChannelImageStack`: Represents **stacks of images** (3D)
+
+**Bit-depth handling** – `SingleChannelImage` and all colour types auto-cast 12-/16-bit arrays to `float32` by default. Pass `auto_cast=False` if you want to keep native 16-bit data and provide custom processors.
 
 - **Processing**  
   - **Arithmetic:** `ImageAddition`, `ImageSubtraction`
-  - **Filtering & Normalization:** `ImageClipping`, `ImageNormalizerAlgorithm`
-  - **Image Stack Projections:** `StackToImageMeanProjector`, `ImageStackToSideBySideProjector`
+  - **Filtering & Normalization:** `ImageCropper`, `ImageNormalizerOperation`
+  - **Image Stack Projections:** `StackToImageMeanProjector`, `SingleChannelImageStackSideBySideProjector`
 
 - **I/O and Image Generation**  
   - Load and save images in **PNG** and **NPZ** formats  
@@ -27,7 +29,7 @@ Visit the repositories:
 
 - **Visualization (Jupyter Notebook Compatible)**  
   - **Interactive Cross-Section Viewer** (`ImageCrossSectionInteractiveViewer`) - Explore cross-sections of 2D images dynamically  
-  - **Image Stack Animator** (`ImageStackAnimator`) - Animate sequences of stacked images  
+  - **Image Stack Animator** (`SingleChannelImageStackAnimator`) - Animate sequences of stacked images  
   - **X-Y Projection Viewer** (`ImageXYProjectionViewer`) - View **intensity projections** along X and Y axes  
   - **Standard & Interactive Image Display** (`ImageViewer`, `ImageInteractiveViewer`)
 
@@ -59,7 +61,7 @@ from semantiva.logger import Logger
 from semantiva_imaging.probes import (
     TwoDTiltedGaussianFitterProbe,
 )
-from semantiva_imaging.data_types.data_types import ImageStackDataType
+from semantiva_imaging.data_types.data_types import SingleChannelImageStack
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
 from semantiva.payload_operations.pipeline import Pipeline
@@ -107,7 +109,7 @@ context_dict = {"t_values": t_values}
 #   3. Another ModelFittingContextProcessor: Fits a polynomial model to the extracted angle feature vs. t_values.
 node_configurations = [
     {
-        "processor": Slicer(TwoDTiltedGaussianFitterProbe, ImageStackDataType),
+        "processor": Slicer(TwoDTiltedGaussianFitterProbe, SingleChannelImageStack),
         # This probe extracts best-fit parameters for the 2D Gaussian in each frame
         # and stores them in the pipeline context under 'gaussian_fit_parameters'.
         "context_keyword": "gaussian_fit_parameters",

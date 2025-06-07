@@ -3,26 +3,27 @@ import numpy as np
 from typing import Any, Dict, Tuple, List
 from semantiva.context_processors.context_types import ContextType
 from .io import (
-    ImageDataSource,
-    ImageStackSource,
-    ImageDataSink,
-    ImageStackDataSink,
-    ImageStackPayloadSource,
+    SingleChannelImageDataSource,
+    SingleChannelImageStackSource,
+    SingleChannelImageDataSink,
+    SingleChannelImageStackSink,
+    SingleChannelImageStackPayloadSource,
 )
-from ..data_types import ImageDataType, ImageStackDataType
+from ..data_types import SingleChannelImage, SingleChannelImageStack
 
 
-class NpzImageDataTypeLoader(ImageDataSource):
+class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
     """
     Concrete implementation of ImageDataTypeSource for loading image data from .npz files.
 
     This class provides functionality to load a single array from a `.npz` file
-    as an `ImageDataType`.
+    as a :class:`SingleChannelImage`.
     """
 
-    def _get_data(self, path: str) -> ImageDataType:
+    @classmethod
+    def _get_data(cls, path: str, *args, **kwargs):
         """
-        Loads the single array from a .npz file and returns it as an `ImageDataType`.
+        Loads the single array from a .npz file and returns it as a ``SingleChannelImage``.
 
         Assumes the `.npz` file contains only one array.
 
@@ -30,7 +31,7 @@ class NpzImageDataTypeLoader(ImageDataSource):
             path (str): The path to the .npz file containing the image data.
 
         Returns:
-            ImageDataType: The loaded image data.
+            SingleChannelImage: The loaded image data.
 
         Raises:
             FileNotFoundError: If the file at the specified path does not exist.
@@ -54,54 +55,55 @@ class NpzImageDataTypeLoader(ImageDataSource):
                 if array.ndim != 2:
                     raise ValueError(f"The array in {path} is not a 2D array.")
 
-                # Wrap the array in an ImageDataType object
-                return ImageDataType(array)
+                # Wrap the array in a SingleChannelImage object
+                return SingleChannelImage(array)
         except FileNotFoundError as e:
             raise FileNotFoundError(f"File not found: {path}") from e
         except Exception as e:
             raise ValueError(f"Error loading image data from {path}: {e}") from e
 
 
-class NpzImageDataSaver(ImageDataSink):
+class NpzImageDataSaver(SingleChannelImageDataSink):
     """
-    Concrete implementation of ImageDataTypeSink for saving `ImageDataType` objects to .npz files.
+    Concrete implementation of ImageDataTypeSink for saving ``SingleChannelImage`` objects to .npz files.
 
-    This class provides functionality to save an `ImageDataType` object into a `.npz` file.
+    This class provides functionality to save a ``SingleChannelImage`` object into a `.npz` file.
     """
 
-    def _send_data(self, data: ImageDataType, path: str):
+    def _send_data(self, data: SingleChannelImage, path: str):
         """
-        Saves the `ImageDataType` as a `.npz` file at the specified path.
+        Saves the ``SingleChannelImage`` as a `.npz` file at the specified path.
 
         Parameters:
-            data (ImageDataType): The image data to be saved.
+            data (SingleChannelImage): The image data to be saved.
             path (str): The file path to save the `.npz` file.
 
         Raises:
-            ValueError: If the provided data is not an `ImageDataType`.
+            ValueError: If the provided data is not a ``SingleChannelImage``.
             IOError: If the file cannot be saved.
         """
         if not isinstance(data, self.input_data_type()):
-            raise ValueError("Provided data is not an instance of ImageDataType.")
+            raise ValueError("Provided data is not an instance of SingleChannelImage.")
 
         try:
             # Save the data to an .npz file
             np.savez(path, image=data.data)
         except Exception as e:
-            raise IOError(f"Error saving ImageDataType to {path}: {e}") from e
+            raise IOError(f"Error saving SingleChannelImage to {path}: {e}") from e
 
 
-class NpzImageStackDataLoader(ImageStackSource):
+class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
     """
-    Concrete implementation of ImageStackDataTypeSource for loading image stack data from .npz files.
+    Concrete implementation of ImageStackSource for loading image stacks from .npz files.
 
     This class provides functionality to load a single 3D array from a `.npz` file
-    as an `ImageStackDataType`.
+    as a :class:`SingleChannelImageStack`.
     """
 
-    def _get_data(self, path: str) -> ImageStackDataType:
+    @classmethod
+    def _get_data(cls, path: str):
         """
-        Loads the single 3D array from a .npz file and returns it as an `ImageStackDataType`.
+        Loads the single 3D array from a .npz file and returns it as a ``SingleChannelImageStack``.
 
         Assumes the `.npz` file contains only one array, which is 3D.
 
@@ -109,7 +111,7 @@ class NpzImageStackDataLoader(ImageStackSource):
             path (str): The path to the .npz file containing the image stack data.
 
         Returns:
-            ImageStackDataType: The loaded image stack data.
+            SingleChannelImageStack: The loaded image stack data.
 
         Raises:
             FileNotFoundError: If the file at the specified path does not exist.
@@ -133,59 +135,62 @@ class NpzImageStackDataLoader(ImageStackSource):
                 if array.ndim != 3:
                     raise ValueError(f"The array in {path} is not a 3D array.")
 
-                # Wrap the array in an ImageStackDataType object
-                return ImageStackDataType(array)
+                # Wrap the array in a SingleChannelImageStack object
+                return SingleChannelImageStack(array)
         except FileNotFoundError as e:
             raise FileNotFoundError(f"File not found: {path}") from e
         except Exception as e:
             raise ValueError(f"Error loading image stack data from {path}: {e}") from e
 
 
-class NpzImageStackDataSaver(ImageStackDataSink):
+class NpzImageStackDataSaver(SingleChannelImageStackSink):
     """
-    Concrete implementation of ImageStackDataTypeSink for saving `ImageStackDataType` objects to .npz files.
+    Concrete implementation of ImageStackDataSink for saving ``SingleChannelImageStack`` objects to .npz files.
 
-    This class provides functionality to save an `ImageStackDataType` object into a `.npz` file.
+    This class provides functionality to save a ``SingleChannelImageStack`` object into a `.npz` file.
     """
 
-    def _send_data(self, data: ImageStackDataType, path: str):
+    def _send_data(self, data: SingleChannelImageStack, path: str):
         """
-        Saves the `ImageStackDataType` as a `.npz` file at the specified path.
+        Saves the ``SingleChannelImageStack`` as a `.npz` file at the specified path.
 
         Parameters:
-            data (ImageStackDataType): The image stack data to be saved.
+            data (SingleChannelImageStack): The image stack data to be saved.
             path (str): The file path to save the `.npz` file.
 
         Raises:
-            ValueError: If the provided data is not an `ImageStackDataType`.
+            ValueError: If the provided data is not a ``SingleChannelImageStack``.
             IOError: If the file cannot be saved.
         """
         if not isinstance(data, self.input_data_type()):
-            raise ValueError("Provided data is not an instance of ImageStackDataType.")
+            raise ValueError(
+                "Provided data is not an instance of SingleChannelImageStack."
+            )
 
         try:
             # Save the data to an .npz file
             np.savez(path, image_stack=data.data)
         except Exception as e:
-            raise IOError(f"Error saving ImageStackDataType to {path}: {e}") from e
+            raise IOError(f"Error saving SingleChannelImageStack to {path}: {e}") from e
 
 
-class PngImageLoader(ImageDataSource):
+class PngImageLoader(SingleChannelImageDataSource):
     """
     Concrete implementation of ImageDataTypeSource for loading image data from PNG files.
 
-    This class provides functionality to load a PNG image as an `ImageDataType`.
+    This class provides functionality to load a PNG image as a :class:`SingleChannelImage`.
     """
 
-    def _get_data(self, path: str) -> ImageDataType:
+    @classmethod
+    def _get_data(cls, path: str):
         """
-        Loads a PNG image from the specified file path and returns it as an `ImageDataType`.
+        Loads a PNG image from the specified file path and returns it as a ``SingleChannelImage``.
 
         Parameters:
             path (str): The path to the PNG file.
 
         Returns:
-            ImageDataType: The loaded image data.
+            SingleChannelImage: The loaded image data.
 
         Raises:
             FileNotFoundError: If the file at the specified path does not exist.
@@ -194,39 +199,37 @@ class PngImageLoader(ImageDataSource):
         try:
             # Open the PNG image
             with Image.open(path) as img:
-                # Convert the image to grayscale and load it as a NumPy array
+                # Convert the image to single-channel and load it as a NumPy array
                 image_array = np.asarray(img.convert("L"))
-                # Wrap the array in an ImageDataType object
-                return ImageDataType(image_array)
+                # Wrap the array in a SingleChannelImage object
+                return SingleChannelImage(image_array)
         except FileNotFoundError as e:
             raise FileNotFoundError(f"File not found: {path}") from e
         except Exception as e:
             raise ValueError(f"Error loading PNG image from {path}: {e}") from e
 
 
-class PngImageSaver(ImageDataSink):
+class PngImageSaver(SingleChannelImageDataSink):
     """
     Concrete implementation of ImageDataTypeSink for saving image data to PNG files.
 
-    This class provides functionality to save an `ImageDataType` object as a PNG image.
+    This class provides functionality to save a ``SingleChannelImage`` object as a PNG image.
     """
 
-    def _send_data(self, data: ImageDataType, path: str):
+    def _send_data(self, data: SingleChannelImage, path: str):
         """
-        Saves the `ImageDataType` as a PNG file at the specified path.
+        Saves the ``SingleChannelImage`` as a PNG file at the specified path.
 
         Parameters:
-            data (ImageDataType): The image data to be saved.
+            data (SingleChannelImage): The image data to be saved.
             path (str): The file path to save the PNG image.
 
         Raises:
-            ValueError: If the provided data is not an `ImageDataType`.
+            ValueError: If the provided data is not a ``SingleChannelImage``.
             IOError: If the file cannot be saved.
         """
-        if not isinstance(
-            data, self.input_data_type()
-        ):  # Check if the data type is correct
-            raise ValueError("Provided data is not an instance of ImageDataType.")
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of SingleChannelImage.")
 
         try:
             # Convert the NumPy array to a PIL image
@@ -237,32 +240,32 @@ class PngImageSaver(ImageDataSink):
             raise IOError(f"Error saving PNG image to {path}: {e}") from e
 
 
-class PNGImageStackSaver(ImageStackDataSink):
+class PNGImageStackSaver(SingleChannelImageStackSink):
     """
-    Concrete implementation of ImageDataSink for saving multi-frame image data (ImageStackDataType)
+    Concrete implementation of ImageDataSink for saving multi-frame image data (``SingleChannelImageStack``)
     as sequentially numbered PNG files.
 
-    Each frame in the `ImageStackDataType` is saved as a separate PNG file, with filenames
+    Each frame in the ``SingleChannelImageStack`` is saved as a separate PNG file, with filenames
     numbered sequentially (e.g., "frame_000.png", "frame_001.png", ...).
     """
 
-    def _send_data(self, data: ImageStackDataType, base_path: str):
+    def _send_data(self, data: SingleChannelImageStack, base_path: str):
         """
-        Saves the `ImageStackDataType` as sequentially numbered PNG files.
+        Saves the ``SingleChannelImageStack`` as sequentially numbered PNG files.
 
         Parameters:
-            data (ImageStackDataType): The image stack data to be saved.
+            data (SingleChannelImageStack): The image stack data to be saved.
             base_path (str): The base file path to save PNG files. A number will
                              be appended to this path for each frame.
 
         Raises:
-            ValueError: If the provided data is not an `ImageStackDataType`.
+            ValueError: If the provided data is not a ``SingleChannelImageStack``.
             IOError: If any frame cannot be saved.
         """
-        if not isinstance(
-            data, self.input_data_type()
-        ):  # Check if the data type is correct
-            raise ValueError("Provided data is not an instance of ImageStackDataType.")
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError(
+                "Provided data is not an instance of SingleChannelImageStack."
+            )
 
         try:
             # Iterate through each frame in the stack
@@ -277,20 +280,21 @@ class PNGImageStackSaver(ImageStackDataSink):
             raise IOError(f"Error saving PNG image stack: {e}") from e
 
 
-class ImageDataRandomGenerator(ImageDataSource):
+class ImageDataRandomGenerator(SingleChannelImageDataSource):
     """
-    A random generator for creating `ImageDataType` objects with random data.
+    A random generator for creating ``SingleChannelImage`` objects with random data.
     """
 
-    def _get_data(self, shape: tuple[int, int]) -> ImageDataType:
+    @classmethod
+    def _get_data(cls, shape: tuple[int, int]):
         """
-        Generates a dummy `ImageDataType` with random values.
+        Generates a dummy ``SingleChannelImage`` with random values.
 
         Parameters:
             shape (tuple[int, int]): The shape (rows, columns) of the generated image data.
 
         Returns:
-            ImageDataType: A dummy image data object containing a 2D array of random values.
+            SingleChannelImage: A dummy image data object containing a 2D array of random values.
 
         Raises:
             ValueError: If the provided shape does not have exactly two dimensions.
@@ -301,12 +305,13 @@ class ImageDataRandomGenerator(ImageDataSource):
             raise ValueError(
                 f"Shape must be a tuple with two dimensions, but got {shape}."
             )
-        return ImageDataType(np.random.rand(*shape))
+        return SingleChannelImage(np.random.rand(*shape))
 
 
-class TwoDGaussianImageGenerator(ImageDataSource):
+class TwoDGaussianImageGenerator(SingleChannelImageDataSource):
     """Generates an image with a 2D Gaussian signal with optional rotation."""
 
+    @classmethod
     def _get_data(
         self,
         x_0: float | int,  # x position
@@ -315,7 +320,7 @@ class TwoDGaussianImageGenerator(ImageDataSource):
         amplitude: float,
         angle: float = 0.0,  # Rotation angle in degrees
         image_size: tuple[int, int] = (1024, 1024),  # Default image size
-    ) -> ImageDataType:
+    ):
         """
         Generates a 2D Gaussian image centered at a given position with an optional rotation.
 
@@ -328,7 +333,7 @@ class TwoDGaussianImageGenerator(ImageDataSource):
             image_size (tuple[int, int]): The shape (height, width) of the generated image (default: (1024, 1024)).
 
         Returns:
-            ImageDataType: A n image with a 2D Gaussian shape.
+            SingleChannelImage: A n image with a 2D Gaussian shape.
         """
         x_center, y_center = x_0, y_0
 
@@ -360,10 +365,10 @@ class TwoDGaussianImageGenerator(ImageDataSource):
             -((x_rotated**2) / (2 * std_dev_x**2) + (y_rotated**2) / (2 * std_dev_y**2))
         )
 
-        return ImageDataType(z)
+        return SingleChannelImage(z)
 
 
-class ParametricImageStackGenerator(ImageStackSource):
+class ParametricImageStackGenerator(SingleChannelImageStackSource):
     def __init__(
         self,
         num_frames: int,
@@ -406,24 +411,28 @@ class ParametricImageStackGenerator(ImageStackSource):
         """
         return self.parametric_expressions[param_name](t)
 
-    def _get_data(self):
+    def _get_data(cls):
         """
         Generates a stack of images with evolving parameters.
 
         Returns:
-            ImageStackDataType: The generated image stack data.
+            SingleChannelImageStack: The generated image stack data.
         """
         images = [
-            self.image_generator.get_data(
+            cls.image_generator.get_data(
                 **{
-                    key: self._evaluate_param(key, t)
-                    for key in self.parametric_expressions
+                    key: cls._evaluate_param(key, t)
+                    for key in cls.parametric_expressions
                 },
-                **self.image_generator_params,
+                **cls.image_generator_params,
             )
-            for t in self.t_values
+            for t in cls.t_values
         ]
-        return ImageStackDataType.from_list(images)
+        return SingleChannelImageStack(
+            images
+            if isinstance(images, np.ndarray)
+            else np.stack([img.data for img in images])
+        )
 
     @property
     def t_values(self):
@@ -434,21 +443,22 @@ class ParametricImageStackGenerator(ImageStackSource):
         return t_values
 
 
-class ImageStackRandomGenerator(ImageStackSource):
+class SingleChannelImageStackRandomGenerator(SingleChannelImageStackSource):
     """
-    A random generator for creating `ImageStackDataType` objects with random data.
+    A random generator for creating ``SingleChannelImageStack`` objects with random data.
     """
 
-    def _get_data(self, shape: tuple[int, int, int]) -> ImageStackDataType:
+    @classmethod
+    def _get_data(cls, shape: tuple[int, int, int]):
         """
-        Generates a dummy `ImageStackDataType` with random values.
+        Generates a dummy ``SingleChannelImageStack`` with random values.
 
         Parameters:
             shape (tuple[int, int, int]): The shape (slices, rows, columns) of the generated
                                           image stack data.
 
         Returns:
-            ImageStackDataType: A dummy image stack data object containing a 3D array of random values.
+            SingleChannelImageStack: A dummy image stack data object containing a 3D array of random values.
 
         Raises:
             ValueError: If the provided shape does not have exactly three dimensions.
@@ -459,12 +469,14 @@ class ImageStackRandomGenerator(ImageStackSource):
                 f"Shape must be a tuple with three dimensions, but got {shape}."
             )
 
-        return ImageStackDataType(np.random.rand(*shape))
+        return SingleChannelImageStack(np.random.rand(*shape))
 
 
-class ImageStackPayloadRandomGenerator(ImageStackPayloadSource):
+class SingleChannelImageStackPayloadRandomGenerator(
+    SingleChannelImageStackPayloadSource
+):
     """
-    A random generator for producing payloads containing ImageStackDataType and ContextType.
+    A random generator for producing payloads containing ``SingleChannelImageStack`` and ``ContextType``.
     """
 
     @classmethod
@@ -479,12 +491,14 @@ class ImageStackPayloadRandomGenerator(ImageStackPayloadSource):
         """
         return ["image_stack_payload"]
 
-    def _get_payload(self, *args, **kwargs) -> tuple[ImageStackDataType, ContextType]:
+    def _get_payload(
+        self, *args, **kwargs
+    ) -> tuple[SingleChannelImageStack, ContextType]:
         """
         Generates and returns a dummy payload.
 
         The payload consists of:
-        - `ImageStackDataType`: A 3D NumPy array with random data (a stack of 2D images).
+        - ``SingleChannelImageStack``: A 3D NumPy array with random data (a stack of 2D images).
         - `ContextType`: A dictionary containing dummy contextual information.
 
         Parameters:
@@ -492,12 +506,12 @@ class ImageStackPayloadRandomGenerator(ImageStackPayloadSource):
             **kwargs: Additional keyword arguments for customization (not used in this implementation).
 
         Returns:
-            tuple[ImageStackDataType, dict]:
-                A tuple containing the `ImageStackDataType` with dummy data and a
-                `ContextType` dictionary with dummy metadata.
+            tuple[SingleChannelImageStack, dict]:
+                A tuple containing the ``SingleChannelImageStack`` with dummy data and a
+                ``ContextType`` dictionary with dummy metadata.
         """
         # Generate a dummy 3D NumPy array (stack of 10 images, each 256x256)
         dummy_stack = np.random.rand(10, 256, 256)  # Example stack of 10 images
 
-        # Wrap the stack in an ImageStackDataType and return the payload
-        return ImageStackDataType(dummy_stack), ContextType()
+        # Wrap the stack in an SingleChannelImageStack and return the payload
+        return SingleChannelImageStack(dummy_stack), ContextType()

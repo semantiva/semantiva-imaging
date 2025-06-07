@@ -3,28 +3,28 @@ from semantiva.logger import Logger
 from semantiva.context_processors.context_types import ContextType
 from semantiva.specializations import load_specializations
 from semantiva_imaging.data_types import (
-    ImageDataType,
+    SingleChannelImage,
 )
 from semantiva.payload_operations import Pipeline
 from semantiva_imaging.data_io.loaders_savers import (
     ImageDataRandomGenerator,
-    ImageStackRandomGenerator,
+    SingleChannelImageStackRandomGenerator,
 )
 
 
 @pytest.fixture
 def image_stack_data():
     """
-    Pytest fixture for providing an ImageStackDataType instance using the dummy generator.
+    Pytest fixture for providing an SingleChannelImageStack instance using the dummy generator.
     """
-    generator = ImageStackRandomGenerator()
+    generator = SingleChannelImageStackRandomGenerator()
     return generator.get_data((10, 256, 256))
 
 
 @pytest.fixture
 def random_image1():
     """
-    Pytest fixture for providing a random 2D ImageDataType instance using the dummy generator.
+    Pytest fixture for providing a random 2D SingleChannelImage instance using the dummy generator.
     """
     generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
@@ -33,7 +33,7 @@ def random_image1():
 @pytest.fixture
 def random_image2():
     """
-    Pytest fixture for providing another random 2D ImageDataType instance using the dummy generator.
+    Pytest fixture for providing another random 2D SingleChannelImage instance using the dummy generator.
     """
     generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
@@ -83,7 +83,7 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     output_data, output_context = pipeline.process(image_stack_data, context)
 
     # Validate the output
-    assert isinstance(output_data, ImageDataType)
+    assert isinstance(output_data, SingleChannelImage)
     assert isinstance(output_context, ContextType)
     # Expected result validation skipped due to dynamic random inputs
 

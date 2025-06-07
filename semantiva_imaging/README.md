@@ -4,7 +4,7 @@ This README demonstrates how to **generate, manipulate, visualize, and verify 2D
 
 ## 🚀 Features Covered:
 - **Generate** 2D Gaussian images with `TwoDGaussianImageGenerator`
-- **Stack images** into `ImageStackDataType`
+- **Stack images** into `SingleChannelImageStack`
 - **Apply transformations**:
   - Mean projection (`StackToImageMeanProjector`)
   - Side-by-side projection (`ImageStackToSideBySideProjector`)
@@ -17,10 +17,10 @@ This README demonstrates how to **generate, manipulate, visualize, and verify 2D
 ```python
 import matplotlib.pyplot as plt
 from semantiva_imaging.data_io.loaders_savers import TwoDGaussianImageGenerator
-from semantiva_imaging.data_types import ImageStackDataType
-from semantiva.specializations.image.image_algorithms import (
+from semantiva_imaging.data_types import SingleChannelImageStack
+from semantiva_imaging.processing.operations import (
     StackToImageMeanProjector,
-    ImageStackToSideBySideProjector,
+    SingleChannelImageStackSideBySideProjector,
 )
 from semantiva.specializations.image.image_probes import TwoDGaussianFitterProbe
 
@@ -39,7 +39,7 @@ for idx, image in enumerate([image1, image2, image3], start=1):
     plt.show()
 
 # Step 3: Construct an Image Stack
-image_stack = ImageStackDataType.from_list([image1, image2, image3])
+image_stack = SingleChannelImageStack(np.stack([img.data for img in [image1, image2, image3]]))
 
 
 # Step 4: Apply Image Processing Algorithms
@@ -55,7 +55,7 @@ plt.colorbar()
 plt.show()
 
 # 4.2: Concatenate images horizontally
-side_by_side_projector = ImageStackToSideBySideProjector()
+side_by_side_projector = SingleChannelImageStackSideBySideProjector()
 side_by_side_image = side_by_side_projector.process(image_stack)
 
 # Display the side-by-side image
