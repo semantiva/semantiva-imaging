@@ -2,14 +2,14 @@ import pytest
 import os
 import numpy as np
 from semantiva_imaging.data_types import (
-    ImageDataType,
-    ImageStackDataType,
+    SingleChannelImage,
+    SingleChannelImageStack,
 )
 from semantiva_imaging.data_io.loaders_savers import (
     ImageDataRandomGenerator,
-    ImageStackRandomGenerator,
-    NpzImageDataTypeLoader,
-    NpzImageStackDataLoader,
+    SingleChannelImageStackRandomGenerator,
+    NpzSingleChannelImageLoader,
+    NpzSingleChannelImageStackDataLoader,
     PngImageLoader,
     NpzImageDataSaver,
     NpzImageStackDataSaver,
@@ -20,7 +20,7 @@ from semantiva_imaging.data_io.loaders_savers import (
 @pytest.fixture
 def sample_image_data():
     """
-    Fixture to provide a sample ImageDataType using the dummy generator.
+    Fixture to provide a sample SingleChannelImage using the dummy generator.
     """
     generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
@@ -29,9 +29,9 @@ def sample_image_data():
 @pytest.fixture
 def sample_stack_data():
     """
-    Fixture to provide a sample ImageStackDataType using the dummy generator.
+    Fixture to provide a sample SingleChannelImageStack using the dummy generator.
     """
-    generator = ImageStackRandomGenerator()
+    generator = SingleChannelImageStackRandomGenerator()
     return generator.get_data((10, 256, 256))
 
 
@@ -45,7 +45,7 @@ def tmp_test_dir(tmp_path):
 
 def test_npz_image_loader(sample_image_data, tmp_test_dir):
     """
-    Test loading ImageDataType from a dynamically created .npz file.
+    Test loading SingleChannelImage from a dynamically created .npz file.
     """
     # Save the generated image to a .npz file
     file_path = os.path.join(tmp_test_dir, "image_data.npz")
@@ -53,15 +53,15 @@ def test_npz_image_loader(sample_image_data, tmp_test_dir):
     saver.send_data(sample_image_data, file_path)
 
     # Load the image back and verify
-    loader = NpzImageDataTypeLoader()
+    loader = NpzSingleChannelImageLoader()
     image_data = loader.get_data(file_path)
-    assert isinstance(image_data, ImageDataType)
+    assert isinstance(image_data, SingleChannelImage)
     assert np.array_equal(image_data.data, sample_image_data.data)
 
 
 def test_npz_stack_loader(sample_stack_data, tmp_test_dir):
     """
-    Test loading ImageStackDataType from a dynamically created .npz file.
+    Test loading SingleChannelImageStack from a dynamically created .npz file.
     """
     # Save the generated stack to a .npz file
     file_path = os.path.join(tmp_test_dir, "stack_data.npz")
@@ -69,15 +69,15 @@ def test_npz_stack_loader(sample_stack_data, tmp_test_dir):
     saver.send_data(sample_stack_data, file_path)
 
     # Load the stack back and verify
-    loader = NpzImageStackDataLoader()
+    loader = NpzSingleChannelImageStackDataLoader()
     stack_data = loader.get_data(file_path)
-    assert isinstance(stack_data, ImageStackDataType)
+    assert isinstance(stack_data, SingleChannelImageStack)
     assert np.array_equal(stack_data.data, sample_stack_data.data)
 
 
 def test_png_image_loader(sample_image_data, tmp_test_dir):
     """
-    Test loading ImageDataType from a dynamically created .png file.
+    Test loading SingleChannelImage from a dynamically created .png file.
     """
     # Save the generated image to a .png file
     file_path = os.path.join(tmp_test_dir, "image_data.png")
@@ -87,13 +87,13 @@ def test_png_image_loader(sample_image_data, tmp_test_dir):
     # Load the image back and verify
     loader = PngImageLoader()
     image_data = loader.get_data(file_path)
-    assert isinstance(image_data, ImageDataType)
+    assert isinstance(image_data, SingleChannelImage)
     assert image_data.data.shape == sample_image_data.data.shape
 
 
 def test_image_stack_iterator():
     """
-    Tests the iterator of ImageStackDataType to ensure it correctly yields ImageDataType instances.
+    Tests the iterator of SingleChannelImageStack to ensure it correctly yields SingleChannelImage instances.
     """
 
     # Create a 3D numpy array (e.g., 5 images of size 10x10)
@@ -101,9 +101,9 @@ def test_image_stack_iterator():
     stack_data = np.random.rand(num_images, height, width)
 
     # Create an ImageStackArrayDataType instance
-    image_stack = ImageStackDataType(stack_data)
+    image_stack = SingleChannelImageStack(stack_data)
 
-    assert image_stack.collection_base_type() == ImageDataType
+    assert image_stack.collection_base_type() == SingleChannelImage
 
     # Collect all elements from the iterator
     images = list(iter(image_stack))  # Equivalent to: [img for img in image_stack]
@@ -113,18 +113,18 @@ def test_image_stack_iterator():
         len(images) == num_images
     ), "Iterator did not yield the expected number of elements"
 
-    # Validate each element is an ImageDataType
+    # Validate each element is an SingleChannelImage
     for img in images:
         assert isinstance(
-            img, ImageDataType
+            img, SingleChannelImage
         ), f"Iterator yielded an invalid type: {type(img)}"
 
         # Validate the internal NumPy array is 2D
         assert isinstance(
             img.data, np.ndarray
-        ), "ImageDataType does not contain a NumPy array"
+        ), "SingleChannelImage does not contain a NumPy array"
         assert (
             img.data.ndim == 2
-        ), f"ImageDataType contains incorrect shape: {img.data.shape}"
+        ), f"SingleChannelImage contains incorrect shape: {img.data.shape}"
 
     print("✅ test_image_stack_array_iterator passed!")

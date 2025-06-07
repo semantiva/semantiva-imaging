@@ -2,7 +2,7 @@ from scipy.optimize import curve_fit
 import numpy as np
 from typing import Dict
 from ..processing.processors import ImageProbe
-from ..data_types import ImageDataType
+from ..data_types import SingleChannelImage
 
 
 class BasicImageProbe(ImageProbe):
@@ -15,7 +15,7 @@ class BasicImageProbe(ImageProbe):
         Compute essential image statistics.
 
         Args:
-            data (ImageDataType): The input image data.
+            data (SingleChannelImage): The input image data.
 
         Returns:
             dict: A dictionary of image statistics.
@@ -62,7 +62,7 @@ class TwoDGaussianFitterProbe(ImageProbe):
         Calculate the R² goodness-of-fit score for a 2D Gaussian fit.
 
         Parameters:
-            data (ImageDataType): The input image data.
+            data (SingleChannelImage): The input image data.
             fit_params (tuple): The optimized parameters of the Gaussian function.
 
         Returns:
@@ -74,12 +74,12 @@ class TwoDGaussianFitterProbe(ImageProbe):
         r_squared = 1 - (ss_res / ss_tot)
         return r_squared
 
-    def _process_logic(self, data: ImageDataType) -> Dict:
+    def _process_logic(self, data: SingleChannelImage) -> Dict:
         """
         Fit a 2D Gaussian function to the input image data and compute the goodness-of-fit score.
 
         Parameters:
-            data (ImageDataType): The input image data.
+            data (SingleChannelImage): The input image data.
 
         Returns:
             dict: A dictionary containing:
@@ -215,7 +215,7 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
         Compute the **R² goodness-of-fit** score for the fitted Gaussian model.
 
         Parameters:
-            data (ImageDataType): The input image data.
+            data (SingleChannelImage): The input image data.
             fitted_data (np.ndarray): The computed fitted Gaussian model.
 
         Returns:
@@ -227,13 +227,13 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
         r_squared = 1 - (ss_res / ss_tot)
         return r_squared
 
-    def _process_logic(self, data: ImageDataType) -> Dict:
+    def _process_logic(self, data: SingleChannelImage) -> Dict:
         """
         Fit a **tilted 2D Gaussian function** to the input image data, extracting
         the Gaussian parameters including the **rotation angle**.
 
         Parameters:
-            data (ImageDataType): The input image containing a Gaussian-like signal.
+            data (SingleChannelImage): The input image containing a Gaussian-like signal.
 
         Returns:
             dict: A dictionary containing:

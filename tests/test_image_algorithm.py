@@ -6,29 +6,29 @@ from semantiva_imaging.processing.operations import (
     ImageCropper,
     StackToImageMeanProjector,
     ImageNormalizerOperation,
-    ImageStackToSideBySideProjector,
+    SingleChannelImageStackSideBySideProjector,
 )
 from semantiva_imaging.data_io.loaders_savers import (
     ImageDataRandomGenerator,
-    ImageStackRandomGenerator,
+    SingleChannelImageStackRandomGenerator,
 )
 from semantiva_imaging.data_types import (
-    ImageDataType,
-    ImageStackDataType,
+    SingleChannelImage,
+    SingleChannelImageStack,
 )
 
 
 @pytest.fixture
 def dummy_image_data():
-    """Fixture for generating dummy ImageDataType data."""
+    """Fixture for generating dummy SingleChannelImage data."""
     generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
 
 
 @pytest.fixture
 def dummy_image_stack_data():
-    """Fixture for generating dummy ImageStackDataType data."""
-    generator = ImageStackRandomGenerator()
+    """Fixture for generating dummy SingleChannelImageStack data."""
+    generator = SingleChannelImageStackRandomGenerator()
     return generator.get_data((10, 256, 256))
 
 
@@ -82,7 +82,7 @@ def test_stack_to_image_mean_projector(dummy_image_stack_data):
 def test_image_normalizer_operation(image_normalizer_operation):
     # Create a test image with varying pixel values
     image_data = np.array([[0, 50, 100], [150, 200, 250]], dtype=np.float32)
-    image = ImageDataType(image_data)
+    image = SingleChannelImage(image_data)
 
     # Define the normalization range
     min_value, max_value = 0, 1
@@ -110,10 +110,10 @@ def test_image_stack_to_side_by_side_projector_valid():
 
     # Stack into 3D array
     image_stack = np.stack([image1, image2, image3], axis=0)
-    image_stack_data = ImageStackDataType(image_stack)
+    image_stack_data = SingleChannelImageStack(image_stack)
 
     # Instantiate the projector
-    projector = ImageStackToSideBySideProjector()
+    projector = SingleChannelImageStackSideBySideProjector()
 
     # Perform projection
     result = projector._process_logic(image_stack_data)

@@ -1,10 +1,10 @@
 from semantiva.data_processors import DataOperation, DataProbe
-from ..data_types import ImageDataType, ImageStackDataType
+from ..data_types import SingleChannelImage, SingleChannelImageStack
 
 
 class ImageOperation(DataOperation):
     """
-    A DataOperation for ImageDataType data.
+    A DataOperation for :class:`SingleChannelImage` data.
     """
 
     @classmethod
@@ -13,24 +13,24 @@ class ImageOperation(DataOperation):
         Specify the input data type for the operation.
 
         Returns:
-            type: `ImageDataType`, representing Image.
+            type: `SingleChannelImage`, representing Image.
         """
-        return ImageDataType
+        return SingleChannelImage
 
     @classmethod
-    def output_data_type(cls) -> type[ImageDataType]:
+    def output_data_type(cls) -> type[SingleChannelImage]:
         """
         Specify the output data type for the operation.
 
         Returns:
-            type: `ImageDataType`, representing Image.
+            type: `SingleChannelImage`, representing Image.
         """
-        return ImageDataType
+        return SingleChannelImage
 
 
-class ImageStackAlgorithm(DataOperation):
+class SingleChannelImageStackAlgorithm(DataOperation):
     """
-    A DataOperation for ImageStackDataType data.
+    A DataOperation for :class:`SingleChannelImageStack` data.
     """
 
     @classmethod
@@ -39,74 +39,74 @@ class ImageStackAlgorithm(DataOperation):
         Specify the input data type for the operation.
 
         Returns:
-            type: `ImageStackDataType`, representing a stack of images.
+            type: `SingleChannelImageStack`, representing a stack of images.
         """
-        return ImageStackDataType
+        return SingleChannelImageStack
 
     @classmethod
-    def output_data_type(cls) -> type[ImageStackDataType]:
+    def output_data_type(cls) -> type[SingleChannelImageStack]:
         """
         Specify the output data type for the operation.
 
         Returns:
-            type: `ImageStackDataType`, representing a stack of images.
+            type: `SingleChannelImageStack`, representing a stack of images.
         """
-        return ImageStackDataType
+        return SingleChannelImageStack
 
 
-class ImageStackToImageProjector(DataOperation):
+class SingleChannelImageStackToImageProjector(DataOperation):
     """
-    A DataOperation for flattening ImageStackDataType data into a ImageDataType.
+    A DataOperation for flattening ``SingleChannelImageStack`` data into a ``SingleChannelImage``.
     """
 
     @classmethod
-    def input_data_type(cls) -> type[ImageStackDataType]:
+    def input_data_type(cls) -> type[SingleChannelImageStack]:
         """
         Specify the input data type for the operation.
 
         Returns:
-            type: `ImageStackDataType`, representing a stack of images.
+            type: `SingleChannelImageStack`, representing a stack of images.
         """
-        return ImageStackDataType
+        return SingleChannelImageStack
 
     @classmethod
-    def output_data_type(cls) -> type[ImageDataType]:
+    def output_data_type(cls) -> type[SingleChannelImage]:
         """
         Specify the output data type for the operation.
 
         Returns:
-            type: `ImageStackDataType`, representing a stack of images.
+            type: `SingleChannelImage`, representing Image.
         """
-        return ImageDataType
+        return SingleChannelImage
 
 
 class ImageProbe(DataProbe):
     """
-    A DataProbe for ImageDataType data.
+    A DataProbe for :class:`SingleChannelImage` data.
     """
 
     @classmethod
-    def input_data_type(cls) -> type[ImageDataType]:
+    def input_data_type(cls) -> type[SingleChannelImage]:
         """
         Specify the input data type for the operation.
 
         Returns:
-            type: `ImageDataType`, representing Image.
+            type: `SingleChannelImage`, representing Image.
         """
-        return ImageDataType
+        return SingleChannelImage
 
 
-class ImageStackProbe(DataProbe):
+class SingleChannelImageStackProbe(DataProbe):
     """
-    A DataProbe for ImageStackDataType data.
+    A DataProbe for :class:`SingleChannelImageStack` data.
     """
 
     @classmethod
-    def input_data_type(cls) -> type[ImageStackDataType]:
+    def input_data_type(cls) -> type[SingleChannelImageStack]:
         """
         Specify the input data type for the operation.
 
         Returns:
-            type: `ImageStackDataType`, representing a stack of images.
+            type: `SingleChannelImageStack`, representing a stack of images.
         """
-        return ImageStackDataType
+        return SingleChannelImageStack

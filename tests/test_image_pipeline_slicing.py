@@ -5,7 +5,7 @@ from semantiva.context_processors.context_types import (
 )
 from semantiva_imaging.data_io.loaders_savers import (
     ImageDataRandomGenerator,
-    ImageStackRandomGenerator,
+    SingleChannelImageStackRandomGenerator,
 )
 from semantiva_imaging.processing.operations import (
     ImageAddition,
@@ -15,8 +15,8 @@ from semantiva_imaging.processing.operations import (
 )
 from semantiva.payload_operations import Pipeline
 from semantiva_imaging.data_types import (
-    ImageDataType,
-    ImageStackDataType,
+    SingleChannelImage,
+    SingleChannelImageStack,
 )
 from semantiva_imaging.probes import (
     BasicImageProbe,
@@ -27,7 +27,7 @@ from semantiva.data_processors.data_slicer_factory import Slicer
 @pytest.fixture
 def random_image():
     """
-    Pytest fixture providing a random 2D ImageDataType instance.
+    Pytest fixture providing a random 2D SingleChannelImage instance.
     """
     generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
@@ -36,7 +36,7 @@ def random_image():
 @pytest.fixture
 def another_random_image():
     """
-    Pytest fixture providing another random 2D ImageDataType instance.
+    Pytest fixture providing another random 2D SingleChannelImage instance.
     """
     generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
@@ -45,9 +45,9 @@ def another_random_image():
 @pytest.fixture
 def random_image_stack():
     """
-    Pytest fixture providing a random 3D ImageStackDataType instance (stack of 5 images).
+    Pytest fixture providing a random 3D SingleChannelImageStack instance (stack of 5 images).
     """
-    generator = ImageStackRandomGenerator()
+    generator = SingleChannelImageStackRandomGenerator()
     return generator.get_data((5, 256, 256))  # Generates a stack of 5 images
 
 
@@ -75,15 +75,15 @@ def test_pipeline_slicing_with_single_context(
     """
     Tests slicing when using a single ContextType.
 
-    - The `ImageStackDataType` is sliced into `ImageDataType` items.
+    - The `SingleChannelImageStack` is sliced into `SingleChannelImage` items.
     - The **same** ContextType instance is passed to each sliced item.
-    - The final output should remain an `ImageStackDataType` with the same number of images.
+    - The final output should remain an `SingleChannelImageStack` with the same number of images.
     """
 
     node_configurations = [
         {
             "processor": Slicer(
-                ImageAddition, ImageStackDataType
+                ImageAddition, SingleChannelImageStack
             ),  # Adds a specified image to each slice of the input data
             "parameters": {
                 "image_to_add": random_image
@@ -91,7 +91,7 @@ def test_pipeline_slicing_with_single_context(
         },
         {
             "processor": Slicer(
-                ImageSubtraction, ImageStackDataType
+                ImageSubtraction, SingleChannelImageStack
             ),  # Subtracts a specified image from each slice of the input data
             "parameters": {
                 "image_to_subtract": another_random_image
@@ -99,14 +99,14 @@ def test_pipeline_slicing_with_single_context(
         },
         {
             "processor": Slicer(
-                BasicImageProbe, ImageStackDataType
+                BasicImageProbe, SingleChannelImageStack
             ),  # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
             "processor": Slicer(
-                BasicImageProbe, ImageStackDataType
+                BasicImageProbe, SingleChannelImageStack
             ),  # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
@@ -125,9 +125,9 @@ def test_pipeline_slicing_with_single_context(
     ), "Context for `mock_keyword` must contain one element per slice"
 
     assert isinstance(
-        output_data, ImageStackDataType
-    ), "Output should be an ImageStackDataType"
-    assert len(output_data) == 5, "ImageStackDataType should retain 5 images"
+        output_data, SingleChannelImageStack
+    ), "Output should be an SingleChannelImageStack"
+    assert len(output_data) == 5, "SingleChannelImageStack should retain 5 images"
     assert isinstance(
         output_context, ContextType
     ), "Context should remain a ContextType"
@@ -139,15 +139,15 @@ def test_pipeline_slicing_with_context_collection(
     """
     Tests slicing when using a ContextCollectionType.
 
-    - The `ImageStackDataType` is sliced into `ImageDataType` items.
+    - The `SingleChannelImageStack` is sliced into `SingleChannelImage` items.
     - A **corresponding** `ContextType` is used for each sliced item.
-    - The final output should remain an `ImageStackDataType` with the same number of images.
+    - The final output should remain an `SingleChannelImageStack` with the same number of images.
     """
 
     node_configurations = [
         {
             "processor": Slicer(
-                ImageAddition, ImageStackDataType
+                ImageAddition, SingleChannelImageStack
             ),  # Adds a specified image to each slice of the input data
             "parameters": {
                 "image_to_add": random_image
@@ -155,7 +155,7 @@ def test_pipeline_slicing_with_context_collection(
         },
         {
             "processor": Slicer(
-                ImageSubtraction, ImageStackDataType
+                ImageSubtraction, SingleChannelImageStack
             ),  # Subtracts a specified image from each slice of the input data
             "parameters": {
                 "image_to_subtract": another_random_image
@@ -163,14 +163,14 @@ def test_pipeline_slicing_with_context_collection(
         },
         {
             "processor": Slicer(
-                BasicImageProbe, ImageStackDataType
+                BasicImageProbe, SingleChannelImageStack
             ),  # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
             "processor": Slicer(
-                BasicImageProbe, ImageStackDataType
+                BasicImageProbe, SingleChannelImageStack
             ),  # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
@@ -192,9 +192,9 @@ def test_pipeline_slicing_with_context_collection(
         pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]
     ) == len(output_data)
     assert isinstance(
-        output_data, ImageStackDataType
-    ), "Output should be an ImageStackDataType"
-    assert len(output_data) == 5, "ImageStackDataType should retain 5 images"
+        output_data, SingleChannelImageStack
+    ), "Output should be an SingleChannelImageStack"
+    assert len(output_data) == 5, "SingleChannelImageStack should retain 5 images"
     assert isinstance(
         output_context, ContextCollectionType
     ), "Context should remain a ContextCollectionType"
@@ -205,9 +205,9 @@ def test_pipeline_without_slicing(random_image, another_random_image, random_con
     """
     Tests normal execution without slicing.
 
-    - The pipeline receives a **single** `ImageDataType`, so no slicing occurs.
+    - The pipeline receives a **single** `SingleChannelImage`, so no slicing occurs.
     - The entire image is processed in one pass.
-    - The final output remains a **single** `ImageDataType`.
+    - The final output remains a **single** `SingleChannelImage`.
     """
 
     node_configurations = [
@@ -225,7 +225,9 @@ def test_pipeline_without_slicing(random_image, another_random_image, random_con
 
     output_data, output_context = pipeline.process(random_image, random_context)
 
-    assert isinstance(output_data, ImageDataType), "Output should be an ImageDataType"
+    assert isinstance(
+        output_data, SingleChannelImage
+    ), "Output should be an SingleChannelImage"
     assert isinstance(
         output_context, ContextType
     ), "Context should remain a ContextType"
@@ -235,7 +237,7 @@ def test_pipeline_invalid_slicing(random_image, random_context):
     """
     Tests invalid slicing scenario.
 
-    - The pipeline expects an `ImageStackDataType` but receives `ImageDataType`.
+    - The pipeline expects an `SingleChannelImageStack` but receives `SingleChannelImage`.
     - This should raise a **TypeError** due to incompatible pipeline topology.
     """
 

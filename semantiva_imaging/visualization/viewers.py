@@ -10,8 +10,8 @@ from matplotlib.figure import Figure
 from matplotlib.widgets import Slider, RadioButtons, CheckButtons
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from ..data_types import (
-    ImageDataType,
-    ImageStackDataType,
+    SingleChannelImage,
+    SingleChannelImageStack,
 )
 
 
@@ -22,13 +22,13 @@ class FigureOption(TypedDict):
 
 class ImageViewer:
     """
-    ImageDataType viewer.
+    SingleChannelImage viewer.
     """
 
     @classmethod
     def view(
         cls,
-        data: ImageDataType,
+        data: SingleChannelImage,
         title: str = "",
         colorbar: bool = False,
         cmap: str = "viridis",
@@ -51,7 +51,7 @@ class ImageViewer:
     @classmethod
     def _generate_image(
         cls,
-        data: ImageDataType,
+        data: SingleChannelImage,
         title: str = "",
         colorbar: bool = False,
         cmap: str = "viridis",
@@ -89,7 +89,7 @@ class ImageInteractiveViewer:
 
     def __init__(
         self,
-        data: ImageDataType,
+        data: SingleChannelImage,
         title: str,
         colorbar: bool,
         cmap: str,
@@ -159,7 +159,7 @@ class ImageInteractiveViewer:
     @classmethod
     def view(
         cls,
-        data: ImageDataType,
+        data: SingleChannelImage,
         title: str = "",
         colorbar: bool = False,
         cmap: str = "viridis",
@@ -173,7 +173,7 @@ class ImageInteractiveViewer:
 
     def _update_plot(
         self,
-        data: ImageDataType,
+        data: SingleChannelImage,
         colorbar: bool,
         log_scale: bool,
         cmap: str,
@@ -199,15 +199,15 @@ class ImageInteractiveViewer:
         plt.show()
 
 
-class ImageStackAnimator:
+class SingleChannelImageStackAnimator:
     """
-    A viewer that animates an ImageStackType object
+    A viewer that animates an SingleChannelImageStack data object
     """
 
     @classmethod
     def view(
         cls,
-        image_stack: ImageStackDataType,
+        image_stack: SingleChannelImageStack,
         title: str = "",
         colorbar: bool = False,
         cmap: str = "hot",
@@ -220,7 +220,7 @@ class ImageStackAnimator:
         Creates and displays an animation using matplotlib.animation.
 
         Parameters:
-            image_stack (ImageStackDataType): Stack of images to animate.
+            image_stack (SingleChannelImageStack): Stack of images to animate.
         """
         fig, ax = plt.subplots()
 
@@ -276,7 +276,7 @@ class ImageCrossSectionInteractiveViewer:
 
     def __init__(
         self,
-        image_data: ImageDataType,
+        image_data: SingleChannelImage,
         title: str = "",
         colorbar: bool = False,
         cmap: str = "hot",
@@ -349,7 +349,7 @@ class ImageCrossSectionInteractiveViewer:
     @classmethod
     def view(
         cls,
-        image_data: ImageDataType,
+        image_data: SingleChannelImage,
         title: str = "",
         colorbar: bool = False,
         cmap: str = "hot",
@@ -505,7 +505,7 @@ class ImageXYProjectionViewer:
     @classmethod
     def view(
         cls,
-        image: ImageDataType,
+        image: SingleChannelImage,
         title: str = "",
         colorbar: bool = False,
         cmap: str = "hot",
