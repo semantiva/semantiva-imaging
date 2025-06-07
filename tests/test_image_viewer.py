@@ -3,13 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from semantiva_imaging.visualization.viewers import ImageViewer
-from semantiva_imaging.data_types import ImageDataType
+from semantiva_imaging.data_types import SingleChannelImage
 
 
 @pytest.fixture
 def test_image():
     """Fixture to provide test image data."""
-    return ImageDataType(data=np.random.rand(10, 10))
+    return SingleChannelImage(data=np.random.rand(10, 10))
 
 
 def test_generate_image(test_image):

@@ -1,18 +1,27 @@
 import pytest
+
 import numpy as np
 import matplotlib.pyplot as plt
 from ipywidgets import Checkbox, Dropdown, FloatSlider, Text
+import os
 from semantiva_imaging.visualization.viewers import (
     ImageInteractiveViewer,
     ImageCrossSectionInteractiveViewer,
     ImageXYProjectionViewer,
 )
-from semantiva_imaging.data_types import ImageDataType
+from semantiva_imaging.data_types import SingleChannelImage
+
+# ignore ipykernel.pylab.backend_inline deprecation inside pytest
+pytestmark = pytest.mark.filterwarnings(
+    "ignore:.*`ipykernel\\.pylab\\.backend_inline`.*:DeprecationWarning"
+)
 
 
 @pytest.fixture(autouse=True)
 def disable_plt_show(monkeypatch):
     """Prevents matplotlib figures from being displayed during pytest runs."""
+    monkeypatch.setattr(plt, "show", lambda: None)
+    os.environ["JUPYTER_PLATFORM_DIRS"] = "1"
     monkeypatch.setattr(plt, "show", lambda: None)
 
 
@@ -20,7 +29,7 @@ def disable_plt_show(monkeypatch):
 @pytest.fixture
 def test_image():
     """Fixture to provide test image data."""
-    return ImageDataType(np.random.rand(256, 256))
+    return SingleChannelImage(np.random.rand(256, 256))
 
 
 def test_figure_options():

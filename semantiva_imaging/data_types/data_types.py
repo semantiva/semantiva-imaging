@@ -1,24 +1,44 @@
+"""Domain-specific single-channel data types."""
+
 import numpy as np
-from typing import Iterator, Optional
+from typing import Iterator
 from semantiva.data_types import BaseDataType, DataCollectionType
 
 
-class ImageDataType(BaseDataType[np.ndarray]):
+_ALLOWED_DTYPES = (np.uint8, np.float32, np.float64)
+
+
+class SingleChannelImage(BaseDataType):
     """
-    A class representing a 2D image.
+    A class representing a 2D single-channel image.
+    This class inherits from `BaseDataType` and is designed to handle 2D single-channel images.
+    It validates the input data to ensure it is a 2D NumPy array and supports automatic casting
+    of certain data types to `float32` if specified.
     """
 
-    def __init__(self, data: np.ndarray, *args, **kwargs):
+    def __init__(self, data: np.ndarray, auto_cast: bool = True, *args, **kwargs):
         """
-        Initializes the ImageDataType instance.
+        Initializes the SingleChannelImage instance.
 
         Parameters:
             data (numpy.ndarray): The image data to be stored and validated.
+            auto_cast (bool): If True, automatically casts uint16 and int16 data types to float32.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
 
         Raises:
-            AssertionError: If the input data is not a 2D NumPy array.
+            AssertionError: If the input data is not of an allowed dtype and auto_cast is True.
         """
-        super().__init__(data, *args, **kwargs)
+        assert data.ndim == 2, f"SingleChannelImage expects 2-D, got ndim={data.ndim}"
+        if data.dtype in (np.uint16, np.int16) and auto_cast:
+            data = data.astype(np.float32)
+        if auto_cast:
+            assert (
+                data.dtype in _ALLOWED_DTYPES
+            ), f"Unsupported dtype {data.dtype}; allowed {_ALLOWED_DTYPES}"
+        super().__init__(
+            data,
+        )
 
     def validate(self, data: np.ndarray):
         """
@@ -38,22 +58,25 @@ class ImageDataType(BaseDataType[np.ndarray]):
         return data
 
     def __str__(self):
-        return f"ImageDataType: {self.data.shape}"
+        return f"SingleChannelImage: {self.data.shape}"
 
 
-class ImageStackDataType(DataCollectionType[ImageDataType, np.ndarray]):
+class SingleChannelImageStack(DataCollectionType[SingleChannelImage, np.ndarray]):
     """
-    A class representing a stack of image data, derived from DataCollection.
+    A class representing a 2D image.
     """
 
-    def __init__(self, data: Optional[np.ndarray] = None):
-        """
-        Initializes the ImageStackDataType instance.
-
-        Args:
-            data (Optional[np.ndarray]): The image stack data to be stored and validated.
-        """
-        super().__init__(data)
+    def __init__(self, data: np.ndarray, auto_cast: bool = True, *args, **kwargs):
+        assert (
+            data.ndim == 3
+        ), f"SingleChannelImageStack expects 3-D, got ndim={data.ndim}"
+        if data.dtype in (np.uint16, np.int16) and auto_cast:
+            data = data.astype(np.float32)
+        if auto_cast:
+            assert (
+                data.dtype in _ALLOWED_DTYPES
+            ), f"Unsupported --- dtype {data.dtype}; allowed {_ALLOWED_DTYPES}"
+        super().__init__(data, *args, **kwargs)
 
     def validate(self, data: np.ndarray):
         """
@@ -68,27 +91,27 @@ class ImageStackDataType(DataCollectionType[ImageDataType, np.ndarray]):
         assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
         assert data.ndim == 3, "Data must be a 3D array (stack of 2D images)"
 
-    def __iter__(self) -> Iterator[ImageDataType]:
-        """Iterates through the 3D NumPy array, treating each 2D slice as an ImageDataType."""
+    def __iter__(self) -> Iterator[SingleChannelImage]:
+        """Iterates through the 3D NumPy array, treating each 2D slice as an SingleChannelImage."""
         for i in range(self._data.shape[0]):
-            yield ImageDataType(self._data[i])
+            yield SingleChannelImage(self._data[i])
 
-    def append(self, item: ImageDataType) -> None:
+    def append(self, item: SingleChannelImage) -> None:
         """
         Appends a 2D image to the image stack.
 
-        This method takes an `ImageDataType` instance and adds its underlying 2D NumPy array
+        This method takes an `SingleChannelImage` instance and adds its underlying 2D NumPy array
         to the existing 3D NumPy stack. If the stack is empty, it initializes it with the new image.
 
         Args:
-            item (ImageDataType): The 2D image to append.
+            item (SingleChannelImage): The 2D image to append.
 
         Raises:
-            TypeError: If the item is not an instance of `ImageDataType`.
+            TypeError: If the item is not an instance of `SingleChannelImage`.
             ValueError: If the image dimensions do not match the existing stack.
         """
-        if not isinstance(item, ImageDataType):
-            raise TypeError(f"Expected ImageDataType, got {type(item)}")
+        if not isinstance(item, SingleChannelImage):
+            raise TypeError(f"Expected SingleChannelImage, got {type(item)}")
 
         new_image = item.data  # Extract the 2D NumPy array
 

@@ -1,7 +1,7 @@
 import pytest
 from semantiva.payload_operations import Pipeline
 from semantiva.specializations import load_specializations
-from semantiva_imaging.data_types import ImageDataType
+from semantiva_imaging.data_types import SingleChannelImage
 from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
 from semantiva.context_processors.context_types import ContextType
 from semantiva_imaging.data_io.loaders_savers import (
@@ -18,7 +18,7 @@ def yaml_config_path():
 @pytest.fixture
 def random_image1():
     """
-    Pytest fixture for providing a random 2D ImageDataType instance using the dummy generator.
+    Pytest fixture for providing a random 2D SingleChannelImage instance using the dummy generator.
     """
     generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
@@ -42,4 +42,4 @@ def test_pipeline_yaml(random_image1, yaml_config_path, context_type):
 
     assert "final_info" in context.keys()
     assert "image_to_add" not in context.keys()
-    assert isinstance(data, ImageDataType)
+    assert isinstance(data, SingleChannelImage)
