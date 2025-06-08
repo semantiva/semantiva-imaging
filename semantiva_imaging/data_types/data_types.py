@@ -239,3 +239,43 @@ class NChannelImageStack(BaseDataType):
 
     def __str__(self) -> str:
         return f"NChannelImageStack: {self.data.shape}"
+
+
+class RGBImage(NChannelImage):
+    """3-channel image with fixed ("R", "G", "B") labels."""
+
+    def __init__(self, array: np.ndarray, *, auto_cast: bool = True):
+        assert (
+            array.ndim == 3 and array.shape[2] == 3
+        ), "RGBImage expects shape (H, W, 3)"
+        super().__init__(array, channel_info=("R", "G", "B"), auto_cast=auto_cast)
+
+
+class RGBImageStack(NChannelImageStack):
+    """Stack of :class:`RGBImage` (N x H x W x 3)."""
+
+    def __init__(self, array: np.ndarray, *, auto_cast: bool = True):
+        assert (
+            array.ndim == 4 and array.shape[3] == 3
+        ), "RGBImageStack expects shape (N, H, W, 3)"
+        super().__init__(array, channel_info=("R", "G", "B"), auto_cast=auto_cast)
+
+
+class RGBAImage(NChannelImage):
+    """4-channel image with fixed ("R", "G", "B", "A") labels."""
+
+    def __init__(self, array: np.ndarray, *, auto_cast: bool = True):
+        assert (
+            array.ndim == 3 and array.shape[2] == 4
+        ), "RGBAImage expects shape (H, W, 4)"
+        super().__init__(array, channel_info=("R", "G", "B", "A"), auto_cast=auto_cast)
+
+
+class RGBAImageStack(NChannelImageStack):
+    """Stack of :class:`RGBAImage` (N x H x W x 4)."""
+
+    def __init__(self, array: np.ndarray, *, auto_cast: bool = True):
+        assert (
+            array.ndim == 4 and array.shape[3] == 4
+        ), "RGBAImageStack expects shape (N, H, W, 4)"
+        super().__init__(array, channel_info=("R", "G", "B", "A"), auto_cast=auto_cast)
