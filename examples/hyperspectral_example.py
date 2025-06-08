@@ -15,7 +15,11 @@ Dependencies:
 """
 
 import numpy as np
-from semantiva_imaging.data_types import NChannelImage, NChannelImageStack, SingleChannelImage
+from semantiva_imaging.data_types import (
+    NChannelImage,
+    NChannelImageStack,
+    SingleChannelImage,
+)
 from semantiva_imaging.probes.probes import BasicImageProbe
 
 # Generate a dummy 7-band hyperspectral cube
@@ -40,4 +44,3 @@ if __name__ == "__main__":
 
         # Print the computed statistics for the current band
         print(f"  {name}: {result}")
-

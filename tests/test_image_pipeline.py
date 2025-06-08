@@ -24,6 +24,7 @@ from semantiva_imaging.data_io.loaders_savers import (
     ImageDataRandomGenerator,
     SingleChannelImageStackRandomGenerator,
 )
+from semantiva.tools import PipelineInspector
 
 
 @pytest.fixture
@@ -106,7 +107,7 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     print(
         "==============================Pipeline inspection=============================="
     )
-    print(pipeline.inspect())
+    print(PipelineInspector.inspect_pipeline(pipeline))
 
     # Check timers
     print(

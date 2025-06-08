@@ -8,7 +8,7 @@ from semantiva_imaging.probes.probes import BasicImageProbe
 # Dynamically load the example module
 spec = importlib.util.spec_from_file_location(
     "hyperspectral_example",
-    Path(__file__).parent.parent / "examples" / "hyperspectral_example.py"
+    Path(__file__).parent.parent / "examples" / "hyperspectral_example.py",
 )
 assert spec is not None
 module = importlib.util.module_from_spec(spec)
@@ -25,7 +25,7 @@ def test_stack_and_dimensions():
 
 
 def test_module_objects_exist():
-    assert hasattr(module, 'img') and hasattr(module, 'stack')
+    assert hasattr(module, "img") and hasattr(module, "stack")
     assert isinstance(module.img, module.NChannelImage)
     assert isinstance(module.stack, module.NChannelImageStack)
 
@@ -39,9 +39,9 @@ def test_basic_probe_per_band():
         single = SingleChannelImage(data)
         result = probe.process(single)
         expected = {
-            'mean': float(data.mean()),
-            'sum': float(data.sum()),
-            'min': float(data.min()),
-            'max': float(data.max()),
+            "mean": float(data.mean()),
+            "sum": float(data.sum()),
+            "min": float(data.min()),
+            "max": float(data.max()),
         }
         assert result == expected, f"Mismatch for band {name}: {result} vs {expected}"
