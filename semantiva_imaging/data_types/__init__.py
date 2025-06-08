@@ -12,6 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .data_types import SingleChannelImage, SingleChannelImageStack
+from .data_types import (
+    SingleChannelImage,
+    SingleChannelImageStack,
+    NChannelImage,
+    NChannelImageStack,
+)
 
-__all__ = ["SingleChannelImage", "SingleChannelImageStack"]
+__all__ = [
+    "SingleChannelImage",
+    "SingleChannelImageStack",
+    "NChannelImage",
+    "NChannelImageStack",
+]

@@ -15,7 +15,7 @@
 """Domain-specific single-channel data types."""
 
 import numpy as np
-from typing import Iterator
+from typing import Iterator, Sequence, Any, Tuple
 from semantiva.data_types import BaseDataType, DataCollectionType
 
 
@@ -170,3 +170,72 @@ class SingleChannelImageStack(DataCollectionType[SingleChannelImage, np.ndarray]
 
     def __str__(self):
         return f"ImageStackDataType: {self._data.shape}"
+
+
+class NChannelImage(BaseDataType):
+    """Arbitrary-band image (H x W x C).
+
+    Parameters
+    ----------
+    array : np.ndarray
+        Image data with shape ``(H, W, C)``.
+    channel_info : Sequence[Any]
+        Labels or metadata for each channel (length ``C``). Examples include
+        band names, wavelengths, or acquisition parameters.
+    auto_cast : bool, default True
+        Promote ``uint16``/``int16`` to ``float32`` for OpenCV compatibility.
+    """
+
+    def __init__(
+        self, array: np.ndarray, channel_info: Sequence[Any], *, auto_cast: bool = True
+    ):
+        assert array.ndim == 3, f"Expected 3-D array, got ndim={array.ndim}"
+        if array.dtype in (np.uint16, np.int16) and auto_cast:
+            array = array.astype(np.float32)
+        if auto_cast:
+            assert (
+                array.dtype in _ALLOWED_DTYPES
+            ), f"dtype {array.dtype} not allowed; use {_ALLOWED_DTYPES}"
+        assert (
+            len(channel_info) == array.shape[2]
+        ), "channel_info length must match channel count"
+        self.channel_info: Tuple[Any, ...] = tuple(channel_info)
+        super().__init__(array)
+
+    def validate(self, data: np.ndarray) -> bool:
+        """Validate underlying array."""
+        assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
+        assert data.ndim == 3, "Data must be a 3D array (H, W, C)."
+        return True
+
+    def __str__(self) -> str:
+        return f"NChannelImage: {self.data.shape}"
+
+
+class NChannelImageStack(BaseDataType):
+    """Stack of :class:`NChannelImage` (N x H x W x C)."""
+
+    def __init__(
+        self, array: np.ndarray, channel_info: Sequence[Any], *, auto_cast: bool = True
+    ):
+        assert array.ndim == 4, f"Expected 4-D stack, got ndim={array.ndim}"
+        if array.dtype in (np.uint16, np.int16) and auto_cast:
+            array = array.astype(np.float32)
+        if auto_cast:
+            assert (
+                array.dtype in _ALLOWED_DTYPES
+            ), f"dtype {array.dtype} not allowed; use {_ALLOWED_DTYPES}"
+        assert (
+            len(channel_info) == array.shape[3]
+        ), "channel_info length must match channel count"
+        self.channel_info: Tuple[Any, ...] = tuple(channel_info)
+        super().__init__(array)
+
+    def validate(self, data: np.ndarray) -> bool:
+        """Validate underlying stack array."""
+        assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
+        assert data.ndim == 4, "Data must be a 4D array (N, H, W, C)."
+        return True
+
+    def __str__(self) -> str:
+        return f"NChannelImageStack: {self.data.shape}"
