@@ -169,5 +169,5 @@ print("Fitting Results for orientation:",
 
 ## License
 
-Semantiva-imaging is released under the [MIT License](./LICENSE).
+Semantiva-imaging is released under the [Apache License 2.0](./LICENSE).
 
