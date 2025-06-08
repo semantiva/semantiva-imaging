@@ -33,8 +33,14 @@ Visit the repositories:
   - **X-Y Projection Viewer** (`ImageXYProjectionViewer`) - View **intensity projections** along X and Y axes  
   - **Standard & Interactive Image Display** (`ImageViewer`, `ImageInteractiveViewer`)
 
-- **Pipeline Support**  
-  - Define and run **image processing workflows** using Semantiva’s pipeline system  
+- **Pipeline Support**
+  - Define and run **image processing workflows** using Semantiva’s pipeline system
+
+### Color & Multichannel Image Types
+
+`RGBImage` and `RGBAImage` now subclass the generic `NChannelImage`. They automatically
+inherit the `auto_cast` behavior and carry `channel_info=("R","G","B")` or
+`("R","G","B","A")`.
 
 ---
 

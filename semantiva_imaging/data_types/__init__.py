@@ -17,6 +17,10 @@ from .data_types import (
     SingleChannelImageStack,
     NChannelImage,
     NChannelImageStack,
+    RGBImage,
+    RGBImageStack,
+    RGBAImage,
+    RGBAImageStack,
 )
 
 __all__ = [
@@ -24,4 +28,8 @@ __all__ = [
     "SingleChannelImageStack",
     "NChannelImage",
     "NChannelImageStack",
+    "RGBImage",
+    "RGBImageStack",
+    "RGBAImage",
+    "RGBAImageStack",
 ]
