@@ -2,7 +2,7 @@
 name = "semantiva-imaging"
 dynamic = ["version"]
 description = "Image specialization of Semantiva framework."
-license = "MIT" 
+license = "Apache-2.0"
 readme = "README.md" 
 requires-python = ">=3.10.12"
 dependencies = [
