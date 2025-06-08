@@ -139,8 +139,9 @@ node_configurations = [
 # --- 3) Create and Run the Pipeline ---
 pipeline = Pipeline(node_configurations)
 
+from semantiva.tools import PipelineInspector
 print("Pipeline inspection:")
-print(pipeline.inspect())
+print(PipelineInspector.inspect_pipeline(pipeline))
 for index, node in enumerate(pipeline.nodes, start=1):
     print(f"\nNode {index}")
     print(node.semantic_id())
