@@ -16,10 +16,8 @@ from semantiva.data_processors import DataOperation, DataProbe
 from ..data_types import SingleChannelImage, SingleChannelImageStack
 
 
-class ImageOperation(DataOperation):
-    """
-    A DataOperation for :class:`SingleChannelImage` data.
-    """
+class SingleChannelImageOperation(DataOperation):
+    """A ``DataOperation`` specialized for :class:`SingleChannelImage` data."""
 
     @classmethod
     def input_data_type(cls):
@@ -94,10 +92,8 @@ class SingleChannelImageStackToImageProjector(DataOperation):
         return SingleChannelImage
 
 
-class ImageProbe(DataProbe):
-    """
-    A DataProbe for :class:`SingleChannelImage` data.
-    """
+class SingleChannelImageProbe(DataProbe):
+    """A ``DataProbe`` for :class:`SingleChannelImage` data."""
 
     @classmethod
     def input_data_type(cls) -> type[SingleChannelImage]:

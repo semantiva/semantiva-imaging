@@ -13,14 +13,14 @@
 # limitations under the License.
 
 from .probes import (
-    ImageProbe,
+    SingleChannelImageProbe,
     BasicImageProbe,
     TwoDGaussianFitterProbe,
     TwoDTiltedGaussianFitterProbe,
 )
 
 __all__ = [
-    "ImageProbe",
+    "SingleChannelImageProbe",
     "BasicImageProbe",
     "TwoDGaussianFitterProbe",
     "TwoDTiltedGaussianFitterProbe",

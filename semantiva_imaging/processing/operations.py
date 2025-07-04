@@ -18,12 +18,12 @@ from ..data_types import (
     SingleChannelImageStack,
 )
 from ..processing.processors import (
-    ImageOperation,
+    SingleChannelImageOperation,
     SingleChannelImageStackToImageProjector,
 )
 
 
-class ImageSubtraction(ImageOperation):
+class ImageSubtraction(SingleChannelImageOperation):
     """
     Substracts one image from another.
     """
@@ -44,7 +44,7 @@ class ImageSubtraction(ImageOperation):
         return SingleChannelImage(np.subtract(data.data, image_to_subtract.data))
 
 
-class ImageAddition(ImageOperation):
+class ImageAddition(SingleChannelImageOperation):
     """
     Adds two images together.
     """
@@ -65,7 +65,7 @@ class ImageAddition(ImageOperation):
         return SingleChannelImage(np.add(data.data, image_to_add.data))
 
 
-class ImageCropper(ImageOperation):
+class ImageCropper(SingleChannelImageOperation):
     """
     Crops a rectangular region from the input image.
     """
@@ -133,7 +133,7 @@ class StackToImageMeanProjector(SingleChannelImageStackToImageProjector):
         return SingleChannelImage(np.mean(data.data, axis=0))
 
 
-class ImageNormalizerOperation(ImageOperation):
+class ImageNormalizerOperation(SingleChannelImageOperation):
     """
     Linear normalization of an image data to a specified range.
 
