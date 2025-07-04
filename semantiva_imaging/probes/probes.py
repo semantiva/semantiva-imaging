@@ -15,11 +15,11 @@
 from scipy.optimize import curve_fit
 import numpy as np
 from typing import Dict
-from ..processing.processors import ImageProbe
+from ..processing.processors import SingleChannelImageProbe
 from ..data_types import SingleChannelImage
 
 
-class BasicImageProbe(ImageProbe):
+class BasicImageProbe(SingleChannelImageProbe):
     """
     A basic image probe that computes mean, sum, minimum and maximum pixel values.
     """
@@ -42,7 +42,7 @@ class BasicImageProbe(ImageProbe):
         }
 
 
-class TwoDGaussianFitterProbe(ImageProbe):
+class TwoDGaussianFitterProbe(SingleChannelImageProbe):
     """
     A probe that fits a 2D Gaussian function to an image and computes the goodness-of-fit score.
 
@@ -138,7 +138,7 @@ class TwoDGaussianFitterProbe(ImageProbe):
         }
 
 
-class TwoDTiltedGaussianFitterProbe(ImageProbe):
+class TwoDTiltedGaussianFitterProbe(SingleChannelImageProbe):
     """
     A probe that fits a 2D Gaussian function to an image.
     Fitted parameters:

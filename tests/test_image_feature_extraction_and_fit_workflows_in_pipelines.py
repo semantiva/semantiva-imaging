@@ -18,7 +18,7 @@ from semantiva.context_processors.context_processors import ModelFittingContextP
 from semantiva.payload_operations.pipeline import Pipeline
 from semantiva_imaging.data_types import SingleChannelImageStack
 
-from semantiva_imaging.probes import TwoDGaussianFitterProbe, ImageProbe
+from semantiva_imaging.probes import TwoDGaussianFitterProbe, SingleChannelImageProbe
 from semantiva_imaging.data_io.loaders_savers import (
     TwoDGaussianImageGenerator,
     ParametricImageStackGenerator,
@@ -26,7 +26,7 @@ from semantiva_imaging.data_io.loaders_savers import (
 from semantiva.data_processors.data_slicer_factory import Slicer
 
 
-class TwoDGaussianStdDevProbe(ImageProbe):
+class TwoDGaussianStdDevProbe(SingleChannelImageProbe):
     """A probe to extract the standard deviation of a 2D Gaussian from an image."""
 
     def _process_logic(self, data):
