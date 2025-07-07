@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Dict
 from scipy.optimize import curve_fit
 import numpy as np
-from typing import Dict
 from ..processing.processors import SingleChannelImageProbe
 from ..data_types import SingleChannelImage
 
