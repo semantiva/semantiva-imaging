@@ -15,5 +15,6 @@
 """Adapter utilities for Semantiva Imaging."""
 
 from .factory import create_nchannel_processor
+from .opencv_factory import create_opencv_processor
 
-__all__ = ["create_nchannel_processor"]
+__all__ = ["create_nchannel_processor", "create_opencv_processor"]

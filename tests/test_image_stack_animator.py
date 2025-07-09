@@ -14,6 +14,10 @@
 
 import pytest
 import numpy as np
+import matplotlib
+
+matplotlib.use("Agg")  # Use non-interactive backend for testing
+import matplotlib.pyplot as plt
 from semantiva_imaging.data_types import SingleChannelImageStack
 from semantiva_imaging.visualization.viewers import SingleChannelImageStackAnimator
 
@@ -27,4 +31,17 @@ def test_image_stack():
 
 def test_display_animation(test_image_stack):
     """Test that the animation is correctly displayed."""
-    SingleChannelImageStackAnimator.view(test_image_stack)
+    # Set matplotlib to non-interactive mode to avoid GUI issues in tests
+    plt.ioff()  # Turn off interactive mode
+
+    try:
+        # This should not crash in headless environments
+        SingleChannelImageStackAnimator.view(test_image_stack)
+        # If we get here without exception, the test passes
+        assert True
+    except Exception as e:
+        # If there's still an issue, we want to know about it
+        pytest.fail(f"Animation viewer failed: {e}")
+    finally:
+        # Clean up any figures created during testing
+        plt.close("all")
