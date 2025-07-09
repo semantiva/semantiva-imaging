@@ -23,7 +23,11 @@ pdm run black --check semantiva_imaging
 echo "Running mypy"
 pdm run mypy .
 
-# Step 5: Run tests using pytest
+# Step 4: Check license headers
+echo "Running license header check..."
+pdm run python scripts/check_license_headers.py
+
+# Step 6: Run tests using pytest
 echo "Running pytest..."
 pdm run coverage run -m pytest --maxfail=1 -q -s
 pdm run coverage report
