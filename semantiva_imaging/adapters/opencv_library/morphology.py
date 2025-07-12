@@ -12,18 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from semantiva.specializations import SemantivaSpecialization
-from semantiva.component_loader import ComponentLoader
+"""Binary morphology processors."""
 
+from .builders import (
+    DilateSingleChannelImageProcessor,
+    ErodeSingleChannelImageProcessor,
+)
 
-class ImagingSpecialization(SemantivaSpecialization):
-    """Specialization for image processing"""
-
-    def register(self) -> None:
-        registered_modules = [
-            "semantiva_imaging.processing.operations",
-            "semantiva_imaging.probes.probes",
-            "semantiva_imaging.data_io.loaders_savers",
-            "semantiva_imaging.adapters.opencv_library.builders",
-        ]
-        ComponentLoader.register_modules(registered_modules)
+__all__ = [
+    "DilateSingleChannelImageProcessor",
+    "ErodeSingleChannelImageProcessor",
+]
