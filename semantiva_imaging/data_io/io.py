@@ -84,18 +84,6 @@ class SingleChannelImageDataSink(DataSink):
     Abstract base class for image data sinks.
     """
 
-    @abstractmethod
-    def _send_data(self, data: SingleChannelImage, *args, **kwargs):
-        """
-        Abstract method to consume and store `SingleChannelImage` data.
-
-        Subclasses must implement this method to define the mechanism for consuming and
-        storing image data.
-
-        Parameters:
-            data (SingleChannelImage): The image data to be consumed or stored.
-        """
-
     def input_data_type(self) -> type[SingleChannelImage]:  # type: ignore
         return SingleChannelImage
 
