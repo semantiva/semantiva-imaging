@@ -24,8 +24,9 @@ Visit the repositories:
   - **Image Stack Projections:** `StackToImageMeanProjector`, `SingleChannelImageStackSideBySideProjector`
   - **Factory Utilities:** `_create_nchannel_processor` for wrapping raw N-channel algorithms
 
-- **I/O and Image Generation**  
-  - Load and save images in **PNG** and **NPZ** formats  
+- **I/O and Image Generation**
+  - Load and save images in **PNG**, **JPEG**, **TIFF**, and **NPZ** formats
+  - Save and load video stacks (`.avi`) and animated **GIFs**
   - Generate synthetic images using `ImageDataRandomGenerator` and `TwoDGaussianImageGenerator`
 
 - **Visualization (Jupyter Notebook Compatible)**  
