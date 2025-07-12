@@ -176,6 +176,10 @@ print("Fitting Results for orientation:",
 
 > With Semantiva’s **dual-channel** approach, you gain the flexibility to adapt pipeline logic on the fly. Even advanced tasks—such as parametric signal generation, feature extraction, and multi-stage model fitting—become modular, maintainable, and straightforward to extend.
 
+### Codec-Dependent Classes
+
+Some loader/saver classes in Semantiva Imaging depend on system-specific codecs, which may not be available or consistent across all environments. For detailed information about dependencies, risks, and recommendations, please refer to the [Codec Dependencies Documentation](./codec_dependencies.md).
+
 ## License
 
 Semantiva-imaging is released under the [Apache License 2.0](./LICENSE).
