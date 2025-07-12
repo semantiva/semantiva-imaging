@@ -19,9 +19,9 @@ import inspect
 from typing import Type, Any, cast
 
 from semantiva.data_processors import DataOperation
+from semantiva.data_types import BaseDataType
 from ..processing.base_nchannel import NChannelImageOperation
 from ..data_types import NChannelImage
-from semantiva.data_types import BaseDataType
 
 
 def _create_nchannel_processor(

@@ -18,6 +18,9 @@ from __future__ import annotations
 
 import cv2
 
+# OpenCV stubs do not define all members used here
+# pylint: disable=no-member
+
 from ..opencv_factory import _create_opencv_processor
 from ...data_types import RGBImage, SingleChannelImage
 
