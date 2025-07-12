@@ -12,16 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
+"""Viewer utilities for interactive image exploration."""
+
 from typing import TypedDict
+import sys
+
+import numpy as np
 import ipywidgets as widgets
-import matplotlib.animation as animation
+from matplotlib import animation, cm
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 from matplotlib.figure import Figure
 from matplotlib.widgets import Slider, RadioButtons, CheckButtons
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.colors import LogNorm, Normalize
+from matplotlib.colors import LogNorm
 from ..data_types import (
     SingleChannelImage,
     SingleChannelImageStack,
@@ -36,12 +39,13 @@ except ImportError:
     _HAS_IPYTHON = False
 
 # Check if we're in a testing environment
-import sys
 
 _IS_TESTING = "pytest" in sys.modules or "unittest" in sys.modules
 
 
 class FigureOption(TypedDict):
+    """Configuration for figure creation."""
+
     figsize: tuple[float, float]
     labelsize: int
 
@@ -63,7 +67,7 @@ class ImageViewer:
         ylabel: str = "",
     ):
         """Display an image with optional title, colorbar, colormap, and log scale."""
-        figure = cls._generate_image(
+        cls._generate_image(
             data,
             title=title,
             colorbar=colorbar,
@@ -156,11 +160,11 @@ class ImageInteractiveViewer:
         )
 
         # Ensure vmax is always greater than vmin
-        def update_vmax_range(change):
+        def update_vmax_range(_change):
             if vmax_widget.value <= vmin_widget.value:
                 vmax_widget.value = vmin_widget.value + 0.1
 
-        def update_vmin_range(change):
+        def update_vmin_range(_change):
             if vmin_widget.value >= vmax_widget.value:
                 vmin_widget.value = vmax_widget.value - 0.1
 
@@ -262,7 +266,7 @@ class SingleChannelImageStackAnimator:
 
         # Add colorbar if requested
         if colorbar:
-            cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax)
+            fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax)
 
         frames = []
 
@@ -505,12 +509,15 @@ class ImageCrossSectionInteractiveViewer:
 
         ax_cmap_radio = plt.axes([0.75, 0.85, 0.15, 0.15])
         options_list = ["viridis", "plasma", "gray", "magma", "hot"]
+        active_index = 0
         for i, option in enumerate(options_list):
             if option == self._cmap:
-                active = i
+                active_index = i
                 break
         self._cmap_radio = RadioButtons(
-            ax_cmap_radio, ["viridis", "plasma", "gray", "magma", "hot"], active=i
+            ax_cmap_radio,
+            ["viridis", "plasma", "gray", "magma", "hot"],
+            active=active_index,
         )
         self._cmap_radio.on_clicked(self._update_cmap)
 
@@ -577,16 +584,12 @@ class ImageXYProjectionViewer:
 
         # Add colorbar
         if colorbar:
-            color_bar = fig.colorbar(
-                img, ax=main_ax, orientation="vertical", shrink=0.8
-            )
+            fig.colorbar(img, ax=main_ax, orientation="vertical", shrink=0.8)
 
         main_ax.autoscale(enable=True)
         right_ax.autoscale(enable=True)
         top_ax.autoscale(enable=True)
 
         # Projection plots
-        (v_proj,) = right_ax.plot(
-            y_projection, np.arange(ny), "b-", label="Y Projection"
-        )
-        (h_proj,) = top_ax.plot(np.arange(nx), x_projection, "b-", label="X Projection")
+        right_ax.plot(y_projection, np.arange(ny), "b-", label="Y Projection")
+        top_ax.plot(np.arange(nx), x_projection, "b-", label="X Projection")
