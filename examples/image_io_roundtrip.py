@@ -13,7 +13,7 @@ from semantiva_imaging.data_io.loaders_savers import (
     PngImageLoader,
     TiffSingleChannelImageSaver,
     TiffSingleChannelImageLoader,
-    SingleChannelImageStackVideoSaver,
+    SingleChannelImageStackAVISaver,
     SingleChannelImageStackVideoLoader,
 )
 
@@ -33,5 +33,5 @@ if __name__ == "__main__":
     stack = SingleChannelImageStack(
         np.random.randint(0, 255, (2, 5, 5), dtype=np.uint8)
     )
-    SingleChannelImageStackVideoSaver().send_data(stack, "roundtrip.avi")
+    SingleChannelImageStackAVISaver().send_data(stack, "roundtrip.avi")
     print(SingleChannelImageStackVideoLoader().get_data("roundtrip.avi"))

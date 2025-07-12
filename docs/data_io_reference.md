@@ -11,6 +11,6 @@ The following loaders and savers are available in `semantiva_imaging.data_io.loa
 - `PngRGBImageLoader` / `PngRGBImageSaver`
 - `TiffRGBImageLoader` / `TiffRGBImageSaver`
 - `PngRGBAImageLoader` / `PngRGBAImageSaver`
-- `SingleChannelImageStackVideoLoader` / `SingleChannelImageStackVideoSaver`
-- `RGBImageStackVideoLoader` / `RGBImageStackVideoSaver`
-- `AnimatedGifStackLoader` / `AnimatedGifSinglechannelImageStackSaver`
+- `SingleChannelImageStackVideoLoader` / `SingleChannelImageStackAVISaver`
+- `RGBImageStackVideoLoader` / `RGBImageStackAVISaver`
+- `AnimatedGifRGBAImageStackLoader` / `AnimatedGifSinglechannelImageStackSaver`
