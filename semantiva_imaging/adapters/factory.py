@@ -19,14 +19,16 @@ import inspect
 from typing import Type, Any, cast
 
 from semantiva.data_processors import DataOperation
+from ..processing.base_nchannel import NChannelImageOperation
+from ..data_types import NChannelImage
 from semantiva.data_types import BaseDataType
 
 
-def create_nchannel_processor(
+def _create_nchannel_processor(
     name: str,
-    base_cls: Type[DataOperation],
-    input_type: Type[BaseDataType],
-    output_type: Type[BaseDataType],
+    base_cls: Type[NChannelImageOperation],
+    input_type: Type[NChannelImage],
+    output_type: Type[NChannelImage],
 ) -> Type[DataOperation]:
     """Create a public ``DataOperation`` for n-channel image data.
 
@@ -86,7 +88,7 @@ def create_nchannel_processor(
     ...     def _process_logic(self, data: NChannelImage, other: NChannelImage, scale: float = 1.0):
     ...         return NChannelImage((data.data + other.data) * scale)
     >>>
-    >>> AddRGBProcessor = create_nchannel_processor(
+    >>> AddRGBProcessor = _create_nchannel_processor(
     ...     "AddRGBProcessor", _AddOp, RGBImage, RGBImage
     ... )
     >>>

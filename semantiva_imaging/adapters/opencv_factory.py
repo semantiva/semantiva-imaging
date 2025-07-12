@@ -33,22 +33,22 @@ classes from OpenCV functions. The factory handles several complex requirements:
 4. **Type Safety**: The generated processors validate input types and provide
    proper type annotations for Semantiva's introspection system.
 
-The main entry point is `create_opencv_processor()` which creates a new DataOperation
+The main entry point is `_create_opencv_processor()` which creates a new DataOperation
 class that wraps an OpenCV function with all the necessary adaptations.
 
 Example
 -------
 >>> import cv2
 >>> from semantiva_imaging.data_types import RGBImage
->>> 
+>>>
 >>> # Create a Gaussian blur processor for RGB images
->>> GaussianBlurProcessor = create_opencv_processor(
-...     cv2.GaussianBlur, 
-...     "GaussianBlurProcessor", 
-...     RGBImage, 
+>>> GaussianBlurProcessor = _create_opencv_processor(
+...     cv2.GaussianBlur,
+...     "GaussianBlurProcessor",
+...     RGBImage,
 ...     RGBImage
 ... )
->>> 
+>>>
 >>> # Use the processor
 >>> processor = GaussianBlurProcessor()
 >>> blurred_image = processor.process(rgb_image, ksize=(5, 5), sigmaX=1.0)
@@ -67,6 +67,7 @@ import re
 import numpy as np
 
 from semantiva.data_processors import DataOperation
+from semantiva.data_types import BaseDataType
 from semantiva_imaging.processing.base_nchannel import NChannelImageOperation
 from semantiva_imaging.processing.processors import SingleChannelImageOperation
 from semantiva_imaging.data_types import NChannelImage, SingleChannelImage
@@ -89,7 +90,9 @@ class TypeMismatchError(TypeError):
 _CV_CHANNEL_ORDER = ("B", "G", "R")
 
 
-def _reorder_view(arr, src: tuple[str, ...], dst: tuple[str, ...]):
+def _reorder_view(
+    arr: np.ndarray, src: tuple[str, ...], dst: tuple[str, ...]
+) -> np.ndarray:
     """Create a zero-copy view of an array with reordered channels.
 
     This function creates a view of the input array with channels reordered
@@ -372,11 +375,11 @@ def _choose_parser(func: Callable) -> Callable[[Callable], inspect.Signature]:
 # Public factory -----------------------------------------------------------------
 
 
-def create_opencv_processor(
+def _create_opencv_processor(
     cv_func: Callable,
     name: str,
-    input_type: Type[Any],
-    output_type: Type[Any],
+    input_type: Type[BaseDataType],
+    output_type: Type[BaseDataType],
     *,
     signature_parser: Optional[Callable[[Callable], inspect.Signature]] = None,
     override_signature: Optional[inspect.Signature] = None,
@@ -427,7 +430,7 @@ def create_opencv_processor(
     >>> import cv2
     >>> from semantiva_imaging.data_types import RGBImage
     >>>
-    >>> BlurProcessor = create_opencv_processor(
+    >>> BlurProcessor = _create_opencv_processor(
     ...     cv2.GaussianBlur, "BlurProcessor", RGBImage, RGBImage
     ... )
     >>> processor = BlurProcessor()
@@ -438,7 +441,7 @@ def create_opencv_processor(
     >>> from semantiva_imaging.data_types import SingleChannelImage
     >>>
     >>> # cv2.threshold returns (threshold_value, thresholded_image)
-    >>> ThresholdProcessor = create_opencv_processor(
+    >>> ThresholdProcessor = _create_opencv_processor(
     ...     cv2.threshold,
     ...     "ThresholdProcessor",
     ...     SingleChannelImage,
@@ -495,9 +498,9 @@ def create_opencv_processor(
         new_params = [
             # Add 'self' parameter for the method
             inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
-            # Replace the first parameter with our typed 'img' parameter
+            # Replace the first parameter with our typed 'data' parameter
             inspect.Parameter(
-                "img", inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=input_type
+                "data", inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=input_type
             ),
             # Keep all other parameters unchanged
             *params,
@@ -509,7 +512,7 @@ def create_opencv_processor(
     # Step 3: Set up return mapping for tuple handling
     return_map = return_map or {}
 
-    def _process_logic(self, img: Any, *args, **kwargs):
+    def _process_logic(self, data: BaseDataType, *args, **kwargs) -> BaseDataType:
         """Process an image through the wrapped OpenCV function.
 
         This method handles the complete pipeline:
@@ -524,18 +527,21 @@ def create_opencv_processor(
         parameters with appropriate type annotations.
         """
         # Step 3a: Validate input type
-        if not isinstance(img, input_type):
+        if not isinstance(data, input_type):
             raise TypeMismatchError(
-                f"Expected {input_type.__name__}, got {type(img).__name__}"
+                f"Expected {input_type.__name__}, got {type(data).__name__}"
             )
 
         # Step 3b: Extract the underlying array data
-        arr = getattr(img, "data", img)
+        arr: np.ndarray = getattr(data, "data")
 
         # Step 3c: Create a view with OpenCV-compatible channel ordering
         # Only reorder if we have 3+ channels (assuming RGB-like data)
-        if hasattr(img, "channel_info") and len(getattr(img, "channel_info")) >= 3:
-            view = _reorder_view(arr, tuple(img.channel_info), _CV_CHANNEL_ORDER)
+        # Ensure that channel reordering is only applied to multi-channel images.
+        if hasattr(data, "channel_info") and len(getattr(data, "channel_info")) >= 3:
+            view: np.ndarray = _reorder_view(
+                arr, tuple(data.channel_info), _CV_CHANNEL_ORDER
+            )
         else:
             # Single channel or channel-agnostic data passes through unchanged
             view = arr
@@ -573,11 +579,13 @@ def create_opencv_processor(
         # Step 3f: Reorder channels back to Semantiva format
         if (
             isinstance(result, np.ndarray)
-            and hasattr(img, "channel_info")
-            and len(getattr(img, "channel_info")) >= 3
+            and result.ndim >= 3
+            and result.shape[-1] >= 3
+            and hasattr(data, "channel_info")
+            and len(getattr(data, "channel_info")) >= 3
         ):
             # Convert back from OpenCV BGR to the original channel ordering
-            result = _reorder_view(result, _CV_CHANNEL_ORDER, tuple(img.channel_info))
+            result = _reorder_view(result, _CV_CHANNEL_ORDER, tuple(data.channel_info))
 
         # Step 3g: Wrap result in the expected output type
         return cast(Any, output_type)(result)
@@ -591,6 +599,12 @@ def create_opencv_processor(
         "input_data_type": classmethod(lambda cls: input_type),
         "output_data_type": classmethod(lambda cls: output_type),
     }
+
+    # Step 4a: Add context keys if return_map is provided
+    if return_map:
+        # Register the context keys from return_map
+        context_keys = list(return_map.values())
+        attrs["context_keys"] = classmethod(lambda cls: context_keys)
 
     # Step 5: Choose the appropriate base class
     # Use NChannelImageOperation for multi-channel images, SingleChannelImageOperation otherwise

@@ -22,7 +22,7 @@ Visit the repositories:
   - **Arithmetic:** `ImageAddition`, `ImageSubtraction`
   - **Filtering & Normalization:** `ImageCropper`, `ImageNormalizerOperation`
   - **Image Stack Projections:** `StackToImageMeanProjector`, `SingleChannelImageStackSideBySideProjector`
-  - **Factory Utilities:** `create_nchannel_processor` for wrapping raw N-channel algorithms
+  - **Factory Utilities:** `_create_nchannel_processor` for wrapping raw N-channel algorithms
 
 - **I/O and Image Generation**  
   - Load and save images in **PNG** and **NPZ** formats  
