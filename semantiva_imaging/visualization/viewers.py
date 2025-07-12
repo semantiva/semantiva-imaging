@@ -15,18 +15,30 @@
 import numpy as np
 from typing import TypedDict
 import ipywidgets as widgets
-from IPython.display import display, HTML
-from matplotlib.colors import LogNorm, Normalize
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.figure import Figure
 from matplotlib.widgets import Slider, RadioButtons, CheckButtons
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.colors import LogNorm, Normalize
 from ..data_types import (
     SingleChannelImage,
     SingleChannelImageStack,
 )
+
+# Handle IPython display import gracefully for testing environments
+try:
+    from IPython.display import display, HTML
+
+    _HAS_IPYTHON = True
+except ImportError:
+    _HAS_IPYTHON = False
+
+# Check if we're in a testing environment
+import sys
+
+_IS_TESTING = "pytest" in sys.modules or "unittest" in sys.modules
 
 
 class FigureOption(TypedDict):
@@ -60,7 +72,10 @@ class ImageViewer:
             xlabel=xlabel,
             ylabel=ylabel,
         )
-        plt.show()
+        # Only show if we're in an interactive backend
+        backend = plt.get_backend()
+        if backend != "Agg" and not _IS_TESTING:
+            plt.show()
 
     @classmethod
     def _generate_image(
@@ -267,7 +282,13 @@ class SingleChannelImageStackAnimator:
         ani = animation.ArtistAnimation(fig, frames, interval=frame_duration, blit=True)
 
         # Display the animation
-        display(HTML(ani.to_jshtml()))
+        if _HAS_IPYTHON and not _IS_TESTING:
+            display(HTML(ani.to_jshtml()))
+        else:
+            # Only show if we're in an interactive backend
+            backend = plt.get_backend()
+            if backend != "Agg" and not _IS_TESTING:
+                plt.show()
         plt.close()
 
 
