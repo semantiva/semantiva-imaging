@@ -70,7 +70,7 @@ from semantiva.data_processors import DataOperation
 from semantiva.data_types import BaseDataType
 from semantiva_imaging.processing.base_nchannel import NChannelImageOperation
 from semantiva_imaging.processing.processors import SingleChannelImageOperation
-from semantiva_imaging.data_types import NChannelImage, SingleChannelImage
+from semantiva_imaging.data_types import NChannelImage
 
 
 class TypeMismatchError(TypeError):
@@ -274,7 +274,7 @@ def _simple_parser(func: Callable) -> inspect.Signature:
     """
     try:
         return inspect.signature(func)
-    except Exception:
+    except (ValueError, TypeError):
         return _parse_docstring_signature(func)
 
 
@@ -303,7 +303,7 @@ def _nested_parser(func: Callable) -> inspect.Signature:
     """
     try:
         return inspect.signature(func)
-    except Exception:
+    except (ValueError, TypeError):
         return _parse_docstring_signature(func)
 
 
@@ -332,7 +332,7 @@ def _multi_return_parser(func: Callable) -> inspect.Signature:
     """
     try:
         return inspect.signature(func)
-    except Exception:
+    except (ValueError, TypeError):
         return _parse_docstring_signature(func)
 
 

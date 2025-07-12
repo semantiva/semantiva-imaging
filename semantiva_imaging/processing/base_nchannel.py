@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base classes for n-channel image processors and probes."""
+
 from typing import Any
 from ..data_types import NChannelImage
 from ..processing.processors import DataOperation, DataProbe

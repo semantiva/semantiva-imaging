@@ -12,12 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Semantiva Imaging specialization package."""
+
 from semantiva.specializations import SemantivaSpecialization
 from semantiva.component_loader import ComponentLoader
 
 
 class ImagingSpecialization(SemantivaSpecialization):
-    """Specialization for image processing"""
+    """Specialization for image processing."""
+
+    def __init__(self, loader: ComponentLoader | None = None) -> None:
+        """Store the loader used for registration."""
+        self.loader = loader or ComponentLoader
 
     def register(self) -> None:
         registered_modules = [
