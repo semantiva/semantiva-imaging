@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Loaders and savers for image data."""
+
+from typing import Any, Dict, Tuple, List
 from PIL import Image
 import numpy as np
-from typing import Any, Dict, Tuple, List
 from semantiva.context_processors.context_types import ContextType
 from .io import (
     SingleChannelImageDataSource,
@@ -58,7 +60,8 @@ class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
                 # Validate the file contains exactly one array
                 if len(data.files) != 1:
                     raise ValueError(
-                        f"The file {path} must contain exactly one array, but found {len(data.files)}."
+                        f"The file {path} must contain exactly one array, "
+                        f"but found {len(data.files)}."
                     )
 
                 # Get the array
@@ -78,11 +81,7 @@ class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
 
 
 class NpzImageDataSaver(SingleChannelImageDataSink):
-    """
-    Concrete implementation of ImageDataTypeSink for saving ``SingleChannelImage`` objects to .npz files.
-
-    This class provides functionality to save a ``SingleChannelImage`` object into a `.npz` file.
-    """
+    """Save a ``SingleChannelImage`` to an ``.npz`` file."""
 
     def _send_data(self, data: SingleChannelImage, path: str):
         """
@@ -138,7 +137,8 @@ class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
                 # Validate the file contains exactly one array
                 if len(data.files) != 1:
                     raise ValueError(
-                        f"The file {path} must contain exactly one array, but found {len(data.files)}."
+                        f"The file {path} must contain exactly one array, "
+                        f"but found {len(data.files)}."
                     )
 
                 # Get the array
@@ -158,11 +158,7 @@ class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
 
 
 class NpzImageStackDataSaver(SingleChannelImageStackSink):
-    """
-    Concrete implementation of ImageStackDataSink for saving ``SingleChannelImageStack`` objects to .npz files.
-
-    This class provides functionality to save a ``SingleChannelImageStack`` object into a `.npz` file.
-    """
+    """Save a ``SingleChannelImageStack`` to an ``.npz`` file."""
 
     def _send_data(self, data: SingleChannelImageStack, path: str):
         """
@@ -259,8 +255,8 @@ class PNGImageStackSaver(SingleChannelImageStackSink):
     Concrete implementation of ImageDataSink for saving multi-frame image data (``SingleChannelImageStack``)
     as sequentially numbered PNG files.
 
-    Each frame in the ``SingleChannelImageStack`` is saved as a separate PNG file, with filenames
-    numbered sequentially (e.g., "frame_000.png", "frame_001.png", ...).
+    Each frame in the ``SingleChannelImageStack`` is saved as a separate PNG
+    file with filenames numbered sequentially (e.g., ``frame_000.png``).
     """
 
     def _send_data(self, data: SingleChannelImageStack, base_path: str):
@@ -450,6 +446,7 @@ class ParametricImageStackGenerator(SingleChannelImageStackSource):
 
     @property
     def t_values(self):
+        """Range of ``t`` values used for the parametric expressions."""
         t_values = np.linspace(
             self.param_ranges["t"][0], self.param_ranges["t"][1], self.num_frames
         )

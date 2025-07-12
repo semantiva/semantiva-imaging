@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""I/O interface classes for imaging data."""
+
 from abc import abstractmethod
 from typing_extensions import override
 from semantiva.context_processors.context_types import ContextType
@@ -36,19 +38,7 @@ class SingleChannelImageDataSource(DataSource):
         Returns:
             SingleChannelImage: The retrieved image data.
         """
-        pass
-
-    @classmethod
-    def get_data(cls, *args, **kwargs):
-        """
-        Fetch and return `SingleChannelImage` data.
-
-        This method calls the subclass-implemented `_get_data` method to retrieve the data.
-
-        Returns:
-            SingleChannelImage: The fetched image data.
-        """
-        return cls()._get_data(*args, **kwargs)
+        raise NotImplementedError
 
     @classmethod
     def output_data_type(cls) -> type[SingleChannelImage]:
@@ -106,17 +96,6 @@ class SingleChannelImageDataSink(DataSink):
             data (SingleChannelImage): The image data to be consumed or stored.
         """
 
-    def send_data(self, data: SingleChannelImage, *args, **kwargs):
-        """
-        Consume and store `SingleChannelImage` data.
-
-        This method calls the subclass-implemented `_send_data` method to process the data.
-
-        Parameters:
-            data (SingleChannelImage): The image data to be consumed or stored.
-        """
-        self._send_data(data, *args, **kwargs)
-
     def input_data_type(self) -> type[SingleChannelImage]:  # type: ignore
         return SingleChannelImage
 
@@ -138,24 +117,16 @@ class SingleChannelImageStackSink(DataSink):
             data (SingleChannelImageStack): The image stack data to be consumed or stored.
         """
 
-    def send_data(self, data: SingleChannelImageStack, *args, **kwargs):
-        """
-        Consume and store `SingleChannelImageStack` data.
-
-        This method calls the subclass-implemented `_send_data` method to process the data.
-
-        Parameters:
-            data (SingleChannelImageStack): The image stack data to be consumed or stored.
-        """
-        self._send_data(data, *args, **kwargs)
-
     def input_data_type(self) -> type[SingleChannelImageStack]:  # type: ignore
         return SingleChannelImageStack
 
 
 class ImagePayloadSink(PayloadSink):
-    """
-    Abstract base class for sinks that consume and store ``SingleChannelImage`` objects with associated context.
+    """Abstract base class for sinks that handle ``SingleChannelImage`` payloads.
+
+    Sinks implementing this interface consume image data together with its
+    contextual information and persist them using a backend specific
+    mechanism.
     """
 
     @abstractmethod
@@ -163,28 +134,7 @@ class ImagePayloadSink(PayloadSink):
     def _send_payload(
         self, data: SingleChannelImage, context: ContextType, *args, **kwargs
     ):
-        """
-        Abstract method to consume and store `SingleChannelImage` data along with context.
-
-        Subclasses must implement this method to define the mechanism for consuming and
-        storing the data and context.
-
-        Parameters:
-            data (SingleChannelImage): The image data to be consumed or stored.
-            context (ContextType): The associated context or metadata for the image data.
-        """
-
-    def send_payload(self, data, context, *args, **kwargs):
-        """
-        Consume and store `SingleChannelImage` data along with context.
-
-        This method calls the subclass-implemented `_send_payload` method to process the data and context.
-
-        Parameters:
-            data (SingleChannelImage): The image data to be consumed or stored.
-            context (dict): The associated context or metadata for the image data.
-        """
-        self._send_payload(data, context, *args, **kwargs)
+        """Consume ``SingleChannelImage`` data together with its context."""
 
     def input_data_type(self) -> type[SingleChannelImage]:  # type: ignore
         """
@@ -197,39 +147,13 @@ class ImagePayloadSink(PayloadSink):
 
 
 class SingleChannelImageStackPayloadSource(PayloadSource):
-    """
-    Abstract base class for sources that provide ``SingleChannelImageStack`` objects with associated context.
-    """
+    """Source of ``SingleChannelImageStack`` objects with context information."""
 
     @abstractmethod
     def _get_payload(
         self, *args, **kwargs
     ) -> tuple[SingleChannelImageStack, ContextType]:
-        """
-        Abstract method to retrieve an `SingleChannelImageStack` object and its associated context.
-
-        Subclasses must implement this method to define the mechanism for retrieving the data and context.
-
-        Returns:
-            tuple[SingleChannelImageStack, dict]:
-                A tuple where the first element is the `SingleChannelImageStack` object and
-                the second element is a dictionary representing the context or metadata.
-        """
-
-    def get_payload(
-        self, *args, **kwargs
-    ) -> tuple[SingleChannelImageStack, ContextType]:
-        """
-        Fetch and return an `SingleChannelImageStack` object and its associated context.
-
-        This method calls the subclass-implemented `_get_payload` method to retrieve the data and context.
-
-        Returns:
-            tuple[SingleChannelImageStack, dict]:
-                A tuple where the first element is the `SingleChannelImageStack` object and
-                the second element is a dictionary representing the context or metadata.
-        """
-        return self._get_payload(*args, **kwargs)
+        """Abstract method retrieving an image stack and its context."""
 
     def output_data_type(self) -> type[SingleChannelImageStack]:  # type: ignore
         """

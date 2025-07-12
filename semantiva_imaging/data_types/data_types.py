@@ -14,8 +14,8 @@
 
 """Domain-specific single-channel data types."""
 
-import numpy as np
 from typing import Iterator, Sequence, Any, Tuple
+import numpy as np
 from semantiva.data_types import BaseDataType, DataCollectionType
 
 

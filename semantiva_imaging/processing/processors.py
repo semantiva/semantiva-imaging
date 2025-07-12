@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base processor classes for image operations and probes."""
+
 from semantiva.data_processors import DataOperation, DataProbe
 from ..data_types import SingleChannelImage, SingleChannelImageStack
 
