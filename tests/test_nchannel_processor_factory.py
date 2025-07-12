@@ -14,7 +14,7 @@
 
 """Tests for the n-channel processor factory functionality.
 
-This module tests the create_nchannel_processor factory function to ensure
+This module tests the _create_nchannel_processor factory function to ensure
 that dynamically generated processor classes maintain proper functionality,
 metadata exposure, and error handling behavior.
 """
@@ -25,7 +25,7 @@ import pytest
 
 from semantiva.payload_operations import DataNode
 from semantiva.examples.test_utils import DummyContext
-from semantiva_imaging.adapters import create_nchannel_processor
+from semantiva_imaging.adapters.factory import _create_nchannel_processor
 from semantiva_imaging.processing.base_nchannel import NChannelImageOperation
 from semantiva_imaging.data_types import RGBImage, RGBAImage
 from semantiva_imaging.data_types import NChannelImage
@@ -66,7 +66,7 @@ class _AddOp(NChannelImageOperation):
 
 # Create a concrete processor for RGB images using the factory
 # This demonstrates the intended usage pattern
-AddRGBImageProcessor = create_nchannel_processor(
+AddRGBImageProcessor = _create_nchannel_processor(
     "AddRGBImageProcessor", _AddOp, RGBImage, RGBImage
 )
 
