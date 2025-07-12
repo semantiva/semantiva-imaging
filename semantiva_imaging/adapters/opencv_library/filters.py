@@ -12,18 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from semantiva.specializations import SemantivaSpecialization
-from semantiva.component_loader import ComponentLoader
+"""Filter and edge detection processors."""
 
+from .builders import (
+    GaussianBlurRGBImageProcessor,
+    MedianBlurRGBImageProcessor,
+    BilateralFilterRGBImageProcessor,
+    CannyEdgeSingleChannelImageProcessor,
+    SobelEdgeSingleChannelImageProcessor,
+    LaplacianSingleChannelImageProcessor,
+)
 
-class ImagingSpecialization(SemantivaSpecialization):
-    """Specialization for image processing"""
-
-    def register(self) -> None:
-        registered_modules = [
-            "semantiva_imaging.processing.operations",
-            "semantiva_imaging.probes.probes",
-            "semantiva_imaging.data_io.loaders_savers",
-            "semantiva_imaging.adapters.opencv_library.builders",
-        ]
-        ComponentLoader.register_modules(registered_modules)
+__all__ = [
+    "GaussianBlurRGBImageProcessor",
+    "MedianBlurRGBImageProcessor",
+    "BilateralFilterRGBImageProcessor",
+    "CannyEdgeSingleChannelImageProcessor",
+    "SobelEdgeSingleChannelImageProcessor",
+    "LaplacianSingleChannelImageProcessor",
+]
