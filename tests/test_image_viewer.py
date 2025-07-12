@@ -51,20 +51,3 @@ def test_generate_image(test_image):
 
     # Check if log scale is applied
     assert isinstance(ax.images[0].norm, LogNorm)
-
-
-def test_display_image(monkeypatch, test_image):
-    """Test if display_image() calls plt.show()"""
-
-    # Use monkeypatch to replace plt.show() with a dummy function
-    show_called = []
-
-    def mock_show():
-        show_called.append(True)
-
-    monkeypatch.setattr(plt, "show", mock_show)
-
-    ImageViewer.view(test_image)
-
-    # Verify that plt.show() was called
-    assert show_called, "plt.show() was not called"

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Concrete image operations used in processing pipelines."""
+
 import numpy as np
 from ..data_types import (
     SingleChannelImage,

@@ -12,18 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Public probe classes for the imaging specialization."""
+"""Filter and edge detection processors."""
 
-from .probes import (
-    SingleChannelImageProbe,
-    BasicImageProbe,
-    TwoDGaussianFitterProbe,
-    TwoDTiltedGaussianFitterProbe,
+from .builders import (
+    GaussianBlurRGBImageProcessor,
+    MedianBlurRGBImageProcessor,
+    BilateralFilterRGBImageProcessor,
+    CannyEdgeSingleChannelImageProcessor,
+    SobelEdgeSingleChannelImageProcessor,
+    LaplacianSingleChannelImageProcessor,
 )
 
 __all__ = [
-    "SingleChannelImageProbe",
-    "BasicImageProbe",
-    "TwoDGaussianFitterProbe",
-    "TwoDTiltedGaussianFitterProbe",
+    "GaussianBlurRGBImageProcessor",
+    "MedianBlurRGBImageProcessor",
+    "BilateralFilterRGBImageProcessor",
+    "CannyEdgeSingleChannelImageProcessor",
+    "SobelEdgeSingleChannelImageProcessor",
+    "LaplacianSingleChannelImageProcessor",
 ]

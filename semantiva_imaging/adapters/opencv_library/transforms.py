@@ -12,18 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Public probe classes for the imaging specialization."""
+"""Geometric transform processors."""
 
-from .probes import (
-    SingleChannelImageProbe,
-    BasicImageProbe,
-    TwoDGaussianFitterProbe,
-    TwoDTiltedGaussianFitterProbe,
+from .builders import (
+    ResizeRGBImageProcessor,
+    RotateRGBImageProcessor,
+    FlipRGBImageProcessor,
 )
 
 __all__ = [
-    "SingleChannelImageProbe",
-    "BasicImageProbe",
-    "TwoDGaussianFitterProbe",
-    "TwoDTiltedGaussianFitterProbe",
+    "ResizeRGBImageProcessor",
+    "RotateRGBImageProcessor",
+    "FlipRGBImageProcessor",
 ]

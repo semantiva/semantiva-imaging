@@ -12,18 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Public probe classes for the imaging specialization."""
+"""Binary morphology processors."""
 
-from .probes import (
-    SingleChannelImageProbe,
-    BasicImageProbe,
-    TwoDGaussianFitterProbe,
-    TwoDTiltedGaussianFitterProbe,
+from .builders import (
+    DilateSingleChannelImageProcessor,
+    ErodeSingleChannelImageProcessor,
 )
 
 __all__ = [
-    "SingleChannelImageProbe",
-    "BasicImageProbe",
-    "TwoDGaussianFitterProbe",
-    "TwoDTiltedGaussianFitterProbe",
+    "DilateSingleChannelImageProcessor",
+    "ErodeSingleChannelImageProcessor",
 ]

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Convenience exports for Semantiva imaging data types."""
+
 from .data_types import (
     SingleChannelImage,
     SingleChannelImageStack,
