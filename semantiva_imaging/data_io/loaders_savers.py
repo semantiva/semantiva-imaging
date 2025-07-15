@@ -15,8 +15,10 @@
 """Loaders and savers for image data."""
 
 from typing import Any, Dict, Tuple, List
-from PIL import Image
+from PIL import Image, ImageSequence
 import numpy as np
+import cv2
+import logging
 from semantiva.context_processors.context_types import ContextType
 from .io import (
     SingleChannelImageDataSource,
@@ -24,8 +26,17 @@ from .io import (
     SingleChannelImageDataSink,
     SingleChannelImageStackSink,
     SingleChannelImageStackPayloadSource,
+    DataSink,
+    DataSource,
 )
-from ..data_types import SingleChannelImage, SingleChannelImageStack
+from ..data_types import (
+    SingleChannelImage,
+    SingleChannelImageStack,
+    RGBImage,
+    RGBAImage,
+    RGBImageStack,
+    RGBAImageStack,
+)
 
 
 class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
@@ -250,6 +261,215 @@ class PngImageSaver(SingleChannelImageDataSink):
             raise IOError(f"Error saving PNG image to {path}: {e}") from e
 
 
+class JpgSingleChannelImageLoader(SingleChannelImageDataSource):
+    """Load a :class:`SingleChannelImage` from a JPEG file."""
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                arr = np.asarray(img.convert("L"))
+                return SingleChannelImage(arr)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading JPEG image from {path}: {e}") from e
+
+
+class JpgSingleChannelImageSaver(SingleChannelImageDataSink):
+    """Save a :class:`SingleChannelImage` to a JPEG file."""
+
+    def _send_data(self, data: SingleChannelImage, path: str):
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of SingleChannelImage.")
+        try:
+            img = Image.fromarray(data.data.astype(np.uint8))
+            img.save(path, format="JPEG")
+        except Exception as e:
+            raise IOError(f"Error saving JPEG image to {path}: {e}") from e
+
+
+class TiffSingleChannelImageLoader(SingleChannelImageDataSource):
+    """Load a :class:`SingleChannelImage` from a TIFF file."""
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                arr = np.asarray(img.convert("L"))
+                return SingleChannelImage(arr)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading TIFF image from {path}: {e}") from e
+
+
+class TiffSingleChannelImageSaver(SingleChannelImageDataSink):
+    """Save a :class:`SingleChannelImage` to a TIFF file."""
+
+    def _send_data(self, data: SingleChannelImage, path: str):
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of SingleChannelImage.")
+        try:
+            img = Image.fromarray(data.data.astype(np.uint8))
+            img.save(path, format="TIFF")
+        except Exception as e:
+            raise IOError(f"Error saving TIFF image to {path}: {e}") from e
+
+
+class JpgRGBImageLoader(DataSource):
+    """Load an :class:`RGBImage` from a JPEG file."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBImage
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                has_alpha = "A" in img.getbands()
+                if has_alpha:
+                    logging.warning("Alpha channel dropped")
+                arr = np.asarray(img.convert("RGB"))
+                return RGBImage(arr)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading JPEG RGB image from {path}: {e}") from e
+
+
+class JpgRGBImageSaver(DataSink):
+    """Save an :class:`RGBImage` to a JPEG file."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBImage
+
+    def _send_data(self, data: RGBImage, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBImage.")
+        try:
+            img = Image.fromarray(data.data.astype(np.uint8))
+            img.save(path, format="JPEG")
+        except Exception as e:
+            raise IOError(f"Error saving JPEG RGB image to {path}: {e}") from e
+
+
+class PngRGBImageLoader(DataSource):
+    """Load an :class:`RGBImage` from a PNG file."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBImage
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                has_alpha = "A" in img.getbands()
+                if has_alpha:
+                    logging.warning("Alpha channel dropped")
+                arr = np.asarray(img.convert("RGB"))
+                return RGBImage(arr)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading PNG RGB image from {path}: {e}") from e
+
+
+class PngRGBImageSaver(DataSink):
+    """Save an :class:`RGBImage` to a PNG file."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBImage
+
+    def _send_data(self, data: RGBImage, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBImage.")
+        try:
+            img = Image.fromarray(data.data.astype(np.uint8))
+            img.save(path, format="PNG")
+        except Exception as e:
+            raise IOError(f"Error saving PNG RGB image to {path}: {e}") from e
+
+
+class TiffRGBImageLoader(DataSource):
+    """Load an :class:`RGBImage` from a TIFF file."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBImage
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                has_alpha = "A" in img.getbands()
+                if has_alpha:
+                    logging.warning("Alpha channel dropped")
+                arr = np.asarray(img.convert("RGB"))
+                return RGBImage(arr)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading TIFF RGB image from {path}: {e}") from e
+
+
+class TiffRGBImageSaver(DataSink):
+    """Save an :class:`RGBImage` to a TIFF file."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBImage
+
+    def _send_data(self, data: RGBImage, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBImage.")
+        try:
+            img = Image.fromarray(data.data.astype(np.uint8))
+            img.save(path, format="TIFF")
+        except Exception as e:
+            raise IOError(f"Error saving TIFF RGB image to {path}: {e}") from e
+
+
+class PngRGBAImageLoader(DataSource):
+    """Load an :class:`RGBAImage` from a PNG file."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBAImage
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                arr = np.asarray(img.convert("RGBA"))
+                return RGBAImage(arr)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading PNG RGBA image from {path}: {e}") from e
+
+
+class PngRGBAImageSaver(DataSink):
+    """Save an :class:`RGBAImage` to a PNG file."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBAImage
+
+    def _send_data(self, data: RGBAImage, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBAImage.")
+        try:
+            img = Image.fromarray(data.data.astype(np.uint8))
+            img.save(path, format="PNG")
+        except Exception as e:
+            raise IOError(f"Error saving PNG RGBA image to {path}: {e}") from e
+
+
 class PNGImageStackSaver(SingleChannelImageStackSink):
     """
     Concrete implementation of ImageDataSink for saving multi-frame image data (``SingleChannelImageStack``)
@@ -288,6 +508,298 @@ class PNGImageStackSaver(SingleChannelImageStackSink):
                 img.save(file_path, format="PNG")
         except Exception as e:
             raise IOError(f"Error saving PNG image stack: {e}") from e
+
+
+class SingleChannelImageStackVideoLoader(SingleChannelImageStackSource):
+    """Load a :class:`SingleChannelImageStack` from an AVI video."""
+
+    @classmethod
+    def _get_data(cls, path: str):
+        cap = cv2.VideoCapture(path)
+        if not cap.isOpened():
+            raise FileNotFoundError(f"File not found: {path}")
+        frames = []
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            frames.append(gray)
+        cap.release()
+        if not frames:
+            raise ValueError(f"No frames found in {path}")
+        return SingleChannelImageStack(np.stack(frames))
+
+
+class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
+    """Save a :class:`SingleChannelImageStack` to an AVI video."""
+
+    def _send_data(self, data: SingleChannelImageStack, path: str):
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError(
+                "Provided data is not an instance of SingleChannelImageStack."
+            )
+
+        # Check if we have data to write
+        if len(data.data) == 0:
+            raise ValueError("Cannot save empty image stack")
+
+        # List of fourcc codecs to try, in order of preference
+        fourcc_options = ["MJPG", "XVID", "mp4v", "X264"]
+
+        h, w = data.data.shape[1:]
+        writer = None
+        last_error = None
+
+        for fourcc_str in fourcc_options:
+            try:
+                fourcc = cv2.VideoWriter_fourcc(*fourcc_str)  # type: ignore[attr-defined]
+                writer = cv2.VideoWriter(
+                    path, fourcc, 1.0, (w, h), False
+                )  # False for grayscale
+
+                if not writer.isOpened():
+                    if writer:
+                        writer.release()
+                    continue
+
+                # Test writing one frame to see if this codec actually works
+                test_frame = data.data[0].astype(np.uint8)
+
+                # Check frame dimensions and type
+                if test_frame.shape != (h, w) or test_frame.dtype != np.uint8:
+                    raise ValueError(
+                        f"Frame preparation failed: expected {(h, w)} uint8, got {test_frame.shape} {test_frame.dtype}"
+                    )
+
+                success = writer.write(test_frame)
+                if success:
+                    # This codec works, write the remaining frames
+                    for frame in data.data[1:]:
+                        frame_uint8 = frame.astype(np.uint8)
+                        success = writer.write(frame_uint8)
+                        if not success:
+                            raise IOError(f"Failed to write frame to video")
+                    writer.release()
+                    return  # Success!
+
+                # If we get here, the write failed
+                if writer:
+                    writer.release()
+                writer = None
+
+            except Exception as e:
+                last_error = e
+                if writer:
+                    try:
+                        writer.release()
+                    except:
+                        pass
+                writer = None
+                continue
+
+        # If we get here, all codecs failed
+        error_msg = f"Could not save video to {path}. Tried codecs: {fourcc_options}"
+        if last_error:
+            error_msg += f". Last error: {last_error}"
+        raise IOError(error_msg)
+
+
+class RGBImageStackVideoLoader(SingleChannelImageStackSource):
+    """Load a :class:`RGBImageStack` from an AVI video."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBImageStack
+
+    @classmethod
+    def _get_data(cls, path: str):
+        cap = cv2.VideoCapture(path)
+        if not cap.isOpened():
+            raise FileNotFoundError(f"File not found: {path}")
+        frames = []
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frames.append(rgb)
+        cap.release()
+        if not frames:
+            raise ValueError(f"No frames found in {path}")
+        return RGBImageStack(np.stack(frames))
+
+
+class RGBImageStackAVISaver(SingleChannelImageStackSink):
+    """Save an :class:`RGBImageStack` to an AVI video."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBImageStack
+
+    def _send_data(self, data: RGBImageStack, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBImageStack.")
+
+        # Check if we have data to write
+        if len(data.data) == 0:
+            raise ValueError("Cannot save empty image stack")
+
+        # List of fourcc codecs to try, in order of preference
+        fourcc_options = ["MJPG", "XVID", "mp4v", "X264"]
+
+        h, w = data.data.shape[1:3]
+        writer = None
+        last_error = None
+
+        for fourcc_str in fourcc_options:
+            try:
+                fourcc = cv2.VideoWriter_fourcc(*fourcc_str)  # type: ignore[attr-defined]
+                writer = cv2.VideoWriter(path, fourcc, 1.0, (w, h), True)
+
+                if not writer.isOpened():
+                    if writer:
+                        writer.release()
+                    continue
+
+                # Test writing one frame to see if this codec actually works
+                test_frame = data.data[0]
+                bgr = cv2.cvtColor(test_frame.astype(np.uint8), cv2.COLOR_RGB2BGR)
+
+                # Check frame dimensions and type
+                if bgr.shape[:2] != (h, w) or bgr.dtype != np.uint8:
+                    raise ValueError(
+                        f"Frame preparation failed: expected {(h, w)} uint8, got {bgr.shape[:2]} {bgr.dtype}"
+                    )
+
+                success = writer.write(bgr)
+                if success:
+                    # This codec works, write the remaining frames
+                    for frame in data.data[1:]:
+                        bgr = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_RGB2BGR)
+                        success = writer.write(bgr)
+                        if not success:
+                            raise IOError(f"Failed to write frame to video")
+                    writer.release()
+                    return  # Success!
+
+                # If we get here, the write failed
+                if writer:
+                    writer.release()
+                writer = None
+
+            except Exception as e:
+                last_error = e
+                if writer:
+                    try:
+                        writer.release()
+                    except:
+                        pass
+                writer = None
+                continue
+
+        # If we get here, all codecs failed
+        error_msg = f"Could not save video to {path}. Tried codecs: {fourcc_options}"
+        if last_error:
+            error_msg += f". Last error: {last_error}"
+        raise IOError(error_msg)
+
+
+class AnimatedGifSingleChannelImageStackLoader(SingleChannelImageStackSource):
+    """Load a :class:`SingleChannelImageStack` from an animated GIF.
+
+    Loads animated GIF files and converts them to grayscale single channel image stacks.
+    Each frame of the GIF is converted to grayscale using PIL's "L" mode conversion.
+    """
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return SingleChannelImageStack
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                frames = [
+                    np.asarray(frame.convert("L"))  # Convert each frame to grayscale
+                    for frame in ImageSequence.Iterator(img)
+                ]
+            if not frames:
+                raise ValueError(f"No frames found in {path}")
+            return SingleChannelImageStack(np.stack(frames))
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading GIF from {path}: {e}") from e
+
+
+class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
+    """Save a :class:`SingleChannelImageStack` to an animated GIF.
+
+    Saves single channel image stacks as animated GIF files. Each frame is converted
+    from grayscale to RGB by replicating the single channel across R, G, and B channels.
+    """
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return SingleChannelImageStack
+
+    def _send_data(self, data: SingleChannelImageStack, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError(
+                "Provided data is not an instance of SingleChannelImageStack."
+            )
+        try:
+            # Convert single channel frames to RGB by replicating the channel
+            frames = []
+            for frame in data.data:
+                # Convert single channel to RGB by stacking 3 times
+                rgb_frame = np.stack([frame, frame, frame], axis=-1)
+                frames.append(Image.fromarray(rgb_frame.astype(np.uint8)))
+            frames[0].save(path, save_all=True, append_images=frames[1:])
+        except Exception as e:
+            raise IOError(f"Error saving GIF to {path}: {e}") from e
+
+
+class AnimatedGifRGBImageStackLoader(SingleChannelImageStackSource):
+    """Load an :class:`RGBImageStack` from an animated GIF."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBImageStack
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                frames = [
+                    np.asarray(frame.convert("RGB"))
+                    for frame in ImageSequence.Iterator(img)
+                ]
+            if not frames:
+                raise ValueError(f"No frames found in {path}")
+            return RGBImageStack(np.stack(frames))
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading GIF from {path}: {e}") from e
+
+
+class AnimatedGifRGBImageStackSaver(SingleChannelImageStackSink):
+    """Save an :class:`RGBImageStack` to an animated GIF."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBImageStack
+
+    def _send_data(self, data: RGBImageStack, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBImageStack.")
+        try:
+            frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]
+            frames[0].save(path, save_all=True, append_images=frames[1:])
+        except Exception as e:
+            raise IOError(f"Error saving GIF to {path}: {e}") from e
 
 
 class ImageDataRandomGenerator(SingleChannelImageDataSource):
@@ -526,3 +1038,117 @@ class SingleChannelImageStackPayloadRandomGenerator(
 
         # Wrap the stack in an SingleChannelImageStack and return the payload
         return SingleChannelImageStack(dummy_stack), ContextType()
+
+
+class TiffRGBAImageLoader(DataSource):
+    """Load an :class:`RGBAImage` from a TIFF file."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBAImage
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                rgba_img = img.convert("RGBA")
+                return RGBAImage(np.asarray(rgba_img))
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading TIFF image from {path}: {e}") from e
+
+
+class TiffRGBAImageSaver(DataSink):
+    """Save an :class:`RGBAImage` to a TIFF file."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBAImage
+
+    def _send_data(self, data: RGBAImage, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBAImage.")
+        try:
+            img = Image.fromarray(data.data.astype(np.uint8), mode="RGBA")
+            img.save(path, format="TIFF")
+        except Exception as e:
+            raise IOError(f"Error saving TIFF image to {path}: {e}") from e
+
+
+class AnimatedGifRGBAImageStackLoader(SingleChannelImageStackSource):
+    """Load an :class:`RGBAImageStack` from an animated GIF."""
+
+    @classmethod
+    def output_data_type(cls):  # type: ignore
+        return RGBAImageStack
+
+    @classmethod
+    def _get_data(cls, path: str):
+        try:
+            with Image.open(path) as img:
+                frames = [
+                    np.asarray(frame.convert("RGBA"))
+                    for frame in ImageSequence.Iterator(img)
+                ]
+            if not frames:
+                raise ValueError(f"No frames found in {path}")
+            return RGBAImageStack(np.stack(frames))
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"File not found: {path}") from e
+        except Exception as e:
+            raise ValueError(f"Error loading GIF from {path}: {e}") from e
+
+
+class AnimatedGifRGBAImageStackSaver(SingleChannelImageStackSink):
+    """Save an :class:`RGBAImageStack` to an animated GIF."""
+
+    @classmethod
+    def input_data_type(cls):  # type: ignore
+        return RGBAImageStack
+
+    def _send_data(self, data: RGBAImageStack, path: str):  # type: ignore[override]
+        if not isinstance(data, self.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBAImageStack.")
+        try:
+            frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]
+            frames[0].save(path, save_all=True, append_images=frames[1:])
+        except Exception as e:
+            raise IOError(f"Error saving GIF to {path}: {e}") from e
+
+
+def _test_video_codec_availability():
+    """Test if video codecs are available without causing crashes.
+
+    Returns:
+        bool: True if video codecs appear to be available, False otherwise.
+    """
+    try:
+        # Try to create a fourcc code - this is the first step that might fail
+        fourcc = cv2.VideoWriter_fourcc(*"MJPG")  # type: ignore[attr-defined]
+
+        # Try to create a VideoWriter with minimal parameters
+        # Use a dummy path and minimal frame size
+        test_path = "/tmp/opencv_test_dummy.avi"
+        writer = cv2.VideoWriter(test_path, fourcc, 1.0, (10, 10), True)
+
+        if writer is not None:
+            # Check if it's opened successfully
+            is_opened = writer.isOpened()
+            writer.release()
+
+            # Clean up the test file if it was created
+            try:
+                import os
+
+                if os.path.exists(test_path):
+                    os.remove(test_path)
+            except:
+                pass
+
+            return is_opened
+
+        return False
+
+    except Exception:
+        return False

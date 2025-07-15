@@ -24,8 +24,9 @@ Visit the repositories:
   - **Image Stack Projections:** `StackToImageMeanProjector`, `SingleChannelImageStackSideBySideProjector`
   - **Factory Utilities:** `_create_nchannel_processor` for wrapping raw N-channel algorithms
 
-- **I/O and Image Generation**  
-  - Load and save images in **PNG** and **NPZ** formats  
+- **I/O and Image Generation**
+  - Load and save images in **PNG**, **JPEG**, **TIFF**, and **NPZ** formats
+  - Save and load video stacks (`.avi`) and animated **GIFs**
   - Generate synthetic images using `ImageDataRandomGenerator` and `TwoDGaussianImageGenerator`
 
 - **Visualization (Jupyter Notebook Compatible)**  
@@ -174,6 +175,10 @@ print("Fitting Results for orientation:",
 * **Traceable & Auditable**: The final pipeline `context` retains the entire metadata history—including extracted features and fitted coefficients. This allows for transparent auditing, reproducibility, and potential handoff to subsequent pipelines or AI tools.
 
 > With Semantiva’s **dual-channel** approach, you gain the flexibility to adapt pipeline logic on the fly. Even advanced tasks—such as parametric signal generation, feature extraction, and multi-stage model fitting—become modular, maintainable, and straightforward to extend.
+
+### Codec-Dependent Classes
+
+Some loader/saver classes in Semantiva Imaging depend on system-specific codecs, which may not be available or consistent across all environments. For detailed information about dependencies, risks, and recommendations, please refer to the [Codec Dependencies Documentation](./codec_dependencies.md).
 
 ## License
 
