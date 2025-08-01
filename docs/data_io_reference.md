@@ -14,3 +14,4 @@ The following loaders and savers are available in `semantiva_imaging.data_io.loa
 - `SingleChannelImageStackVideoLoader` / `SingleChannelImageStackAVISaver`
 - `RGBImageStackVideoLoader` / `RGBImageStackAVISaver`
 - `AnimatedGifRGBAImageStackLoader` / `AnimatedGifSinglechannelImageStackSaver`
+- Additionally, HTTP/HTTPS sources can be loaded using `UrlLoader`: `UrlLoader(PngImageLoader)`

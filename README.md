@@ -26,6 +26,14 @@ Visit the repositories:
 
 - **I/O and Image Generation**
   - Load and save images in **PNG**, **JPEG**, **TIFF**, and **NPZ** formats
+  - Load images from HTTP(S) URLs via `UrlLoader`, e.g. `UrlLoader(PngImageLoader)`
+    ```python
+    from semantiva_imaging.data_io import PngImageLoader
+    from semantiva_imaging.data_io.url_loader import UrlLoader
+
+    loader = UrlLoader(PngImageLoader)
+    image = loader.get_data("https://example.com/example.png")
+    ```
   - Save and load video stacks (`.avi`) and animated **GIFs**
   - Generate synthetic images using `ImageDataRandomGenerator` and `TwoDGaussianImageGenerator`
 
