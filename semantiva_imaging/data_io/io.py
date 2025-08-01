@@ -14,11 +14,16 @@
 
 """I/O interface classes for imaging data."""
 
-from abc import abstractmethod
-from typing_extensions import override
-from semantiva.context_processors.context_types import ContextType
+from typing_extensions import no_type_check
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
-from ..data_types import SingleChannelImage, SingleChannelImageStack
+from ..data_types import (
+    SingleChannelImage,
+    SingleChannelImageStack,
+    RGBImage,
+    RGBImageStack,
+    RGBAImage,
+    RGBAImageStack,
+)
 
 
 class SingleChannelImageDataSource(DataSource):
@@ -27,21 +32,8 @@ class SingleChannelImageDataSource(DataSource):
     """
 
     @classmethod
-    @abstractmethod
-    def _get_data(cls, *args, **kwargs):
-        """
-        Abstract method to retrieve `SingleChannelImage` data from the source.
-
-        Subclasses must implement this method to provide a specific mechanism for retrieving
-        image data.
-
-        Returns:
-            SingleChannelImage: The retrieved image data.
-        """
-        raise NotImplementedError
-
-    @classmethod
     def output_data_type(cls) -> type[SingleChannelImage]:
+        """Returns the expected output data type for SingleChannelImageDataSource: SingleChannelImage."""
         return SingleChannelImage
 
 
@@ -49,19 +41,6 @@ class SingleChannelImageStackSource(DataSource):
     """
     Abstract base class for image stack data sources.
     """
-
-    @classmethod
-    @abstractmethod
-    def _get_data(cls, *args, **kwargs):
-        """
-        Abstract method to retrieve `SingleChannelImageStack` data from the source.
-
-        Subclasses must implement this method to provide a specific mechanism for retrieving
-        image stack data.
-
-        Returns:
-            SingleChannelImageStack: The retrieved image stack data.
-        """
 
     def get_data(self, *args, **kwargs):
         """
@@ -76,6 +55,7 @@ class SingleChannelImageStackSource(DataSource):
 
     @classmethod
     def output_data_type(cls) -> type[SingleChannelImageStack]:  # type: ignore
+        """Returns the expected output data type for SingleChannelImageStackSource: SingleChannelImageStack."""
         return SingleChannelImageStack
 
 
@@ -85,6 +65,7 @@ class SingleChannelImageDataSink(DataSink):
     """
 
     def input_data_type(self) -> type[SingleChannelImage]:  # type: ignore
+        """Returns the expected input data type for SingleChannelImageDataSink: SingleChannelImage."""
         return SingleChannelImage
 
 
@@ -93,20 +74,98 @@ class SingleChannelImageStackSink(DataSink):
     Abstract base class for SingleChannelImageStack sinks.
     """
 
-    @abstractmethod
-    def _send_data(self, data: SingleChannelImageStack, *args, **kwargs):
-        """
-        Abstract method to consume and store `SingleChannelImageStack` data.
-
-        Subclasses must implement this method to define the mechanism for consuming and
-        storing SingleChannelImageStack data.
-
-        Parameters:
-            data (SingleChannelImageStack): The image stack data to be consumed or stored.
-        """
-
     def input_data_type(self) -> type[SingleChannelImageStack]:  # type: ignore
+        """Returns the expected input data type for SingleChannelImageStack."""
         return SingleChannelImageStack
+
+
+class RGBImageDataSource(DataSource):
+    """
+    Abstract base class for RGB image data sources. # type: ignore
+
+    """
+
+    @classmethod
+    def output_data_type(cls) -> type[RGBImage]:
+        """Returns the expected output data type for RGBImageDataSource: RGBImage."""
+        return RGBImage
+
+
+class RGBImageStackSource(DataSource):
+    """
+    Abstract base class for RGB image stack data sources.
+    """
+
+    @classmethod
+    def output_data_type(cls) -> type[RGBImageStack]:
+        """Returns the expected output data type for RGBImageStackSource: RGBImageStack."""
+        return RGBImageStack
+
+
+class RGBAImageDataSource(DataSource):
+    """
+    Abstract base class for RGBA image data sources.
+    """
+
+    @classmethod
+    def output_data_type(cls) -> type[RGBAImage]:
+        """Returns the expected output data type for RGBAImageDataSource: RGBAImage."""
+        return RGBAImage
+
+
+class RGBAImageStackSource(DataSource):
+    """
+    Abstract base class for RGBA image stack data sources.
+    """
+
+    @classmethod
+    def output_data_type(cls) -> type[RGBAImageStack]:
+        """Returns the expected output data type for RGBAImageStackSource: RGBAImageStack."""
+        return RGBAImageStack
+
+
+class RGBImageDataSink(DataSink):
+    """
+    Abstract base class for RGB image data sinks.
+    """
+
+    @no_type_check
+    def input_data_type(self) -> type[RGBImage]:
+        """Returns the expected input data type for RGBImageDataSink: RGBImage."""
+        return RGBImage
+
+
+class RGBImageStackSink(DataSink):
+    """
+    Abstract base class for RGB image stack sinks.
+    """
+
+    @no_type_check
+    def input_data_type(self) -> type[RGBImageStack]:
+        """Returns the expected input data type for RGBImageStackSink: RGBImageStack."""
+        return RGBImageStack
+
+
+class RGBAImageDataSink(DataSink):
+    """
+    Abstract base class for RGBA image data sinks.
+    """
+
+    @no_type_check
+    def input_data_type(self) -> type[RGBAImage]:
+        """Returns the expected input data type for RGBAImageDataSink: RGBAImage."""
+        return RGBAImage
+
+
+class RGBAImageStackSink(DataSink):
+    """
+    Abstract base class for RGBA image stack sinks.
+    """
+
+    @no_type_check
+    def input_data_type(self) -> type[RGBAImageStack]:
+        """Returns the expected input data type for RGBAImageStackSink: RGBAImageStack."""
+        return RGBAImageStack
 
 
 class ImagePayloadSink(PayloadSink):
@@ -116,13 +175,6 @@ class ImagePayloadSink(PayloadSink):
     contextual information and persist them using a backend specific
     mechanism.
     """
-
-    @abstractmethod
-    @override
-    def _send_payload(
-        self, data: SingleChannelImage, context: ContextType, *args, **kwargs
-    ):
-        """Consume ``SingleChannelImage`` data together with its context."""
 
     def input_data_type(self) -> type[SingleChannelImage]:  # type: ignore
         """
@@ -136,12 +188,6 @@ class ImagePayloadSink(PayloadSink):
 
 class SingleChannelImageStackPayloadSource(PayloadSource):
     """Source of ``SingleChannelImageStack`` objects with context information."""
-
-    @abstractmethod
-    def _get_payload(
-        self, *args, **kwargs
-    ) -> tuple[SingleChannelImageStack, ContextType]:
-        """Abstract method retrieving an image stack and its context."""
 
     def output_data_type(self) -> type[SingleChannelImageStack]:  # type: ignore
         """
