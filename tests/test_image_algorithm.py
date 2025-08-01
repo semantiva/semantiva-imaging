@@ -23,7 +23,7 @@ from semantiva_imaging.processing.operations import (
     SingleChannelImageStackSideBySideProjector,
 )
 from semantiva_imaging.data_io.loaders_savers import (
-    ImageDataRandomGenerator,
+    SingleChannelImageRandomGenerator,
     SingleChannelImageStackRandomGenerator,
 )
 from semantiva_imaging.data_types import (
@@ -35,7 +35,7 @@ from semantiva_imaging.data_types import (
 @pytest.fixture
 def dummy_image_data():
     """Fixture for generating dummy SingleChannelImage data."""
-    generator = ImageDataRandomGenerator()
+    generator = SingleChannelImageRandomGenerator()
     return generator.get_data((256, 256))
 
 

@@ -97,7 +97,7 @@ class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
             raise ValueError(f"Error loading image data from {path}: {e}") from e
 
 
-class NpzImageDataSaver(SingleChannelImageDataSink):
+class NpzSingleChannelImageDataSaver(SingleChannelImageDataSink):
     """Save a ``SingleChannelImage`` to an ``.npz`` file."""
 
     def _send_data(self, data: SingleChannelImage, path: str) -> None:
@@ -174,7 +174,7 @@ class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
             raise ValueError(f"Error loading image stack data from {path}: {e}") from e
 
 
-class NpzImageStackDataSaver(SingleChannelImageStackSink):
+class NpzSingleChannelImageStackDataSaver(SingleChannelImageStackSink):
     """Save a ``SingleChannelImageStack`` to an ``.npz`` file."""
 
     def _send_data(self, data: SingleChannelImageStack, path: str) -> None:
@@ -201,7 +201,7 @@ class NpzImageStackDataSaver(SingleChannelImageStackSink):
             raise IOError(f"Error saving SingleChannelImageStack to {path}: {e}") from e
 
 
-class PngImageLoader(SingleChannelImageDataSource):
+class PngSingleChannelImageLoader(SingleChannelImageDataSource):
     """
     Concrete implementation of ImageDataTypeSource for loading image data from PNG files.
 
@@ -236,7 +236,7 @@ class PngImageLoader(SingleChannelImageDataSource):
             raise ValueError(f"Error loading PNG image from {path}: {e}") from e
 
 
-class PngImageSaver(SingleChannelImageDataSink):
+class PngSingleChannelImageSaver(SingleChannelImageDataSink):
     """
     Concrete implementation of ImageDataTypeSink for saving image data to PNG files.
 
@@ -444,7 +444,7 @@ class PngRGBAImageSaver(RGBAImageDataSink):
             raise IOError(f"Error saving PNG RGBA image to {path}: {e}") from e
 
 
-class PNGImageStackSaver(SingleChannelImageStackSink):
+class PNGSingleChannelImageStackSaver(SingleChannelImageStackSink):
     """
     Concrete implementation of ImageDataSink for saving multi-frame image data (``SingleChannelImageStack``)
     as sequentially numbered PNG files.
@@ -760,7 +760,7 @@ class AnimatedGifRGBImageStackSaver(RGBImageStackSink):
             raise IOError(f"Error saving GIF to {path}: {e}") from e
 
 
-class ImageDataRandomGenerator(SingleChannelImageDataSource):
+class SingleChannelImageRandomGenerator(SingleChannelImageDataSource):
     """
     A random generator for creating ``SingleChannelImage`` objects with random data.
     """
@@ -788,7 +788,7 @@ class ImageDataRandomGenerator(SingleChannelImageDataSource):
         return SingleChannelImage(np.random.rand(*shape))
 
 
-class TwoDGaussianImageGenerator(SingleChannelImageDataSource):
+class TwoDGaussianSingleChannelImageGenerator(SingleChannelImageDataSource):
     """Generates an image with a 2D Gaussian signal with optional rotation."""
 
     @classmethod
