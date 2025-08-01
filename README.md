@@ -26,16 +26,19 @@ Visit the repositories:
 
 - **I/O and Image Generation**
   - Load and save images in **PNG**, **JPEG**, **TIFF**, and **NPZ** formats
-  - Load images from HTTP(S) URLs via `UrlLoader`, e.g. `UrlLoader(PngImageLoader)`
-    ```python
-    from semantiva_imaging.data_io import PngImageLoader
-    from semantiva_imaging.data_io.url_loader import UrlLoader
+  - Load images from HTTP(S) URLs via `UrlLoader`, e.g. `UrlLoader(PngRGBImageLoader)`
+```python
+from semantiva_imaging.data_io import PngRGBImageLoader
+from semantiva_imaging.data_io.url_loader import UrlLoader
 
-    loader = UrlLoader(PngImageLoader)
-    image = loader.get_data("https://example.com/example.png")
-    ```
+loader = UrlLoader(PngRGBImageLoader)
+image = loader.get_data("https://avatars.githubusercontent.com/u/195345127?s=48") # Semantiva Github logo
+```
+  - Load and save **animated GIFs** with `AnimatedGifRGBAImageStackLoader` and `AnimatedGifSinglechannelImageStackSaver`
+  - Generate synthetic images using `SingleChannelImageRandomGenerator` and `TwoDGaussianSingleChannelImageGenerator`
+```
   - Save and load video stacks (`.avi`) and animated **GIFs**
-  - Generate synthetic images using `ImageDataRandomGenerator` and `TwoDGaussianImageGenerator`
+  - Generate synthetic images using `SingleChannelImageRandomGenerator` and `TwoDGaussianSingleChannelImageGenerator`
 
 - **Visualization (Jupyter Notebook Compatible)**  
   - **Interactive Cross-Section Viewer** (`ImageCrossSectionInteractiveViewer`) - Explore cross-sections of 2D images dynamically  
@@ -84,7 +87,7 @@ from semantiva.payload_operations.pipeline import Pipeline
 from semantiva.data_processors.data_slicer_factory import Slicer
 
 from semantiva_imaging.data_io.loaders_savers import (
-    TwoDGaussianImageGenerator,
+    TwoDGaussianSingleChannelImageGenerator,
     ParametricImageStackGenerator,
 )
 
@@ -104,7 +107,7 @@ generator = ParametricImageStackGenerator(
     param_ranges={
         "t": (-1, 2)
     },  # 't' will sweep from -1 to +2, controlling the parametric expressions
-    image_generator=TwoDGaussianImageGenerator(),
+    image_generator=TwoDGaussianSingleChannelImageGenerator(),
     image_generator_params={"image_size": (128, 128)},  # Image resolution
 )
 

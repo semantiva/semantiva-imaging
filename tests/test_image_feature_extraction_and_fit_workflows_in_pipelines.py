@@ -20,7 +20,7 @@ from semantiva_imaging.data_types import SingleChannelImageStack
 
 from semantiva_imaging.probes import TwoDGaussianFitterProbe, SingleChannelImageProbe
 from semantiva_imaging.data_io.loaders_savers import (
-    TwoDGaussianImageGenerator,
+    TwoDGaussianSingleChannelImageGenerator,
     ParametricImageStackGenerator,
 )
 from semantiva.data_processors.data_slicer_factory import Slicer
@@ -47,7 +47,7 @@ def image_stack():
             "amplitude": "100",
         },
         param_ranges={"t": (-1, 2)},
-        image_generator=TwoDGaussianImageGenerator(),
+        image_generator=TwoDGaussianSingleChannelImageGenerator(),
         image_generator_params={
             "image_size": (128, 128)
         },  # Use a much smaller image size

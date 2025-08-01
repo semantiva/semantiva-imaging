@@ -47,8 +47,8 @@ from semantiva_imaging.data_io.loaders_savers import (
     JpgSingleChannelImageSaver,
     TiffSingleChannelImageLoader,
     TiffSingleChannelImageSaver,
-    PngImageLoader,
-    PngImageSaver,
+    PngSingleChannelImageLoader,
+    PngSingleChannelImageSaver,
     JpgRGBImageLoader,
     JpgRGBImageSaver,
     PngRGBImageLoader,
@@ -59,7 +59,7 @@ from semantiva_imaging.data_io.loaders_savers import (
     PngRGBAImageSaver,
     TiffRGBAImageLoader,
     TiffRGBAImageSaver,
-    PNGImageStackSaver,
+    PNGSingleChannelImageStackSaver,
     SingleChannelImageStackVideoLoader,
     SingleChannelImageStackAVISaver,
     RGBImageStackVideoLoader,
@@ -423,7 +423,11 @@ def test_comprehensive_format_support(tmp_dir):
 
     single_formats = [
         ("test.jpg", JpgSingleChannelImageSaver(), JpgSingleChannelImageLoader()),
-        ("test.png", PngImageSaver(), PngImageLoader()),  # Using existing PNG classes
+        (
+            "test.png",
+            PngSingleChannelImageSaver(),
+            PngSingleChannelImageLoader(),
+        ),  # Using existing PNG classes
         ("test.tiff", TiffSingleChannelImageSaver(), TiffSingleChannelImageLoader()),
     ]
 
@@ -470,9 +474,9 @@ def test_comprehensive_format_support(tmp_dir):
         np.random.randint(0, 255, (3, 4, 4), dtype=np.uint8)
     )
 
-    # Test PNGImageStackSaver (saves multiple PNG files)
+    # Test PNGSingleChannelImageStackSaver (saves multiple PNG files)
     base_path = os.path.join(tmp_dir, "png_stack")
-    PNGImageStackSaver().send_data(gray_stack, base_path)
+    PNGSingleChannelImageStackSaver().send_data(gray_stack, base_path)
 
     # Verify the files were created
     for i in range(3):
@@ -480,7 +484,7 @@ def test_comprehensive_format_support(tmp_dir):
         assert os.path.exists(png_file), f"PNG stack file {png_file} was not created"
 
         # Verify content by loading with PIL
-        loaded_img = PngImageLoader().get_data(png_file)
+        loaded_img = PngSingleChannelImageLoader().get_data(png_file)
         loaded_array = np.array(loaded_img.data)
         np.testing.assert_array_equal(loaded_array, gray_stack.data[i])
 
@@ -572,8 +576,8 @@ def test_missing_combinations_intentionally_absent():
 
 
 def test_png_image_stack_saver_basic(tmp_dir):
-    """Test basic PNGImageStackSaver functionality."""
-    from semantiva_imaging.data_io import PNGImageStackSaver
+    """Test basic PNGSingleChannelImageStackSaver functionality."""
+    from semantiva_imaging.data_io import PNGSingleChannelImageStackSaver
 
     # Create a test stack with 3 frames
     stack_data = np.array(
@@ -589,7 +593,7 @@ def test_png_image_stack_saver_basic(tmp_dir):
     base_path = os.path.join(tmp_dir, "test_stack")
 
     # Save the stack
-    saver = PNGImageStackSaver()
+    saver = PNGSingleChannelImageStackSaver()
     saver.send_data(gray_stack, base_path)
 
     # Check that the expected files were created
@@ -605,7 +609,7 @@ def test_png_image_stack_saver_basic(tmp_dir):
 
     # Load the files back and verify content
     for i, file_path in enumerate(expected_files):
-        loaded_img = PngImageLoader().get_data(file_path)
+        loaded_img = PngSingleChannelImageLoader().get_data(file_path)
         loaded_array = loaded_img.data
 
         # Compare with original frame
@@ -617,15 +621,15 @@ def test_png_image_stack_saver_basic(tmp_dir):
 
 
 def test_png_image_stack_saver_empty_stack(tmp_dir):
-    """Test PNGImageStackSaver with empty stack."""
-    from semantiva_imaging.data_io import PNGImageStackSaver
+    """Test PNGSingleChannelImageStackSaver with empty stack."""
+    from semantiva_imaging.data_io import PNGSingleChannelImageStackSaver
 
     # Create an empty stack
     empty_data = np.empty((0, 10, 10), dtype=np.uint8)
     empty_stack = SingleChannelImageStack(empty_data)
     base_path = os.path.join(tmp_dir, "empty_stack")
 
-    saver = PNGImageStackSaver()
+    saver = PNGSingleChannelImageStackSaver()
     saver.send_data(empty_stack, base_path)
 
     # No files should be created for empty stack
@@ -639,15 +643,15 @@ def test_png_image_stack_saver_empty_stack(tmp_dir):
 
 
 def test_png_image_stack_saver_single_frame(tmp_dir):
-    """Test PNGImageStackSaver with single frame."""
-    from semantiva_imaging.data_io import PNGImageStackSaver
+    """Test PNGSingleChannelImageStackSaver with single frame."""
+    from semantiva_imaging.data_io import PNGSingleChannelImageStackSaver
 
     # Create a single frame stack
     single_frame = np.random.randint(0, 255, (1, 16, 16), dtype=np.uint8)
     single_stack = SingleChannelImageStack(single_frame)
     base_path = os.path.join(tmp_dir, "single_frame")
 
-    saver = PNGImageStackSaver()
+    saver = PNGSingleChannelImageStackSaver()
     saver.send_data(single_stack, base_path)
 
     # Only one file should be created
@@ -658,15 +662,15 @@ def test_png_image_stack_saver_single_frame(tmp_dir):
     assert not os.path.exists(unexpected_file), "Unexpected second file was created"
 
     # Verify content
-    loaded_img = PngImageLoader().get_data(expected_file)
+    loaded_img = PngSingleChannelImageLoader().get_data(expected_file)
 
     loaded_array = np.array(loaded_img.data)
     np.testing.assert_array_equal(loaded_array, single_frame[0])
 
 
 def test_png_image_stack_saver_large_stack(tmp_dir):
-    """Test PNGImageStackSaver with larger stack (10 frames)."""
-    from semantiva_imaging.data_io import PNGImageStackSaver
+    """Test PNGSingleChannelImageStackSaver with larger stack (10 frames)."""
+    from semantiva_imaging.data_io import PNGSingleChannelImageStackSaver
 
     # Create a 10-frame stack
     num_frames = 10
@@ -674,7 +678,7 @@ def test_png_image_stack_saver_large_stack(tmp_dir):
     large_stack = SingleChannelImageStack(stack_data)
     base_path = os.path.join(tmp_dir, "large_stack")
 
-    saver = PNGImageStackSaver()
+    saver = PNGSingleChannelImageStackSaver()
     saver.send_data(large_stack, base_path)
 
     # Check all files were created with correct numbering
@@ -683,7 +687,7 @@ def test_png_image_stack_saver_large_stack(tmp_dir):
         assert os.path.exists(expected_file), f"Frame {i} file was not created"
 
         # Verify content
-        loaded_img = PngImageLoader().get_data(expected_file)
+        loaded_img = PngSingleChannelImageLoader().get_data(expected_file)
         loaded_array = loaded_img.data
         np.testing.assert_array_equal(
             loaded_array, stack_data[i], err_msg=f"Frame {i} content mismatch"
@@ -691,8 +695,8 @@ def test_png_image_stack_saver_large_stack(tmp_dir):
 
 
 def test_png_image_stack_saver_invalid_input(tmp_dir):
-    """Test PNGImageStackSaver with invalid input."""
-    from semantiva_imaging.data_io import PNGImageStackSaver
+    """Test PNGSingleChannelImageStackSaver with invalid input."""
+    from semantiva_imaging.data_io import PNGSingleChannelImageStackSaver
     from semantiva_imaging.data_types import RGBImage
 
     # Try to save an RGB image instead of SingleChannelImageStack
@@ -700,15 +704,15 @@ def test_png_image_stack_saver_invalid_input(tmp_dir):
     rgb_img = RGBImage(rgb_data)
     base_path = os.path.join(tmp_dir, "invalid_input")
 
-    saver = PNGImageStackSaver()
+    saver = PNGSingleChannelImageStackSaver()
 
     with pytest.raises(ValueError, match="not an instance of SingleChannelImageStack"):
         saver.send_data(rgb_img, base_path)
 
 
 def test_png_image_stack_saver_different_data_types(tmp_dir):
-    """Test PNGImageStackSaver with different data types."""
-    from semantiva_imaging.data_io import PNGImageStackSaver
+    """Test PNGSingleChannelImageStackSaver with different data types."""
+    from semantiva_imaging.data_io import PNGSingleChannelImageStackSaver
 
     # Test with float32 data (should be converted to uint8)
     float_data = (
@@ -722,7 +726,7 @@ def test_png_image_stack_saver_different_data_types(tmp_dir):
     float_stack = SingleChannelImageStack(float_data)
     base_path = os.path.join(tmp_dir, "float_stack")
 
-    saver = PNGImageStackSaver()
+    saver = PNGSingleChannelImageStackSaver()
     saver.send_data(float_stack, base_path)
 
     # Check files were created
@@ -731,21 +735,21 @@ def test_png_image_stack_saver_different_data_types(tmp_dir):
         assert os.path.exists(expected_file), f"Float frame {i} file was not created"
 
         # Verify that data was properly converted to uint8
-        loaded_img = PngImageLoader().get_data(expected_file)
+        loaded_img = PngSingleChannelImageLoader().get_data(expected_file)
         loaded_array = loaded_img.data
         expected_array = float_data[i].astype(np.uint8)
         np.testing.assert_array_equal(loaded_array, expected_array)
 
 
 def test_png_image_stack_saver_edge_case_paths(tmp_dir):
-    """Test PNGImageStackSaver with various path formats."""
-    from semantiva_imaging.data_io import PNGImageStackSaver
+    """Test PNGSingleChannelImageStackSaver with various path formats."""
+    from semantiva_imaging.data_io import PNGSingleChannelImageStackSaver
 
     # Create test data
     test_data = np.random.randint(0, 255, (2, 4, 4), dtype=np.uint8)
     test_stack = SingleChannelImageStack(test_data)
 
-    saver = PNGImageStackSaver()
+    saver = PNGSingleChannelImageStackSaver()
 
     # Test with path containing dots
     base_path_with_dots = os.path.join(tmp_dir, "test.with.dots")

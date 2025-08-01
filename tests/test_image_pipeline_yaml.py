@@ -19,7 +19,7 @@ from semantiva_imaging.data_types import SingleChannelImage
 from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
 from semantiva.context_processors.context_types import ContextType
 from semantiva_imaging.data_io.loaders_savers import (
-    ImageDataRandomGenerator,
+    SingleChannelImageRandomGenerator,
 )
 
 
@@ -34,7 +34,7 @@ def random_image1():
     """
     Pytest fixture for providing a random 2D SingleChannelImage instance using the dummy generator.
     """
-    generator = ImageDataRandomGenerator()
+    generator = SingleChannelImageRandomGenerator()
     return generator.get_data((256, 256))
 
 
