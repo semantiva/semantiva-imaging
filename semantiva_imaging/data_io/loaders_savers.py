@@ -26,8 +26,14 @@ from .io import (
     SingleChannelImageDataSink,
     SingleChannelImageStackSink,
     SingleChannelImageStackPayloadSource,
-    DataSink,
-    DataSource,
+    RGBImageDataSource,
+    RGBImageStackSource,
+    RGBImageDataSink,
+    RGBImageStackSink,
+    RGBAImageDataSource,
+    RGBAImageStackSource,
+    RGBAImageDataSink,
+    RGBAImageStackSink,
 )
 from ..data_types import (
     SingleChannelImage,
@@ -94,7 +100,7 @@ class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
 class NpzImageDataSaver(SingleChannelImageDataSink):
     """Save a ``SingleChannelImage`` to an ``.npz`` file."""
 
-    def _send_data(self, data: SingleChannelImage, path: str):
+    def _send_data(self, data: SingleChannelImage, path: str) -> None:
         """
         Saves the ``SingleChannelImage`` as a `.npz` file at the specified path.
 
@@ -125,7 +131,7 @@ class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
     """
 
     @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> SingleChannelImageStack:
         """
         Loads the single 3D array from a .npz file and returns it as a ``SingleChannelImageStack``.
 
@@ -171,7 +177,7 @@ class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
 class NpzImageStackDataSaver(SingleChannelImageStackSink):
     """Save a ``SingleChannelImageStack`` to an ``.npz`` file."""
 
-    def _send_data(self, data: SingleChannelImageStack, path: str):
+    def _send_data(self, data: SingleChannelImageStack, path: str) -> None:
         """
         Saves the ``SingleChannelImageStack`` as a `.npz` file at the specified path.
 
@@ -203,7 +209,7 @@ class PngImageLoader(SingleChannelImageDataSource):
     """
 
     @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> SingleChannelImage:
         """
         Loads a PNG image from the specified file path and returns it as a ``SingleChannelImage``.
 
@@ -237,7 +243,7 @@ class PngImageSaver(SingleChannelImageDataSink):
     This class provides functionality to save a ``SingleChannelImage`` object as a PNG image.
     """
 
-    def _send_data(self, data: SingleChannelImage, path: str):
+    def _send_data(self, data: SingleChannelImage, path: str) -> None:
         """
         Saves the ``SingleChannelImage`` as a PNG file at the specified path.
 
@@ -265,7 +271,7 @@ class JpgSingleChannelImageLoader(SingleChannelImageDataSource):
     """Load a :class:`SingleChannelImage` from a JPEG file."""
 
     @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> SingleChannelImage:
         try:
             with Image.open(path) as img:
                 arr = np.asarray(img.convert("L"))
@@ -279,7 +285,7 @@ class JpgSingleChannelImageLoader(SingleChannelImageDataSource):
 class JpgSingleChannelImageSaver(SingleChannelImageDataSink):
     """Save a :class:`SingleChannelImage` to a JPEG file."""
 
-    def _send_data(self, data: SingleChannelImage, path: str):
+    def _send_data(self, data: SingleChannelImage, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
         try:
@@ -293,7 +299,7 @@ class TiffSingleChannelImageLoader(SingleChannelImageDataSource):
     """Load a :class:`SingleChannelImage` from a TIFF file."""
 
     @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> SingleChannelImage:
         try:
             with Image.open(path) as img:
                 arr = np.asarray(img.convert("L"))
@@ -307,7 +313,7 @@ class TiffSingleChannelImageLoader(SingleChannelImageDataSource):
 class TiffSingleChannelImageSaver(SingleChannelImageDataSink):
     """Save a :class:`SingleChannelImage` to a TIFF file."""
 
-    def _send_data(self, data: SingleChannelImage, path: str):
+    def _send_data(self, data: SingleChannelImage, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
         try:
@@ -317,15 +323,11 @@ class TiffSingleChannelImageSaver(SingleChannelImageDataSink):
             raise IOError(f"Error saving TIFF image to {path}: {e}") from e
 
 
-class JpgRGBImageLoader(DataSource):
+class JpgRGBImageLoader(RGBImageDataSource):
     """Load an :class:`RGBImage` from a JPEG file."""
 
     @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBImage
-
-    @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> RGBImage:
         try:
             with Image.open(path) as img:
                 has_alpha = "A" in img.getbands()
@@ -339,14 +341,10 @@ class JpgRGBImageLoader(DataSource):
             raise ValueError(f"Error loading JPEG RGB image from {path}: {e}") from e
 
 
-class JpgRGBImageSaver(DataSink):
+class JpgRGBImageSaver(RGBImageDataSink):
     """Save an :class:`RGBImage` to a JPEG file."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBImage
-
-    def _send_data(self, data: RGBImage, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBImage, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
@@ -356,15 +354,11 @@ class JpgRGBImageSaver(DataSink):
             raise IOError(f"Error saving JPEG RGB image to {path}: {e}") from e
 
 
-class PngRGBImageLoader(DataSource):
+class PngRGBImageLoader(RGBImageDataSource):
     """Load an :class:`RGBImage` from a PNG file."""
 
     @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBImage
-
-    @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> RGBImage:
         try:
             with Image.open(path) as img:
                 has_alpha = "A" in img.getbands()
@@ -378,14 +372,10 @@ class PngRGBImageLoader(DataSource):
             raise ValueError(f"Error loading PNG RGB image from {path}: {e}") from e
 
 
-class PngRGBImageSaver(DataSink):
+class PngRGBImageSaver(RGBImageDataSink):
     """Save an :class:`RGBImage` to a PNG file."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBImage
-
-    def _send_data(self, data: RGBImage, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBImage, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
@@ -395,15 +385,11 @@ class PngRGBImageSaver(DataSink):
             raise IOError(f"Error saving PNG RGB image to {path}: {e}") from e
 
 
-class TiffRGBImageLoader(DataSource):
+class TiffRGBImageLoader(RGBImageDataSource):
     """Load an :class:`RGBImage` from a TIFF file."""
 
     @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBImage
-
-    @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> RGBImage:
         try:
             with Image.open(path) as img:
                 has_alpha = "A" in img.getbands()
@@ -417,14 +403,10 @@ class TiffRGBImageLoader(DataSource):
             raise ValueError(f"Error loading TIFF RGB image from {path}: {e}") from e
 
 
-class TiffRGBImageSaver(DataSink):
+class TiffRGBImageSaver(RGBImageDataSink):
     """Save an :class:`RGBImage` to a TIFF file."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBImage
-
-    def _send_data(self, data: RGBImage, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBImage, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
@@ -434,15 +416,11 @@ class TiffRGBImageSaver(DataSink):
             raise IOError(f"Error saving TIFF RGB image to {path}: {e}") from e
 
 
-class PngRGBAImageLoader(DataSource):
+class PngRGBAImageLoader(RGBAImageDataSource):
     """Load an :class:`RGBAImage` from a PNG file."""
 
     @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBAImage
-
-    @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> RGBAImage:
         try:
             with Image.open(path) as img:
                 arr = np.asarray(img.convert("RGBA"))
@@ -453,14 +431,10 @@ class PngRGBAImageLoader(DataSource):
             raise ValueError(f"Error loading PNG RGBA image from {path}: {e}") from e
 
 
-class PngRGBAImageSaver(DataSink):
+class PngRGBAImageSaver(RGBAImageDataSink):
     """Save an :class:`RGBAImage` to a PNG file."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBAImage
-
-    def _send_data(self, data: RGBAImage, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBAImage, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImage.")
         try:
@@ -479,7 +453,7 @@ class PNGImageStackSaver(SingleChannelImageStackSink):
     file with filenames numbered sequentially (e.g., ``frame_000.png``).
     """
 
-    def _send_data(self, data: SingleChannelImageStack, base_path: str):
+    def _send_data(self, data: SingleChannelImageStack, base_path: str) -> None:
         """
         Saves the ``SingleChannelImageStack`` as sequentially numbered PNG files.
 
@@ -514,7 +488,7 @@ class SingleChannelImageStackVideoLoader(SingleChannelImageStackSource):
     """Load a :class:`SingleChannelImageStack` from an AVI video."""
 
     @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> SingleChannelImageStack:
         cap = cv2.VideoCapture(path)
         if not cap.isOpened():
             raise FileNotFoundError(f"File not found: {path}")
@@ -534,7 +508,7 @@ class SingleChannelImageStackVideoLoader(SingleChannelImageStackSource):
 class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
     """Save a :class:`SingleChannelImageStack` to an AVI video."""
 
-    def _send_data(self, data: SingleChannelImageStack, path: str):
+    def _send_data(self, data: SingleChannelImageStack, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError(
                 "Provided data is not an instance of SingleChannelImageStack."
@@ -553,7 +527,7 @@ class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
 
         for fourcc_str in fourcc_options:
             try:
-                fourcc = cv2.VideoWriter_fourcc(*fourcc_str)  # type: ignore[attr-defined]
+                fourcc = cv2.VideoWriter_fourcc(*fourcc_str)  # type: ignore
                 writer = cv2.VideoWriter(
                     path, fourcc, 1.0, (w, h), False
                 )  # False for grayscale
@@ -605,15 +579,11 @@ class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
         raise IOError(error_msg)
 
 
-class RGBImageStackVideoLoader(SingleChannelImageStackSource):
+class RGBImageStackVideoLoader(RGBImageStackSource):
     """Load a :class:`RGBImageStack` from an AVI video."""
 
     @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBImageStack
-
-    @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> RGBImageStack:
         cap = cv2.VideoCapture(path)
         if not cap.isOpened():
             raise FileNotFoundError(f"File not found: {path}")
@@ -630,14 +600,10 @@ class RGBImageStackVideoLoader(SingleChannelImageStackSource):
         return RGBImageStack(np.stack(frames))
 
 
-class RGBImageStackAVISaver(SingleChannelImageStackSink):
+class RGBImageStackAVISaver(RGBImageStackSink):
     """Save an :class:`RGBImageStack` to an AVI video."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBImageStack
-
-    def _send_data(self, data: RGBImageStack, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBImageStack, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImageStack.")
 
@@ -654,7 +620,7 @@ class RGBImageStackAVISaver(SingleChannelImageStackSink):
 
         for fourcc_str in fourcc_options:
             try:
-                fourcc = cv2.VideoWriter_fourcc(*fourcc_str)  # type: ignore[attr-defined]
+                fourcc = cv2.VideoWriter_fourcc(*fourcc_str)  # type: ignore
                 writer = cv2.VideoWriter(path, fourcc, 1.0, (w, h), True)
 
                 if not writer.isOpened():
@@ -713,11 +679,11 @@ class AnimatedGifSingleChannelImageStackLoader(SingleChannelImageStackSource):
     """
 
     @classmethod
-    def output_data_type(cls):  # type: ignore
+    def output_data_type(cls) -> type[SingleChannelImageStack]:
         return SingleChannelImageStack
 
     @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> SingleChannelImageStack:
         try:
             with Image.open(path) as img:
                 frames = [
@@ -741,10 +707,10 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
     """
 
     @classmethod
-    def input_data_type(cls):  # type: ignore
+    def input_data_type(cls) -> type[SingleChannelImageStack]:  # type: ignore
         return SingleChannelImageStack
 
-    def _send_data(self, data: SingleChannelImageStack, path: str):  # type: ignore[override]
+    def _send_data(self, data: SingleChannelImageStack, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError(
                 "Provided data is not an instance of SingleChannelImageStack."
@@ -761,15 +727,11 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
             raise IOError(f"Error saving GIF to {path}: {e}") from e
 
 
-class AnimatedGifRGBImageStackLoader(SingleChannelImageStackSource):
+class AnimatedGifRGBImageStackLoader(RGBImageStackSource):
     """Load an :class:`RGBImageStack` from an animated GIF."""
 
     @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBImageStack
-
-    @classmethod
-    def _get_data(cls, path: str):
+    def _get_data(cls, path: str) -> RGBImageStack:
         try:
             with Image.open(path) as img:
                 frames = [
@@ -785,14 +747,10 @@ class AnimatedGifRGBImageStackLoader(SingleChannelImageStackSource):
             raise ValueError(f"Error loading GIF from {path}: {e}") from e
 
 
-class AnimatedGifRGBImageStackSaver(SingleChannelImageStackSink):
+class AnimatedGifRGBImageStackSaver(RGBImageStackSink):
     """Save an :class:`RGBImageStack` to an animated GIF."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBImageStack
-
-    def _send_data(self, data: RGBImageStack, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBImageStack, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImageStack.")
         try:
@@ -1040,12 +998,8 @@ class SingleChannelImageStackPayloadRandomGenerator(
         return SingleChannelImageStack(dummy_stack), ContextType()
 
 
-class TiffRGBAImageLoader(DataSource):
+class TiffRGBAImageLoader(RGBAImageDataSource):
     """Load an :class:`RGBAImage` from a TIFF file."""
-
-    @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBAImage
 
     @classmethod
     def _get_data(cls, path: str):
@@ -1059,14 +1013,10 @@ class TiffRGBAImageLoader(DataSource):
             raise ValueError(f"Error loading TIFF image from {path}: {e}") from e
 
 
-class TiffRGBAImageSaver(DataSink):
+class TiffRGBAImageSaver(RGBAImageDataSink):
     """Save an :class:`RGBAImage` to a TIFF file."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBAImage
-
-    def _send_data(self, data: RGBAImage, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBAImage, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImage.")
         try:
@@ -1076,12 +1026,8 @@ class TiffRGBAImageSaver(DataSink):
             raise IOError(f"Error saving TIFF image to {path}: {e}") from e
 
 
-class AnimatedGifRGBAImageStackLoader(SingleChannelImageStackSource):
+class AnimatedGifRGBAImageStackLoader(RGBAImageStackSource):
     """Load an :class:`RGBAImageStack` from an animated GIF."""
-
-    @classmethod
-    def output_data_type(cls):  # type: ignore
-        return RGBAImageStack
 
     @classmethod
     def _get_data(cls, path: str):
@@ -1100,14 +1046,10 @@ class AnimatedGifRGBAImageStackLoader(SingleChannelImageStackSource):
             raise ValueError(f"Error loading GIF from {path}: {e}") from e
 
 
-class AnimatedGifRGBAImageStackSaver(SingleChannelImageStackSink):
+class AnimatedGifRGBAImageStackSaver(RGBAImageStackSink):
     """Save an :class:`RGBAImageStack` to an animated GIF."""
 
-    @classmethod
-    def input_data_type(cls):  # type: ignore
-        return RGBAImageStack
-
-    def _send_data(self, data: RGBAImageStack, path: str):  # type: ignore[override]
+    def _send_data(self, data: RGBAImageStack, path: str, *args, **kwargs) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImageStack.")
         try:
@@ -1115,40 +1057,3 @@ class AnimatedGifRGBAImageStackSaver(SingleChannelImageStackSink):
             frames[0].save(path, save_all=True, append_images=frames[1:])
         except Exception as e:
             raise IOError(f"Error saving GIF to {path}: {e}") from e
-
-
-def _test_video_codec_availability():
-    """Test if video codecs are available without causing crashes.
-
-    Returns:
-        bool: True if video codecs appear to be available, False otherwise.
-    """
-    try:
-        # Try to create a fourcc code - this is the first step that might fail
-        fourcc = cv2.VideoWriter_fourcc(*"MJPG")  # type: ignore[attr-defined]
-
-        # Try to create a VideoWriter with minimal parameters
-        # Use a dummy path and minimal frame size
-        test_path = "/tmp/opencv_test_dummy.avi"
-        writer = cv2.VideoWriter(test_path, fourcc, 1.0, (10, 10), True)
-
-        if writer is not None:
-            # Check if it's opened successfully
-            is_opened = writer.isOpened()
-            writer.release()
-
-            # Clean up the test file if it was created
-            try:
-                import os
-
-                if os.path.exists(test_path):
-                    os.remove(test_path)
-            except:
-                pass
-
-            return is_opened
-
-        return False
-
-    except Exception:
-        return False
