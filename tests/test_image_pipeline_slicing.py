@@ -18,7 +18,7 @@ from semantiva.context_processors.context_types import (
     ContextCollectionType,
 )
 from semantiva_imaging.data_io.loaders_savers import (
-    ImageDataRandomGenerator,
+    SingleChannelImageRandomGenerator,
     SingleChannelImageStackRandomGenerator,
 )
 from semantiva_imaging.processing.operations import (
@@ -43,7 +43,7 @@ def random_image():
     """
     Pytest fixture providing a random 2D SingleChannelImage instance.
     """
-    generator = ImageDataRandomGenerator()
+    generator = SingleChannelImageRandomGenerator()
     return generator.get_data((256, 256))
 
 
@@ -52,7 +52,7 @@ def another_random_image():
     """
     Pytest fixture providing another random 2D SingleChannelImage instance.
     """
-    generator = ImageDataRandomGenerator()
+    generator = SingleChannelImageRandomGenerator()
     return generator.get_data((256, 256))
 
 

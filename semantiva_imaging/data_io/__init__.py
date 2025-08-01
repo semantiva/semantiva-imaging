@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .url_loader import UrlLoader
 from .loaders_savers import (
     # Single channel image loaders/savers
     NpzSingleChannelImageLoader,
-    NpzImageDataSaver,
-    PngImageLoader,
-    PngImageSaver,
+    NpzSingleChannelImageDataSaver,
+    PngSingleChannelImageLoader,
+    PngSingleChannelImageSaver,
     JpgSingleChannelImageLoader,
     JpgSingleChannelImageSaver,
     TiffSingleChannelImageLoader,
@@ -36,8 +37,8 @@ from .loaders_savers import (
     TiffRGBAImageSaver,
     # Single channel image stack loaders/savers
     NpzSingleChannelImageStackDataLoader,
-    NpzImageStackDataSaver,
-    PNGImageStackSaver,
+    NpzSingleChannelImageStackDataSaver,
+    PNGSingleChannelImageStackSaver,
     SingleChannelImageStackVideoLoader,
     SingleChannelImageStackAVISaver,
     AnimatedGifSingleChannelImageStackLoader,
@@ -53,11 +54,12 @@ from .loaders_savers import (
 )
 
 __all__ = [
+    "UrlLoader",
     # Single channel image loaders/savers
     "NpzSingleChannelImageLoader",
-    "NpzImageDataSaver",
-    "PngImageLoader",
-    "PngImageSaver",
+    "NpzSingleChannelImageDataSaver",
+    "PngSingleChannelImageLoader",
+    "PngSingleChannelImageSaver",
     "JpgSingleChannelImageLoader",
     "JpgSingleChannelImageSaver",
     "TiffSingleChannelImageLoader",
@@ -76,8 +78,8 @@ __all__ = [
     "TiffRGBAImageSaver",
     # Single channel image stack loaders/savers
     "NpzSingleChannelImageStackDataLoader",
-    "NpzImageStackDataSaver",
-    "PNGImageStackSaver",
+    "NpzSingleChannelImageStackDataSaver",
+    "PNGSingleChannelImageStackSaver",
     "SingleChannelImageStackVideoLoader",
     "SingleChannelImageStackAVISaver",
     "AnimatedGifSingleChannelImageStackLoader",

@@ -9,8 +9,8 @@ from semantiva_imaging.data_types import (
 from semantiva_imaging.data_io.loaders_savers import (
     JpgSingleChannelImageSaver,
     JpgSingleChannelImageLoader,
-    PngImageSaver,
-    PngImageLoader,
+    PngSingleChannelImageSaver,
+    PngSingleChannelImageLoader,
     TiffSingleChannelImageSaver,
     TiffSingleChannelImageLoader,
     SingleChannelImageStackAVISaver,
@@ -24,8 +24,8 @@ if __name__ == "__main__":
     JpgSingleChannelImageSaver().send_data(gray, "roundtrip.jpg")
     print(JpgSingleChannelImageLoader().get_data("roundtrip.jpg"))
 
-    PngImageSaver().send_data(gray, "roundtrip.png")
-    print(PngImageLoader().get_data("roundtrip.png"))
+    PngSingleChannelImageSaver().send_data(gray, "roundtrip.png")
+    print(PngSingleChannelImageLoader().get_data("roundtrip.png"))
 
     TiffSingleChannelImageSaver().send_data(gray, "roundtrip.tiff")
     print(TiffSingleChannelImageLoader().get_data("roundtrip.tiff"))

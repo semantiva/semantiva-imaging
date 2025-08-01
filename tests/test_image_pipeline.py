@@ -21,7 +21,7 @@ from semantiva_imaging.data_types import (
 )
 from semantiva.payload_operations import Pipeline
 from semantiva_imaging.data_io.loaders_savers import (
-    ImageDataRandomGenerator,
+    SingleChannelImageRandomGenerator,
     SingleChannelImageStackRandomGenerator,
 )
 from semantiva.tools import PipelineInspector
@@ -41,7 +41,7 @@ def random_image1():
     """
     Pytest fixture for providing a random 2D SingleChannelImage instance using the dummy generator.
     """
-    generator = ImageDataRandomGenerator()
+    generator = SingleChannelImageRandomGenerator()
     return generator.get_data((256, 256))
 
 
@@ -50,7 +50,7 @@ def random_image2():
     """
     Pytest fixture for providing another random 2D SingleChannelImage instance using the dummy generator.
     """
-    generator = ImageDataRandomGenerator()
+    generator = SingleChannelImageRandomGenerator()
     return generator.get_data((256, 256))
 
 

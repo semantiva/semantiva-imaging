@@ -19,7 +19,7 @@ from semantiva_imaging.probes import (
     TwoDGaussianFitterProbe,
 )
 from semantiva_imaging.data_io.loaders_savers import (
-    TwoDGaussianImageGenerator,
+    TwoDGaussianSingleChannelImageGenerator,
 )
 
 
@@ -35,7 +35,7 @@ def gaussian_fitter_probe():
 
 @pytest.fixture
 def gaussian_image_generator():
-    return TwoDGaussianImageGenerator()
+    return TwoDGaussianSingleChannelImageGenerator()
 
 
 def test_basic_image_probe(basic_probe, gaussian_image_generator):

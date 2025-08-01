@@ -3,7 +3,7 @@
 This README demonstrates how to **generate, manipulate, visualize, and verify 2D Gaussian images** using **Semantiva's image processing framework**.
 
 ## 🚀 Features Covered:
-- **Generate** 2D Gaussian images with `TwoDGaussianImageGenerator`
+- **Generate** 2D Gaussian images with `TwoDGaussianSingleChannelImageGenerator`
 - **Stack images** into `SingleChannelImageStack`
 - **Apply transformations**:
   - Mean projection (`StackToImageMeanProjector`)
@@ -16,7 +16,7 @@ This README demonstrates how to **generate, manipulate, visualize, and verify 2D
 
 ```python
 import matplotlib.pyplot as plt
-from semantiva_imaging.data_io.loaders_savers import TwoDGaussianImageGenerator
+from semantiva_imaging.data_io.loaders_savers import TwoDGaussianSingleChannelImageGenerator
 from semantiva_imaging.data_types import SingleChannelImageStack
 from semantiva_imaging.processing.operations import (
     StackToImageMeanProjector,
@@ -25,7 +25,7 @@ from semantiva_imaging.processing.operations import (
 from semantiva.specializations.image.image_probes import TwoDGaussianFitterProbe
 
 # Step 1: Generate Gaussian Images using the updated interface
-generator = TwoDGaussianImageGenerator()
+generator = TwoDGaussianSingleChannelImageGenerator()
 
 image1 = generator._get_data(center=(512, 512), std_dev=40, amplitude=100, image_size=(1024, 1024))
 image2 = generator._get_data(center=(550, 550), std_dev=40, amplitude=100, image_size=(1024, 1024))
