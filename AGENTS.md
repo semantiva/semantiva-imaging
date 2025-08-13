@@ -1,6 +1,6 @@
 # Agent Guidelines for Semantiva Imaging
 
-This repository houses **Semantiva Imaging**, the imaging specialization of the Semantiva framework. It extends the core dual-channel pipeline with domain-specific data types, operations, I/O utilities and visualization helpers for working with images and image stacks.
+This repository houses **Semantiva Imaging**, the imaging extension of the Semantiva framework. It extends the core dual-channel pipeline with domain-specific data types, operations, I/O utilities and visualization helpers for working with images and image stacks.
 
 ## Repository Layout
 
@@ -15,7 +15,7 @@ This repository houses **Semantiva Imaging**, the imaging specialization of the 
 * **tests/** - Pytest suite covering data types, I/O, operations, visualization, and pipelines.
 * **docs/** - additional documentation assets used in the README.
 
-The package is registered with Semantiva through `ImagingSpecialization`, enabling dynamic loading of its processors via the framework's `ComponentLoader`.
+The package is registered with Semantiva through `ImagingExtension`, enabling dynamic loading of its processors via the framework's `ClassRegistry`.
 
 ## Contribution Workflow
 

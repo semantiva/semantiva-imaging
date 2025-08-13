@@ -15,7 +15,8 @@
 import pytest
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
-from semantiva.payload_operations.pipeline import Pipeline
+from semantiva.pipeline import Pipeline
+from semantiva.pipeline.payload import Payload
 from semantiva_imaging.data_types import SingleChannelImageStack
 
 from semantiva_imaging.probes import TwoDGaussianFitterProbe, SingleChannelImageProbe
@@ -75,7 +76,8 @@ def test_pipeline_single_string_key(image_stack):
     ]
     pipeline = Pipeline(node_configurations)
     context_dict = {"t_values": t_values}
-    output_data, output_context = pipeline.process(image_data, context_dict)
+    payload_out = pipeline.process(Payload(image_data, context_dict))
+    output_context = payload_out.context
     assert "std_dev_coefficients" in output_context.keys()
 
 
@@ -99,5 +101,6 @@ def test_pipeline_tuple_key(image_stack):
     ]
     pipeline = Pipeline(node_configurations)
     context_dict = {"t_values": t_values}
-    output_data, output_context = pipeline.process(image_data, context_dict)
+    payload_out = pipeline.process(Payload(image_data, context_dict))
+    output_context = payload_out.context
     assert "std_dev_coefficients" in output_context.keys()

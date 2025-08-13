@@ -64,7 +64,7 @@ pip install semantiva semantiva-imaging
 
 ## Getting Started: A Parameterized Feature Extract-and-Fit Workflow
 
-This is an advanced example demonstrating how Semantiva with Imaging specialization can generate images **based on metadata parameters**, extract features, and fit a simple model—all within a single pipeline. Notice how **context metadata** flows alongside **data**, allowing each operation to dynamically pull parameters from the context.
+This is an advanced example demonstrating how Semantiva with Imaging extension can generate images **based on metadata parameters**, extract features, and fit a simple model—all within a single pipeline. Notice how **context metadata** flows alongside **data**, allowing each operation to dynamically pull parameters from the context.
 
 The parametrized generator bellow creates a stack of images with a time-varying 2D Gaussian signal. The signal's position, standard deviation, and orientation change over time. We then extract the Gaussian parameters from each frame and fit linear models to the standard deviation and orientation angle over time.
 
@@ -83,7 +83,8 @@ from semantiva_imaging.probes import (
 from semantiva_imaging.data_types.data_types import SingleChannelImageStack
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
-from semantiva.payload_operations.pipeline import Pipeline
+from semantiva.pipeline import Pipeline
+from semantiva.pipeline.payload import Payload
 from semantiva.data_processors.data_slicer_factory import Slicer
 
 from semantiva_imaging.data_io.loaders_savers import (
@@ -158,15 +159,17 @@ node_configurations = [
 # --- 3) Create and Run the Pipeline ---
 pipeline = Pipeline(node_configurations)
 
-from semantiva.tools import PipelineInspector
+from semantiva.inspection import build_pipeline_inspection, summary_report
 print("Pipeline inspection:")
-print(PipelineInspector.inspect_pipeline(pipeline))
+inspection = build_pipeline_inspection(node_configurations)
+print(summary_report(inspection))
 for index, node in enumerate(pipeline.nodes, start=1):
     print(f"\nNode {index}")
     print(node.semantic_id())
 # Pass the image stack (data) and the context dictionary (metadata) to the pipeline.
 # Each pipeline step can read/write both data and context, enabling dynamic parameter injection.
-output_data, output_context = pipeline.process(image_stack, context_dict)
+payload_out = pipeline.process(Payload(image_stack, context_dict))
+output_data, output_context = payload_out.data, payload_out.context
 
 # --- 4) Inspect Results ---
 # 'std_dev_coefficients' and 'orientation_coefficients' were computed during pipeline execution.

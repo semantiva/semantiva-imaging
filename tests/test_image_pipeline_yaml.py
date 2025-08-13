@@ -13,11 +13,12 @@
 # limitations under the License.
 
 import pytest
-from semantiva.payload_operations import Pipeline
-from semantiva.specializations import load_specializations
+from semantiva.pipeline import Pipeline
+from semantiva.registry.plugin_registry import load_extensions
 from semantiva_imaging.data_types import SingleChannelImage
 from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
 from semantiva.context_processors.context_types import ContextType
+from semantiva.pipeline.payload import Payload
 from semantiva_imaging.data_io.loaders_savers import (
     SingleChannelImageRandomGenerator,
 )
@@ -47,12 +48,13 @@ def context_type(random_image1):
 def test_pipeline_yaml(random_image1, yaml_config_path, context_type):
     """Test the pipeline processing using a YAML configuration file."""
 
-    load_specializations("imaging")
+    load_extensions("imaging")
 
     load_pipeline_config = load_pipeline_from_yaml(yaml_config_path)
     pipeline = Pipeline(load_pipeline_config)
 
-    data, context = pipeline.process(random_image1, context_type)
+    payload_out = pipeline.process(Payload(random_image1, context_type))
+    data, context = payload_out.data, payload_out.context
 
     assert "final_info" in context.keys()
     assert "image_to_add" not in context.keys()

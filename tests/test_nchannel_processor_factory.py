@@ -23,8 +23,6 @@ import numpy as np
 import inspect
 import pytest
 
-from semantiva.payload_operations import DataNode
-from semantiva.examples.test_utils import DummyContext
 from semantiva_imaging.adapters.factory import _create_nchannel_processor
 from semantiva_imaging.processing.base_nchannel import NChannelImageOperation
 from semantiva_imaging.data_types import RGBImage, RGBAImage
@@ -118,13 +116,6 @@ def test_metadata_exposure():
     # Test parameter name extraction for pipeline integration
     names = AddRGBImageProcessor.get_processing_parameter_names()
     assert names == ["other_image", "scale"]
-
-    # Test integration with Semantiva's DataNode system
-    # This simulates how the processor would be used in a pipeline
-    node = DataNode(AddRGBImageProcessor)
-    ctx = DummyContext({"other_image": RGBImage(np.zeros((2, 2, 3))), "scale": 1.0})
-    params = node._get_processor_parameters(ctx)
-    assert set(params.keys()) == {"other_image", "scale"}
 
 
 def test_error_paths():

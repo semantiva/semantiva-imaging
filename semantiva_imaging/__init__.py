@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Semantiva Imaging specialization package."""
+"""Semantiva Imaging extension package."""
 
-from semantiva.specializations import SemantivaSpecialization
-from semantiva.component_loader import ComponentLoader
+from semantiva.registry import SemantivaExtension
+from semantiva.registry.class_registry import ClassRegistry
 
 
-class ImagingSpecialization(SemantivaSpecialization):
-    """Specialization for image processing."""
+class ImagingExtension(SemantivaExtension):
+    """Extension for image processing."""
 
-    def __init__(self, loader: ComponentLoader | None = None) -> None:
+    def __init__(self, loader: ClassRegistry | None = None) -> None:
         """Store the loader used for registration."""
-        self.loader = loader or ComponentLoader
+        self.loader = loader or ClassRegistry
 
     def register(self) -> None:
         registered_modules = [
@@ -32,4 +32,4 @@ class ImagingSpecialization(SemantivaSpecialization):
             "semantiva_imaging.data_io.loaders_savers",
             "semantiva_imaging.adapters.opencv_library.builders",
         ]
-        ComponentLoader.register_modules(registered_modules)
+        ClassRegistry.register_modules(registered_modules)

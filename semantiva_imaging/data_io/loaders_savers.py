@@ -20,6 +20,7 @@ import numpy as np
 import cv2
 import logging
 from semantiva.context_processors.context_types import ContextType
+from semantiva.pipeline.payload import Payload
 from .io import (
     SingleChannelImageDataSource,
     SingleChannelImageStackSource,
@@ -891,7 +892,7 @@ class ParametricImageStackGenerator(SingleChannelImageStackSource):
         """
         return self.parametric_expressions[param_name](t)
 
-    def _get_data(cls):
+    def _get_data(self):
         """
         Generates a stack of images with evolving parameters.
 
@@ -899,14 +900,14 @@ class ParametricImageStackGenerator(SingleChannelImageStackSource):
             SingleChannelImageStack: The generated image stack data.
         """
         images = [
-            cls.image_generator.get_data(
+            self.image_generator.get_data(
                 **{
-                    key: cls._evaluate_param(key, t)
-                    for key in cls.parametric_expressions
+                    key: self._evaluate_param(key, t)
+                    for key in self.parametric_expressions
                 },
-                **cls.image_generator_params,
+                **self.image_generator_params,
             )
-            for t in cls.t_values
+            for t in self.t_values
         ]
         return SingleChannelImageStack(
             images
@@ -972,9 +973,7 @@ class SingleChannelImageStackPayloadRandomGenerator(
         """
         return ["image_stack_payload"]
 
-    def _get_payload(
-        self, *args, **kwargs
-    ) -> tuple[SingleChannelImageStack, ContextType]:
+    def _get_payload(self, *args, **kwargs) -> Payload:
         """
         Generates and returns a dummy payload.
 
@@ -987,15 +986,14 @@ class SingleChannelImageStackPayloadRandomGenerator(
             **kwargs: Additional keyword arguments for customization (not used in this implementation).
 
         Returns:
-            tuple[SingleChannelImageStack, dict]:
-                A tuple containing the ``SingleChannelImageStack`` with dummy data and a
-                ``ContextType`` dictionary with dummy metadata.
+            Payload: A Payload containing the ``SingleChannelImageStack`` with dummy data and a
+                ``ContextType`` with dummy metadata.
         """
         # Generate a dummy 3D NumPy array (stack of 10 images, each 256x256)
         dummy_stack = np.random.rand(10, 256, 256)  # Example stack of 10 images
 
-        # Wrap the stack in an SingleChannelImageStack and return the payload
-        return SingleChannelImageStack(dummy_stack), ContextType()
+        # Wrap into Payload and return
+        return Payload(SingleChannelImageStack(dummy_stack), ContextType())
 
 
 class TiffRGBAImageLoader(RGBAImageDataSource):

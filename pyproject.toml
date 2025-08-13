@@ -1,7 +1,7 @@
 [project]
 name = "semantiva-imaging"
 dynamic = ["version"]
-description = "Image specialization of Semantiva framework."
+description = "Image extension of Semantiva framework."
 license = "Apache-2.0"
 readme = "README.md" 
 requires-python = ">=3.10.12"
@@ -9,7 +9,7 @@ dependencies = [
     "black>=24.10.0",
     "mypy>=1.14.1",
     "numpy>=2.2.1",
-    "semantiva>=0.4.0",
+    "semantiva>=0.5.0",
     "pylint>=3.3.3",
     "pytest>=8.3.4",
     "coverage",
@@ -25,8 +25,8 @@ dependencies = [
 ]
 distribution = true
 
-[project.entry-points.'semantiva.specializations']
-imaging = "semantiva_imaging:ImagingSpecialization"
+[project.entry-points.'semantiva.extensions']
+semantiva_imaging = "semantiva_imaging:ImagingExtension"
 
 [tool.black]
 # Configuration for the black code formatter
@@ -39,7 +39,7 @@ fail-under = 7.5
 
 [tool.mypy]
 exclude = [
-    "^tests/test_string_specialization\\.py$",
+    "^tests/test_string_extension\\.py$",
     "docs/", 
 ]
 ignore_missing_imports = true
