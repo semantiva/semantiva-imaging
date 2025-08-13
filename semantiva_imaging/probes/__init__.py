@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Public probe classes for the imaging specialization."""
+"""Public probe classes for the imaging extension."""
 
 from .probes import (
     SingleChannelImageProbe,

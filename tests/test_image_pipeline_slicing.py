@@ -27,7 +27,8 @@ from semantiva_imaging.processing.operations import (
     ImageCropper,
     StackToImageMeanProjector,
 )
-from semantiva.payload_operations import Pipeline
+from semantiva.pipeline import Pipeline
+from semantiva.pipeline.payload import Payload
 from semantiva_imaging.data_types import (
     SingleChannelImage,
     SingleChannelImageStack,
@@ -129,7 +130,8 @@ def test_pipeline_slicing_with_single_context(
 
     pipeline = Pipeline(node_configurations)
 
-    output_data, output_context = pipeline.process(random_image_stack, random_context)
+    payload_out = pipeline.process(Payload(random_image_stack, random_context))
+    output_data, output_context = payload_out.data, payload_out.context
     assert len(
         pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]
     ) == len(output_data)
@@ -198,9 +200,10 @@ def test_pipeline_slicing_with_context_collection(
     ]
     pipeline = Pipeline(node_configurations)
 
-    output_data, output_context = pipeline.process(
-        random_image_stack, random_context_collection
+    payload_out = pipeline.process(
+        Payload(random_image_stack, random_context_collection)
     )
+    output_data, output_context = payload_out.data, payload_out.context
 
     assert len(
         pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]
@@ -237,7 +240,8 @@ def test_pipeline_without_slicing(random_image, another_random_image, random_con
 
     pipeline = Pipeline(node_configurations)
 
-    output_data, output_context = pipeline.process(random_image, random_context)
+    payload_out = pipeline.process(Payload(random_image, random_context))
+    output_data, output_context = payload_out.data, payload_out.context
 
     assert isinstance(
         output_data, SingleChannelImage
@@ -265,4 +269,4 @@ def test_pipeline_invalid_slicing(random_image, random_context):
     pipeline = Pipeline(node_configurations)
 
     with pytest.raises(TypeError):
-        pipeline.process(random_image, random_context)
+        pipeline.process(Payload(random_image, random_context))

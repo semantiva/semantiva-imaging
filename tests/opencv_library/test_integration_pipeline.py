@@ -14,15 +14,16 @@
 
 import numpy as np
 import cv2
-from semantiva.specializations import load_specializations
-from semantiva.payload_operations import Pipeline
+from semantiva.registry.plugin_registry import load_extensions
+from semantiva.pipeline import Pipeline
 from semantiva.context_processors.context_types import ContextType
+from semantiva.pipeline.payload import Payload
 
 from semantiva_imaging.data_types import RGBImage
 
 
 def test_pipeline_smoke():
-    load_specializations("imaging")
+    load_extensions("semantiva_imaging")
     img_arr = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
     img = RGBImage(img_arr)
     pipeline = Pipeline(
@@ -69,6 +70,7 @@ def test_pipeline_smoke():
             },
         ]
     )
-    out, _ = pipeline.process(img, ContextType())
+    payload_out = pipeline.process(Payload(img, ContextType()))
+    out = payload_out.data
     assert out.data.shape == (20, 20)
     assert out.data.mean() >= 0

@@ -22,7 +22,7 @@ from semantiva_imaging.processing.operations import (
     StackToImageMeanProjector,
     SingleChannelImageStackSideBySideProjector,
 )
-from semantiva.specializations.image.image_probes import TwoDGaussianFitterProbe
+from semantiva_imaging.probes import TwoDGaussianFitterProbe
 
 # Step 1: Generate Gaussian Images using the updated interface
 generator = TwoDGaussianSingleChannelImageGenerator()

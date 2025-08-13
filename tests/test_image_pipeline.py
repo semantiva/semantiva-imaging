@@ -15,16 +15,17 @@
 import pytest
 from semantiva.logger import Logger
 from semantiva.context_processors.context_types import ContextType
-from semantiva.specializations import load_specializations
+from semantiva.registry.plugin_registry import load_extensions
 from semantiva_imaging.data_types import (
     SingleChannelImage,
 )
-from semantiva.payload_operations import Pipeline
+from semantiva.pipeline import Pipeline
+from semantiva.pipeline.payload import Payload
 from semantiva_imaging.data_io.loaders_savers import (
     SingleChannelImageRandomGenerator,
     SingleChannelImageStackRandomGenerator,
 )
-from semantiva.tools import PipelineInspector
+from semantiva.inspection import build_pipeline_inspection, summary_report
 
 
 @pytest.fixture
@@ -65,7 +66,7 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     4. ImageCropper: Clips the final image to a specific region.
     """
 
-    load_specializations("imaging")
+    load_extensions("imaging")
     # Define node configurations
     node_configurations = [
         {
@@ -95,7 +96,9 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
 
     # Initialize the context and process the data
     context = ContextType()
-    output_data, output_context = pipeline.process(image_stack_data, context)
+    payload_out = pipeline.process(Payload(image_stack_data, context))
+
+    output_data, output_context = payload_out.data, payload_out.context
 
     # Validate the output
     assert isinstance(output_data, SingleChannelImage)
@@ -107,7 +110,8 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     print(
         "==============================Pipeline inspection=============================="
     )
-    print(PipelineInspector.inspect_pipeline(pipeline))
+    inspection = build_pipeline_inspection(node_configurations)
+    print(summary_report(inspection))
 
     # Check timers
     print(

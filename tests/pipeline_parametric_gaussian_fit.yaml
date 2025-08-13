@@ -1,0 +1,34 @@
+extensions:  ["semantiva_imaging"]
+
+pipeline:
+  nodes:
+    - processor: "sweep:TwoDGaussianSingleChannelImageGenerator:SingleChannelImageStack"
+      parameters:
+        num_steps: 3
+        independent_vars:
+          t: [-1, 2]
+        parametric_expressions:
+          x_0: "50 + 5 * t"
+          y_0: "50 + 5 * t + 5 * t ** 2"
+          "std_dev": "(50 + 20 * t, 20)"
+          amplitude: "100"
+          angle: "60 + 5 * t"
+        static_params:
+          image_size: [128, 128]
+
+    - processor: "slicer:TwoDTiltedGaussianFitterProbe:SingleChannelImageStack"
+      context_keyword: "gaussian_fit_parameters"
+
+    - processor: ModelFittingContextProcessor
+      parameters:
+        fitting_model: "model:PolynomialFittingModel:degree=1"
+        independent_var_key: "t_values"
+        dependent_var_key: ["gaussian_fit_parameters", "std_dev_x"]
+        context_keyword: "std_dev_coefficients"
+
+    - processor: ModelFittingContextProcessor
+      parameters:
+        fitting_model: "model:PolynomialFittingModel:degree=1"
+        independent_var_key: "t_values"
+        dependent_var_key: ["gaussian_fit_parameters", "angle"]
+        context_keyword: "orientation_coefficients"
