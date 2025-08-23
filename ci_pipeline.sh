@@ -9,7 +9,7 @@ python --version
 
 # Step 1: Install dependencies (including development dependencies)
 echo "Installing dependencies..."
-pdm install --dev
+pdm install -G :all
 
 # Step 2: Run linting (Pylint)
 echo "Running pylint..."

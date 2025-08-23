@@ -81,11 +81,9 @@ from semantiva_imaging.probes import (
     TwoDTiltedGaussianFitterProbe,
 )
 from semantiva_imaging.data_types.data_types import SingleChannelImageStack
-from semantiva.workflows.fitting_model import PolynomialFittingModel
-from semantiva.context_processors.context_processors import ModelFittingContextProcessor
+from semantiva import ModelFittingContextProcessor, slicer
 from semantiva.pipeline import Pipeline
 from semantiva.pipeline.payload import Payload
-from semantiva.data_processors.data_slicer_factory import Slicer
 
 from semantiva_imaging.data_io.loaders_savers import (
     TwoDGaussianSingleChannelImageGenerator,
@@ -129,7 +127,7 @@ context_dict = {"t_values": t_values}
 #   3. Another ModelFittingContextProcessor: Fits a polynomial model to the extracted angle feature vs. t_values.
 node_configurations = [
     {
-        "processor": Slicer(TwoDTiltedGaussianFitterProbe, SingleChannelImageStack),
+        "processor": slicer(TwoDTiltedGaussianFitterProbe, SingleChannelImageStack),
         # This probe extracts best-fit parameters for the 2D Gaussian in each frame
         # and stores them in the pipeline context under 'gaussian_fit_parameters'.
         "context_keyword": "gaussian_fit_parameters",
@@ -138,7 +136,7 @@ node_configurations = [
         "processor": ModelFittingContextProcessor,
         "parameters": {
             # Use a linear (degree=1) model to fit the extracted std_dev_x vs. t_values.
-            "fitting_model": PolynomialFittingModel(degree=1),
+            "fitting_model": "model:PolynomialFittingModel:degree=1",
             "independent_var_key": "t_values",
             "dependent_var_key": ("gaussian_fit_parameters", "std_dev_x"),
             "context_keyword": "std_dev_coefficients",
@@ -148,7 +146,7 @@ node_configurations = [
         "processor": ModelFittingContextProcessor,
         "parameters": {
             # Also use a linear model to fit the orientation angle vs. t_values.
-            "fitting_model": PolynomialFittingModel(degree=1),
+            "fitting_model": "model:PolynomialFittingModel:degree=1",
             "independent_var_key": "t_values",
             "dependent_var_key": ("gaussian_fit_parameters", "angle"),
             "context_keyword": "orientation_coefficients",
