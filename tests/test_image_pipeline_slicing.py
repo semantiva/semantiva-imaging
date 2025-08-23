@@ -36,7 +36,7 @@ from semantiva_imaging.data_types import (
 from semantiva_imaging.probes import (
     BasicImageProbe,
 )
-from semantiva.data_processors.data_slicer_factory import Slicer
+from semantiva.data_processors.data_slicer_factory import slicer
 
 
 @pytest.fixture
@@ -67,20 +67,30 @@ def random_image_stack():
 
 
 @pytest.fixture
-def random_context():
+def random_context(random_image, another_random_image):
     """
     Pytest fixture providing a random ContextType instance.
     """
-    return ContextType({"param": 42})
+    return ContextType(
+        {
+            "param": 42,
+            "image_to_add": random_image,
+            "image_to_subtract": another_random_image,
+        }
+    )
 
 
 @pytest.fixture
-def random_context_collection():
+def random_context_collection(random_image, another_random_image):
     """
     Pytest fixture providing a ContextCollectionType with 5 distinct context items.
     """
     return ContextCollectionType(
-        context_list=[ContextType({"param": i}) for i in range(5)]
+        context_list=[ContextType({"param": i}) for i in range(5)],
+        global_context={
+            "image_to_add": random_image,
+            "image_to_subtract": another_random_image,
+        },
     )
 
 
@@ -97,32 +107,22 @@ def test_pipeline_slicing_with_single_context(
 
     node_configurations = [
         {
-            "processor": Slicer(
-                ImageAddition, SingleChannelImageStack
-            ),  # Adds a specified image to each slice of the input data
-            "parameters": {
-                "image_to_add": random_image
-            },  # Image to be added to each slice
+            "processor": "slicer:ImageAddition:SingleChannelImageStack",
+            # Adds a specified image to each slice of the input data
         },
         {
-            "processor": Slicer(
-                ImageSubtraction, SingleChannelImageStack
-            ),  # Subtracts a specified image from each slice of the input data
-            "parameters": {
-                "image_to_subtract": another_random_image
-            },  # Image to subtract
+            "processor": "slicer:ImageSubtraction:SingleChannelImageStack",
+            # Subtracts a specified image from each slice of the input data
         },
         {
-            "processor": Slicer(
-                BasicImageProbe, SingleChannelImageStack
-            ),  # Probe operation to extract and store data
+            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",
+            # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "processor": Slicer(
-                BasicImageProbe, SingleChannelImageStack
-            ),  # Probe operation to collect results
+            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",
+            # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
         },
@@ -162,34 +162,17 @@ def test_pipeline_slicing_with_context_collection(
 
     node_configurations = [
         {
-            "processor": Slicer(
-                ImageAddition, SingleChannelImageStack
-            ),  # Adds a specified image to each slice of the input data
-            "parameters": {
-                "image_to_add": random_image
-            },  # Image to be added to each slice
+            "processor": "slicer:ImageAddition:SingleChannelImageStack",  # Adds a specified image to each slice of the input data
         },
         {
-            "processor": Slicer(
-                ImageSubtraction, SingleChannelImageStack
-            ),  # Subtracts a specified image from each slice of the input data
-            "parameters": {
-                "image_to_subtract": another_random_image
-            },  # Image to subtract
+            "processor": "slicer:ImageSubtraction:SingleChannelImageStack",  # Subtracts a specified image from each slice of the input data
         },
         {
-            "processor": Slicer(
-                BasicImageProbe, SingleChannelImageStack
-            ),  # Probe operation to extract and store data
+            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",  # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
-            "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "processor": Slicer(
-                BasicImageProbe, SingleChannelImageStack
-            ),  # Probe operation to collect results
-            "parameters": {},  # No extra parameters required (can be omitted)
-            # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
+            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",  # Probe operation to collect results
         },
         {
             "processor": "rename:mock_keyword:renamed_keyword",  # Rename `mock_keyword` element to `renamed_keyword`
@@ -218,7 +201,7 @@ def test_pipeline_slicing_with_context_collection(
     assert len(output_context) == 5, "ContextCollectionType should retain 5 items"
 
 
-def test_pipeline_without_slicing(random_image, another_random_image, random_context):
+def test_pipeline_without_slicing(random_image, random_context):
     """
     Tests normal execution without slicing.
 
@@ -230,7 +213,6 @@ def test_pipeline_without_slicing(random_image, another_random_image, random_con
     node_configurations = [
         {
             "processor": ImageAddition,
-            "parameters": {"image_to_add": another_random_image},
         },
         {
             "processor": ImageCropper,

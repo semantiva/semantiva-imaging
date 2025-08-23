@@ -6,14 +6,8 @@ license = "Apache-2.0"
 readme = "README.md" 
 requires-python = ">=3.10.12"
 dependencies = [
-    "black>=24.10.0",
-    "mypy>=1.14.1",
     "numpy>=2.2.1",
-    "semantiva>=0.5.0",
-    "pylint>=3.3.3",
-    "pytest>=8.3.4",
-    "coverage",
-    "numpy>=2.2.1",
+    "semantiva>=0.5.0rc1",
     "pillow>=11.1.0",
     "scipy",
     "matplotlib",
@@ -25,6 +19,27 @@ dependencies = [
 ]
 distribution = true
 
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "black >=24.10.0",
+    "mypy >=1.14.1",
+    "pylint >=3.3.3",
+    "pytest >=8.3.4",
+    "ruff >=0.1.13",
+    "coverage",
+    "types-PyYAML",
+]
+
+[tool.pdm.version]
+source = "file"
+path = ".github/workflows/version.txt"
+
+
 [project.entry-points.'semantiva.extensions']
 semantiva_imaging = "semantiva_imaging:ImagingExtension"
 
@@ -34,27 +49,19 @@ semantiva_imaging = "semantiva_imaging:ImagingExtension"
 
 [tool.pylint]
 # Configuration for pylint (static analysis)
-max-line-length = 100  
+max-line-length = 120  
 fail-under = 7.5
 
 [tool.mypy]
 exclude = [
-    "^tests/test_string_extension\\.py$",
     "docs/", 
 ]
 ignore_missing_imports = true
 
 [tool.coverage.run]
-source = ["semantiva"]
+source = ["semantiva_imaging"]
 
 
 [tool.pdm.scripts]
 cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
 
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
-[tool.pdm.version]
-source = "file"
-path = ".github/workflows/version.txt"

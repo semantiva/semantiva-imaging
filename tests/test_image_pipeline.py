@@ -75,11 +75,9 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
         },
         {
             "processor": "ImageAddition",
-            "parameters": {"image_to_add": random_image1},
         },
         {
             "processor": "ImageSubtraction",
-            "parameters": {"image_to_subtract": random_image2},
         },
         {
             "processor": "ImageCropper",
@@ -95,7 +93,9 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     pipeline = Pipeline(node_configurations, logger)
 
     # Initialize the context and process the data
-    context = ContextType()
+    context = ContextType(
+        {"image_to_add": random_image1, "image_to_subtract": random_image2}
+    )
     payload_out = pipeline.process(Payload(image_stack_data, context))
 
     output_data, output_context = payload_out.data, payload_out.context

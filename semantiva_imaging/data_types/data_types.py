@@ -72,7 +72,10 @@ class SingleChannelImage(BaseDataType):
         return data
 
     def __str__(self):
-        return f"SingleChannelImage: {self.data.shape}"
+        return f"{self.__class__.__name__}: {self._data.shape}"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}: {self._data.shape}"
 
 
 class SingleChannelImageStack(DataCollectionType[SingleChannelImage, np.ndarray]):
@@ -169,7 +172,10 @@ class SingleChannelImageStack(DataCollectionType[SingleChannelImage, np.ndarray]
         return self._data.shape[0]
 
     def __str__(self):
-        return f"ImageStackDataType: {self._data.shape}"
+        return f"{self.__class__.__name__}: {self._data.shape}"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}: {self._data.shape}"
 
 
 class NChannelImage(BaseDataType):
@@ -208,8 +214,11 @@ class NChannelImage(BaseDataType):
         assert data.ndim == 3, "Data must be a 3D array (H, W, C)."
         return True
 
-    def __str__(self) -> str:
-        return f"NChannelImage: {self.data.shape}"
+    def __str__(self):
+        return f"{self.__class__.__name__}: {self._data.shape}"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}: {self._data.shape}"
 
 
 class NChannelImageStack(BaseDataType):
@@ -237,8 +246,11 @@ class NChannelImageStack(BaseDataType):
         assert data.ndim == 4, "Data must be a 4D array (N, H, W, C)."
         return True
 
-    def __str__(self) -> str:
-        return f"NChannelImageStack: {self.data.shape}"
+    def __str__(self):
+        return f"{self.__class__.__name__}: {self._data.shape}"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}: {self._data.shape}"
 
 
 class RGBImage(NChannelImage):
