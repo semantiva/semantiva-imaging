@@ -1,3 +1,5 @@
+extensions:  ["semantiva_imaging"]
+
 pipeline:
   nodes:
     - processor: "ImageAddition"

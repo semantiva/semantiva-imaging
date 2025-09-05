@@ -9,23 +9,25 @@ python --version
 
 # Step 1: Install dependencies (including development dependencies)
 echo "Installing dependencies..."
-pdm install -G :all
+pdm install --dev
 
 # Step 2: Run linting (Pylint)
 echo "Running pylint..."
-pdm run pylint semantiva_imaging --fail-under=7.5
+pdm run pylint semantiva --fail-under=7.5
 
-# Step 3: Run black (code formatting check)
+# Step 3: Run ruff (PEP 8 checks)
+echo "Running ruff..."
+pdm run ruff check
+
+# Step 4: Run black (code formatting check)
 echo "Running black..."
-pdm run black --check semantiva_imaging
-
-# Step 4: Run mypy
-echo "Running mypy"
-pdm run mypy .
-
-# Step 4: Check license headers
+pdm run black --check semantiva_imaging tests
 echo "Running license header check..."
 pdm run python scripts/check_license_headers.py
+
+# Step 5: Run mypy
+echo "Running mypy"
+pdm run mypy .
 
 # Step 6: Run tests using pytest
 echo "Running pytest..."

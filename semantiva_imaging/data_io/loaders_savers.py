@@ -55,7 +55,7 @@ class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
     """
 
     @classmethod
-    def _get_data(cls, path: str, *args, **kwargs):
+    def _get_data(cls, path: str):
         """
         Loads the single array from a .npz file and returns it as a ``SingleChannelImage``.
 
@@ -554,7 +554,7 @@ class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
                         frame_uint8 = frame.astype(np.uint8)
                         success = writer.write(frame_uint8)
                         if not success:
-                            raise IOError(f"Failed to write frame to video")
+                            raise IOError("Failed to write frame to video")
                     writer.release()
                     return  # Success!
 
@@ -568,8 +568,8 @@ class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
                 if writer:
                     try:
                         writer.release()
-                    except:
-                        pass
+                    except Exception as e_:
+                        raise e_
                 writer = None
                 continue
 
@@ -646,7 +646,7 @@ class RGBImageStackAVISaver(RGBImageStackSink):
                         bgr = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_RGB2BGR)
                         success = writer.write(bgr)
                         if not success:
-                            raise IOError(f"Failed to write frame to video")
+                            raise IOError("Failed to write frame to video")
                     writer.release()
                     return  # Success!
 
@@ -660,8 +660,8 @@ class RGBImageStackAVISaver(RGBImageStackSink):
                 if writer:
                     try:
                         writer.release()
-                    except:
-                        pass
+                    except Exception as e_:
+                        raise e_
                 writer = None
                 continue
 
@@ -723,7 +723,21 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
                 # Convert single channel to RGB by stacking 3 times
                 rgb_frame = np.stack([frame, frame, frame], axis=-1)
                 frames.append(Image.fromarray(rgb_frame.astype(np.uint8)))
-            frames[0].save(path, save_all=True, append_images=frames[1:])
+            # Allow instances to control loop and optional duration for animated GIFs.
+            # Default: loop=0 (infinite). You can set `saver.loop` and/or `saver.duration`
+            # on the saver instance before calling to override.
+            loop = getattr(self, "loop", 0)
+            duration = getattr(self, "duration", None)
+            if duration is not None:
+                frames[0].save(
+                    path,
+                    save_all=True,
+                    append_images=frames[1:],
+                    loop=loop,
+                    duration=duration,
+                )
+            else:
+                frames[0].save(path, save_all=True, append_images=frames[1:], loop=loop)
         except Exception as e:
             raise IOError(f"Error saving GIF to {path}: {e}") from e
 
@@ -973,7 +987,7 @@ class SingleChannelImageStackPayloadRandomGenerator(
         """
         return ["image_stack_payload"]
 
-    def _get_payload(self, *args, **kwargs) -> Payload:
+    def _get_payload(self) -> Payload:
         """
         Generates and returns a dummy payload.
 
@@ -1047,7 +1061,7 @@ class AnimatedGifRGBAImageStackLoader(RGBAImageStackSource):
 class AnimatedGifRGBAImageStackSaver(RGBAImageStackSink):
     """Save an :class:`RGBAImageStack` to an animated GIF."""
 
-    def _send_data(self, data: RGBAImageStack, path: str, *args, **kwargs) -> None:
+    def _send_data(self, data: RGBAImageStack, path: str) -> None:
         if not isinstance(data, self.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImageStack.")
         try:

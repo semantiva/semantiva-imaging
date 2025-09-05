@@ -94,7 +94,7 @@ def test_nchannel_operation_bad_weather(
     expect NChannelImageOperation to raise a TypeError
     """
 
-    with pytest.raises(TypeError) as type_err:
+    with pytest.raises(TypeError):
         n_channel_image_operation(first_nchannel_image, second_nchannel_image)
 
 
@@ -121,5 +121,5 @@ def test_nchannel_probe_bad_weather(
     expect NChannelImageProbe to raise a TypeError.
     """
 
-    with pytest.raises(TypeError) as type_err:
+    with pytest.raises(TypeError):
         n_channel_image_probe(first_nchannel_image, second_nchannel_image)

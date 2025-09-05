@@ -4,7 +4,6 @@ import numpy as np
 from semantiva_imaging.data_types import (
     SingleChannelImage,
     SingleChannelImageStack,
-    RGBImage,
 )
 from semantiva_imaging.data_io.loaders_savers import (
     JpgSingleChannelImageSaver,
