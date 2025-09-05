@@ -568,7 +568,7 @@ def test_missing_combinations_intentionally_absent():
         "RGBAImageStackVideoLoader",  # AVI doesn't support alpha
         "RGBAImageStackVideoSaver",
     ]
-
+    print(missing_combinations)
     # This test just documents the intentional absence of these combinations
     # In the future, if these are needed, they could be implemented with warnings
     # about quality loss or format limitations

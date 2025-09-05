@@ -23,12 +23,12 @@ pipeline:
       parameters:
         fitting_model: "model:PolynomialFittingModel:degree=1"
         independent_var_key: "t_values"
-        dependent_var_key: ["gaussian_fit_parameters", "std_dev_x"]
+        dependent_var_key: "gaussian_fit_parameters.std_dev_x"
         context_keyword: "std_dev_coefficients"
 
     - processor: ModelFittingContextProcessor
       parameters:
         fitting_model: "model:PolynomialFittingModel:degree=1"
         independent_var_key: "t_values"
-        dependent_var_key: ["gaussian_fit_parameters", "angle"]
+        dependent_var_key: "gaussian_fit_parameters.angle"
         context_keyword: "orientation_coefficients"

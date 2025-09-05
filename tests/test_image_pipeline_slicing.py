@@ -23,7 +23,6 @@ from semantiva_imaging.data_io.loaders_savers import (
 )
 from semantiva_imaging.processing.operations import (
     ImageAddition,
-    ImageSubtraction,
     ImageCropper,
     StackToImageMeanProjector,
 )
@@ -33,10 +32,6 @@ from semantiva_imaging.data_types import (
     SingleChannelImage,
     SingleChannelImageStack,
 )
-from semantiva_imaging.probes import (
-    BasicImageProbe,
-)
-from semantiva.data_processors.data_slicer_factory import slicer
 
 
 @pytest.fixture

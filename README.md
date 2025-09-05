@@ -138,7 +138,7 @@ node_configurations = [
             # Use a linear (degree=1) model to fit the extracted std_dev_x vs. t_values.
             "fitting_model": "model:PolynomialFittingModel:degree=1",
             "independent_var_key": "t_values",
-            "dependent_var_key": ("gaussian_fit_parameters", "std_dev_x"),
+            "dependent_var_key": "gaussian_fit_parameters.std_dev_x",
             "context_keyword": "std_dev_coefficients",
         },
     },
@@ -148,7 +148,7 @@ node_configurations = [
             # Also use a linear model to fit the orientation angle vs. t_values.
             "fitting_model": "model:PolynomialFittingModel:degree=1",
             "independent_var_key": "t_values",
-            "dependent_var_key": ("gaussian_fit_parameters", "angle"),
+            "dependent_var_key": "gaussian_fit_parameters.angle",
             "context_keyword": "orientation_coefficients",
         },
     },

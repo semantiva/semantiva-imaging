@@ -64,7 +64,8 @@ class SingleChannelImageDataSink(DataSink):
     Abstract base class for image data sinks.
     """
 
-    def input_data_type(self) -> type[SingleChannelImage]:  # type: ignore
+    @classmethod
+    def input_data_type(cls):  # type: ignore
         """Returns the expected input data type for SingleChannelImageDataSink: SingleChannelImage."""
         return SingleChannelImage
 
@@ -74,7 +75,8 @@ class SingleChannelImageStackSink(DataSink):
     Abstract base class for SingleChannelImageStack sinks.
     """
 
-    def input_data_type(self) -> type[SingleChannelImageStack]:  # type: ignore
+    @classmethod
+    def input_data_type(cls) -> type[SingleChannelImageStack]:  # type: ignore
         """Returns the expected input data type for SingleChannelImageStack."""
         return SingleChannelImageStack
 
@@ -129,8 +131,9 @@ class RGBImageDataSink(DataSink):
     Abstract base class for RGB image data sinks.
     """
 
+    @classmethod
     @no_type_check
-    def input_data_type(self) -> type[RGBImage]:
+    def input_data_type(cls) -> type[RGBImage]:
         """Returns the expected input data type for RGBImageDataSink: RGBImage."""
         return RGBImage
 
@@ -140,8 +143,9 @@ class RGBImageStackSink(DataSink):
     Abstract base class for RGB image stack sinks.
     """
 
+    @classmethod
     @no_type_check
-    def input_data_type(self) -> type[RGBImageStack]:
+    def input_data_type(cls) -> type[RGBImageStack]:
         """Returns the expected input data type for RGBImageStackSink: RGBImageStack."""
         return RGBImageStack
 
@@ -151,8 +155,9 @@ class RGBAImageDataSink(DataSink):
     Abstract base class for RGBA image data sinks.
     """
 
+    @classmethod
     @no_type_check
-    def input_data_type(self) -> type[RGBAImage]:
+    def input_data_type(cls) -> type[RGBAImage]:
         """Returns the expected input data type for RGBAImageDataSink: RGBAImage."""
         return RGBAImage
 
@@ -162,8 +167,9 @@ class RGBAImageStackSink(DataSink):
     Abstract base class for RGBA image stack sinks.
     """
 
+    @classmethod
     @no_type_check
-    def input_data_type(self) -> type[RGBAImageStack]:
+    def input_data_type(cls) -> type[RGBAImageStack]:
         """Returns the expected input data type for RGBAImageStackSink: RGBAImageStack."""
         return RGBAImageStack
 
@@ -176,7 +182,8 @@ class ImagePayloadSink(PayloadSink):
     mechanism.
     """
 
-    def input_data_type(self) -> type[SingleChannelImage]:  # type: ignore
+    @classmethod
+    def input_data_type(cls) -> type[SingleChannelImage]:  # type: ignore
         """
         Returns the expected input data type for the data.
 

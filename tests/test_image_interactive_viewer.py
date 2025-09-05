@@ -139,4 +139,4 @@ def test_cross_sec_interactive_viewer(test_image):
 def test_xy_projection_viewer(test_image):
     """Test that XYProjectionViewer can be instantiated.
     with no errors."""
-    viewer = ImageXYProjectionViewer.view(test_image)
+    ImageXYProjectionViewer.view(test_image)
