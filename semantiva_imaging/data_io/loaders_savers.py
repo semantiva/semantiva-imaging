@@ -14,7 +14,7 @@
 
 """Loaders and savers for image data."""
 
-from typing import Any, Dict, Tuple, List
+from typing import List
 from PIL import Image, ImageSequence
 import numpy as np
 import cv2
@@ -101,7 +101,8 @@ class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
 class NpzSingleChannelImageDataSaver(SingleChannelImageDataSink):
     """Save a ``SingleChannelImage`` to an ``.npz`` file."""
 
-    def _send_data(self, data: SingleChannelImage, path: str) -> None:
+    @classmethod
+    def _send_data(cls, data: SingleChannelImage, path: str) -> None:
         """
         Saves the ``SingleChannelImage`` as a `.npz` file at the specified path.
 
@@ -113,7 +114,7 @@ class NpzSingleChannelImageDataSaver(SingleChannelImageDataSink):
             ValueError: If the provided data is not a ``SingleChannelImage``.
             IOError: If the file cannot be saved.
         """
-        if not isinstance(data, self.input_data_type()):
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
 
         try:
@@ -178,7 +179,8 @@ class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
 class NpzSingleChannelImageStackDataSaver(SingleChannelImageStackSink):
     """Save a ``SingleChannelImageStack`` to an ``.npz`` file."""
 
-    def _send_data(self, data: SingleChannelImageStack, path: str) -> None:
+    @classmethod
+    def _send_data(cls, data: SingleChannelImageStack, path: str) -> None:
         """
         Saves the ``SingleChannelImageStack`` as a `.npz` file at the specified path.
 
@@ -190,7 +192,7 @@ class NpzSingleChannelImageStackDataSaver(SingleChannelImageStackSink):
             ValueError: If the provided data is not a ``SingleChannelImageStack``.
             IOError: If the file cannot be saved.
         """
-        if not isinstance(data, self.input_data_type()):
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError(
                 "Provided data is not an instance of SingleChannelImageStack."
             )
@@ -244,7 +246,8 @@ class PngSingleChannelImageSaver(SingleChannelImageDataSink):
     This class provides functionality to save a ``SingleChannelImage`` object as a PNG image.
     """
 
-    def _send_data(self, data: SingleChannelImage, path: str) -> None:
+    @classmethod
+    def _send_data(cls, data: SingleChannelImage, path: str) -> None:
         """
         Saves the ``SingleChannelImage`` as a PNG file at the specified path.
 
@@ -256,7 +259,7 @@ class PngSingleChannelImageSaver(SingleChannelImageDataSink):
             ValueError: If the provided data is not a ``SingleChannelImage``.
             IOError: If the file cannot be saved.
         """
-        if not isinstance(data, self.input_data_type()):
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
 
         try:
@@ -286,8 +289,9 @@ class JpgSingleChannelImageLoader(SingleChannelImageDataSource):
 class JpgSingleChannelImageSaver(SingleChannelImageDataSink):
     """Save a :class:`SingleChannelImage` to a JPEG file."""
 
-    def _send_data(self, data: SingleChannelImage, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: SingleChannelImage, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
         try:
             img = Image.fromarray(data.data.astype(np.uint8))
@@ -314,8 +318,9 @@ class TiffSingleChannelImageLoader(SingleChannelImageDataSource):
 class TiffSingleChannelImageSaver(SingleChannelImageDataSink):
     """Save a :class:`SingleChannelImage` to a TIFF file."""
 
-    def _send_data(self, data: SingleChannelImage, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: SingleChannelImage, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
         try:
             img = Image.fromarray(data.data.astype(np.uint8))
@@ -345,8 +350,9 @@ class JpgRGBImageLoader(RGBImageDataSource):
 class JpgRGBImageSaver(RGBImageDataSink):
     """Save an :class:`RGBImage` to a JPEG file."""
 
-    def _send_data(self, data: RGBImage, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBImage, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
             img = Image.fromarray(data.data.astype(np.uint8))
@@ -376,8 +382,9 @@ class PngRGBImageLoader(RGBImageDataSource):
 class PngRGBImageSaver(RGBImageDataSink):
     """Save an :class:`RGBImage` to a PNG file."""
 
-    def _send_data(self, data: RGBImage, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBImage, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
             img = Image.fromarray(data.data.astype(np.uint8))
@@ -407,8 +414,9 @@ class TiffRGBImageLoader(RGBImageDataSource):
 class TiffRGBImageSaver(RGBImageDataSink):
     """Save an :class:`RGBImage` to a TIFF file."""
 
-    def _send_data(self, data: RGBImage, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBImage, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
             img = Image.fromarray(data.data.astype(np.uint8))
@@ -435,8 +443,9 @@ class PngRGBAImageLoader(RGBAImageDataSource):
 class PngRGBAImageSaver(RGBAImageDataSink):
     """Save an :class:`RGBAImage` to a PNG file."""
 
-    def _send_data(self, data: RGBAImage, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBAImage, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImage.")
         try:
             img = Image.fromarray(data.data.astype(np.uint8))
@@ -454,7 +463,8 @@ class PNGSingleChannelImageStackSaver(SingleChannelImageStackSink):
     file with filenames numbered sequentially (e.g., ``frame_000.png``).
     """
 
-    def _send_data(self, data: SingleChannelImageStack, base_path: str) -> None:
+    @classmethod
+    def _send_data(cls, data: SingleChannelImageStack, base_path: str) -> None:
         """
         Saves the ``SingleChannelImageStack`` as sequentially numbered PNG files.
 
@@ -467,7 +477,7 @@ class PNGSingleChannelImageStackSaver(SingleChannelImageStackSink):
             ValueError: If the provided data is not a ``SingleChannelImageStack``.
             IOError: If any frame cannot be saved.
         """
-        if not isinstance(data, self.input_data_type()):
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError(
                 "Provided data is not an instance of SingleChannelImageStack."
             )
@@ -509,8 +519,9 @@ class SingleChannelImageStackVideoLoader(SingleChannelImageStackSource):
 class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
     """Save a :class:`SingleChannelImageStack` to an AVI video."""
 
-    def _send_data(self, data: SingleChannelImageStack, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: SingleChannelImageStack, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError(
                 "Provided data is not an instance of SingleChannelImageStack."
             )
@@ -604,8 +615,9 @@ class RGBImageStackVideoLoader(RGBImageStackSource):
 class RGBImageStackAVISaver(RGBImageStackSink):
     """Save an :class:`RGBImageStack` to an AVI video."""
 
-    def _send_data(self, data: RGBImageStack, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBImageStack, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImageStack.")
 
         # Check if we have data to write
@@ -711,8 +723,9 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
     def input_data_type(cls) -> type[SingleChannelImageStack]:  # type: ignore
         return SingleChannelImageStack
 
-    def _send_data(self, data: SingleChannelImageStack, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: SingleChannelImageStack, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError(
                 "Provided data is not an instance of SingleChannelImageStack."
             )
@@ -726,8 +739,8 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
             # Allow instances to control loop and optional duration for animated GIFs.
             # Default: loop=0 (infinite). You can set `saver.loop` and/or `saver.duration`
             # on the saver instance before calling to override.
-            loop = getattr(self, "loop", 0)
-            duration = getattr(self, "duration", None)
+            loop = getattr(cls, "loop", 0)
+            duration = getattr(cls, "duration", None)
             if duration is not None:
                 frames[0].save(
                     path,
@@ -765,8 +778,9 @@ class AnimatedGifRGBImageStackLoader(RGBImageStackSource):
 class AnimatedGifRGBImageStackSaver(RGBImageStackSink):
     """Save an :class:`RGBImageStack` to an animated GIF."""
 
-    def _send_data(self, data: RGBImageStack, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBImageStack, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImageStack.")
         try:
             frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]
@@ -863,82 +877,6 @@ class TwoDGaussianSingleChannelImageGenerator(SingleChannelImageDataSource):
         return SingleChannelImage(z)
 
 
-class ParametricImageStackGenerator(SingleChannelImageStackSource):
-    def __init__(
-        self,
-        num_frames: int,
-        parametric_expressions: Dict[str, str],
-        param_ranges: Dict[str, Tuple[float, float]],
-        image_generator: Any,
-        image_generator_params: Dict[str, Any],
-    ):
-        """
-        Creates an image stack of signals where parameters evolve according to parametric expressions.
-
-        Parameters:
-            num_frames (int): Number of images in the stack.
-            parametric_expressions (Dict[str, str]): Dictionary specifying how each parameter evolves.
-                Keys correspond to parameter names used in the image generator.
-                Values are string expressions that evaluate t -> value.
-            param_ranges (Dict[str, Tuple[float, float]]): Dictionary specifying parameter ranges for time t.
-            image_generator (Any): An image generator.
-            image_generator_params (Dict[str, Any]): Dictionary of additional static parameters for the image generator.
-        """
-        self.num_frames = num_frames
-        self.parametric_expressions = {
-            key: eval(f"lambda t: {expr}") if isinstance(expr, str) else expr
-            for key, expr in parametric_expressions.items()
-        }
-        self.param_ranges = param_ranges
-        self.image_generator = image_generator
-        self.image_generator_params = image_generator_params
-
-    def _evaluate_param(self, param_name: str, t: float) -> float:
-        """
-        Evaluates the given parameter function.
-
-        Parameters:
-            param_name (str): The name of the parameter to evaluate.
-            t (float): The time value at which to evaluate the parameter.
-
-        Returns:
-            float: The evaluated parameter value.
-        """
-        return self.parametric_expressions[param_name](t)
-
-    def _get_data(self):
-        """
-        Generates a stack of images with evolving parameters.
-
-        Returns:
-            SingleChannelImageStack: The generated image stack data.
-        """
-        images = [
-            self.image_generator.get_data(
-                **{
-                    key: self._evaluate_param(key, t)
-                    for key in self.parametric_expressions
-                },
-                **self.image_generator_params,
-            )
-            for t in self.t_values
-        ]
-        return SingleChannelImageStack(
-            images
-            if isinstance(images, np.ndarray)
-            else np.stack([img.data for img in images])
-        )
-
-    @property
-    def t_values(self):
-        """Range of ``t`` values used for the parametric expressions."""
-        t_values = np.linspace(
-            self.param_ranges["t"][0], self.param_ranges["t"][1], self.num_frames
-        )
-
-        return t_values
-
-
 class SingleChannelImageStackRandomGenerator(SingleChannelImageStackSource):
     """
     A random generator for creating ``SingleChannelImageStack`` objects with random data.
@@ -987,7 +925,8 @@ class SingleChannelImageStackPayloadRandomGenerator(
         """
         return ["image_stack_payload"]
 
-    def _get_payload(self) -> Payload:
+    @classmethod
+    def _get_payload(cls) -> Payload:
         """
         Generates and returns a dummy payload.
 
@@ -1028,8 +967,9 @@ class TiffRGBAImageLoader(RGBAImageDataSource):
 class TiffRGBAImageSaver(RGBAImageDataSink):
     """Save an :class:`RGBAImage` to a TIFF file."""
 
-    def _send_data(self, data: RGBAImage, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBAImage, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImage.")
         try:
             img = Image.fromarray(data.data.astype(np.uint8), mode="RGBA")
@@ -1061,8 +1001,9 @@ class AnimatedGifRGBAImageStackLoader(RGBAImageStackSource):
 class AnimatedGifRGBAImageStackSaver(RGBAImageStackSink):
     """Save an :class:`RGBAImageStack` to an animated GIF."""
 
-    def _send_data(self, data: RGBAImageStack, path: str) -> None:
-        if not isinstance(data, self.input_data_type()):
+    @classmethod
+    def _send_data(cls, data: RGBAImageStack, path: str) -> None:
+        if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImageStack.")
         try:
             frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]

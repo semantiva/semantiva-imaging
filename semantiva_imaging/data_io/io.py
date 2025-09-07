@@ -42,16 +42,18 @@ class SingleChannelImageStackSource(DataSource):
     Abstract base class for image stack data sources.
     """
 
-    def get_data(self, *args, **kwargs):
+    @classmethod
+    def get_data(cls, *args, **kwargs):
         """
         Fetch and return `SingleChannelImageStack` data.
 
-        This method calls the subclass-implemented `_get_data` method to retrieve the data.
+        This stateless classmethod calls the subclass-implemented `_get_data`
+        classmethod to retrieve the data.
 
         Returns:
             SingleChannelImageStack: The fetched image stack data.
         """
-        return self._get_data(*args, **kwargs)
+        return cls._get_data(*args, **kwargs)
 
     @classmethod
     def output_data_type(cls) -> type[SingleChannelImageStack]:  # type: ignore
@@ -196,7 +198,8 @@ class ImagePayloadSink(PayloadSink):
 class SingleChannelImageStackPayloadSource(PayloadSource):
     """Source of ``SingleChannelImageStack`` objects with context information."""
 
-    def output_data_type(self) -> type[SingleChannelImageStack]:  # type: ignore
+    @classmethod
+    def output_data_type(self):
         """
         Returns the expected output data type for the data.
 
@@ -204,3 +207,7 @@ class SingleChannelImageStackPayloadSource(PayloadSource):
             type: `SingleChannelImageStack`, the expected type for the data part of the payload.
         """
         return SingleChannelImageStack
+
+    @classmethod
+    def injected_context_keys(cls) -> list[str]:
+        return []
