@@ -4,9 +4,8 @@ pipeline:
   nodes:
     - processor: "sweep:TwoDGaussianSingleChannelImageGenerator:SingleChannelImageStack"
       parameters:
-        num_steps: 3
-        independent_vars:
-          t: [-1, 2]
+        vars:
+          t: {lo: -1, hi: 2, steps: 3}
         parametric_expressions:
           x_0: "50 + 5 * t"
           y_0: "50 + 5 * t + 5 * t ** 2"
