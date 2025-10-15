@@ -48,7 +48,7 @@ def context_type(random_image1):
 def test_pipeline_yaml(random_image1, yaml_config_path, context_type):
     """Test the pipeline processing using a YAML configuration file."""
 
-    load_extensions("imaging")
+    load_extensions("semantiva_imaging")
 
     load_pipeline_config = load_pipeline_from_yaml(yaml_config_path)
     pipeline = Pipeline(load_pipeline_config)

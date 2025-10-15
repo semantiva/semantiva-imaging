@@ -12,24 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Semantiva Imaging extension package."""
+"""Semantiva Imaging extension package.
+
+This extension provides comprehensive image processing capabilities built on top
+of the Semantiva framework. It includes support for various image data types,
+processing operations, probes for inspection, and I/O operations.
+
+Usage in YAML:
+    extensions: ["semantiva-imaging"]
+
+Components provided:
+- Image data types (SingleChannelImage, RGBImage, etc.)
+- Image processing operations (filters, transforms, etc.)
+- Image I/O operations (loaders and savers)
+- OpenCV adapter components
+- Image probes for inspection and analysis
+"""
 
 from semantiva.registry import SemantivaExtension
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry.processor_registry import ProcessorRegistry
 
 
 class ImagingExtension(SemantivaExtension):
     """Extension for image processing."""
 
-    def __init__(self, loader: ClassRegistry | None = None) -> None:
-        """Store the loader used for registration."""
-        self.loader = loader or ClassRegistry
-
     def register(self) -> None:
-        registered_modules = [
-            "semantiva_imaging.processing.operations",
-            "semantiva_imaging.probes.probes",
-            "semantiva_imaging.data_io.loaders_savers",
-            "semantiva_imaging.adapters.opencv_library.builders",
-        ]
-        ClassRegistry.register_modules(registered_modules)
+        """Register imaging processors with the ProcessorRegistry."""
+        ProcessorRegistry.register_modules(
+            [
+                "semantiva_imaging.data_types.data_types",
+                "semantiva_imaging.processing.operations",
+                "semantiva_imaging.probes.probes",
+                "semantiva_imaging.data_io.loaders_savers",
+                "semantiva_imaging.adapters.opencv_library.builders",
+            ]
+        )

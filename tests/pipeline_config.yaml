@@ -1,11 +1,11 @@
-extensions:  ["semantiva_imaging"]
+extensions:  ["semantiva-imaging"]
 
 pipeline:
   nodes:
     - processor: "ImageAddition"
 
     - processor: "BasicImageProbe"
-      context_keyword: "debug_info"
+      context_key: "debug_info"
 
     - processor: "ImageAddition"
 

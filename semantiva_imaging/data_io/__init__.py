@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Data I/O module for the Semantiva Imaging extension.
+
+This module provides comprehensive data loading and saving capabilities for various
+image formats and types, including support for single-channel, RGB, and RGBA images,
+as well as image stacks and video formats.
+"""
+
 from .url_loader import UrlLoader
 from .loaders_savers import (
     # Single channel image loaders/savers

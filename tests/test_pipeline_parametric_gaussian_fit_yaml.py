@@ -26,7 +26,7 @@ def yaml_config_path():
 
 
 def test_yaml_pipeline_parametric_gaussian_fit(yaml_config_path):
-    load_extensions("semantiva_imaging")
+    load_extensions("semantiva-imaging")
 
     pipeline_config = load_pipeline_from_yaml(yaml_config_path)
     pipeline = Pipeline(pipeline_config)
