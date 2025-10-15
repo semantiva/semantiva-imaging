@@ -1,4 +1,4 @@
-extensions:  ["semantiva_imaging"]
+extensions:  ["semantiva-imaging"]
 
 pipeline:
   nodes:
@@ -15,19 +15,19 @@ pipeline:
         static_params:
           image_size: [128, 128]
 
-    - processor: "slicer:TwoDTiltedGaussianFitterProbe:SingleChannelImageStack"
-      context_keyword: "gaussian_fit_parameters"
+    - processor: "slice:TwoDTiltedGaussianFitterProbe:SingleChannelImageStack"
+      context_key: "gaussian_fit_parameters"
 
     - processor: ModelFittingContextProcessor
       parameters:
         fitting_model: "model:PolynomialFittingModel:degree=1"
         independent_var_key: "t_values"
         dependent_var_key: "gaussian_fit_parameters.std_dev_x"
-        context_keyword: "std_dev_coefficients"
+        context_key: "std_dev_coefficients"
 
     - processor: ModelFittingContextProcessor
       parameters:
         fitting_model: "model:PolynomialFittingModel:degree=1"
         independent_var_key: "t_values"
         dependent_var_key: "gaussian_fit_parameters.angle"
-        context_keyword: "orientation_coefficients"
+        context_key: "orientation_coefficients"

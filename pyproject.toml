@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.10.12"
 dependencies = [
     "numpy>=2.2.1",
-    "semantiva>=0.5.0rc3",
+    "semantiva>=0.5.0.rc7",
     "pillow>=11.1.0",
     "scipy",
     "matplotlib",
@@ -38,7 +38,8 @@ path = ".github/workflows/version.txt"
 
 
 [project.entry-points.'semantiva.extensions']
-semantiva_imaging = "semantiva_imaging:ImagingExtension"
+semantiva-imaging = "semantiva_imaging:ImagingExtension"
+
 
 [tool.black]
 # Configuration for the black code formatter

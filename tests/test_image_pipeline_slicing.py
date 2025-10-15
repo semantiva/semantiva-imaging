@@ -102,21 +102,21 @@ def test_pipeline_slicing_with_single_context(
 
     node_configurations = [
         {
-            "processor": "slicer:ImageAddition:SingleChannelImageStack",
+            "processor": "slice:ImageAddition:SingleChannelImageStack",
             # Adds a specified image to each slice of the input data
         },
         {
-            "processor": "slicer:ImageSubtraction:SingleChannelImageStack",
+            "processor": "slice:ImageSubtraction:SingleChannelImageStack",
             # Subtracts a specified image from each slice of the input data
         },
         {
-            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",
+            "processor": "slice:BasicImageProbe:SingleChannelImageStack",
             # Probe operation to extract and store data
-            "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
+            "context_key": "mock_keyword",  # Stores probe results under this key in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",
+            "processor": "slice:BasicImageProbe:SingleChannelImageStack",
             # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
@@ -157,17 +157,17 @@ def test_pipeline_slicing_with_context_collection(
 
     node_configurations = [
         {
-            "processor": "slicer:ImageAddition:SingleChannelImageStack",  # Adds a specified image to each slice of the input data
+            "processor": "slice:ImageAddition:SingleChannelImageStack",  # Adds a specified image to each slice of the input data
         },
         {
-            "processor": "slicer:ImageSubtraction:SingleChannelImageStack",  # Subtracts a specified image from each slice of the input data
+            "processor": "slice:ImageSubtraction:SingleChannelImageStack",  # Subtracts a specified image from each slice of the input data
         },
         {
-            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",  # Probe operation to extract and store data
-            "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
+            "processor": "slice:BasicImageProbe:SingleChannelImageStack",  # Probe operation to extract and store data
+            "context_key": "mock_keyword",  # Stores probe results under this key in the context
         },
         {
-            "processor": "slicer:BasicImageProbe:SingleChannelImageStack",  # Probe operation to collect results
+            "processor": "slice:BasicImageProbe:SingleChannelImageStack",  # Probe operation to collect results
         },
         {
             "processor": "rename:mock_keyword:renamed_keyword",  # Rename `mock_keyword` element to `renamed_keyword`

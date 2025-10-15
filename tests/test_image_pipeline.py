@@ -66,7 +66,7 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     4. ImageCropper: Clips the final image to a specific region.
     """
 
-    load_extensions("imaging")
+    load_extensions("semantiva_imaging")
     # Define node configurations
     node_configurations = [
         {

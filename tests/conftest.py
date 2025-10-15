@@ -18,16 +18,27 @@
 def pytest_sessionstart(session):
     """Called after the `Session` object has been created and before performing collection.
 
-    We initialize the ClassRegistry here so tests that depend on registered
-    components (including semantiva-imaging loaders/savers) work even when
-    the application CLI usually performs registration at runtime.
+    We initialize the registry here so tests that depend on registered
+    components (including semantiva-imaging processors, data types, and I/O)
+    work correctly.
+
+    This uses the Registry v1 architecture:
+    - ProcessorRegistry for default Semantiva modules
+    - load_extensions() for the semantiva_imaging extension
     """
     try:
         # Import locally from the semantiva package; it's expected to be available
         # on sys.path when running the tests from the repository.
-        from semantiva.registry.class_registry import ClassRegistry
+        from semantiva.registry.bootstrap import DEFAULT_MODULES
+        from semantiva.registry.processor_registry import ProcessorRegistry
+        from semantiva.registry.plugin_registry import load_extensions
 
-        ClassRegistry.initialize_default_modules()
+        # Register core Semantiva modules (context processors, fitting models, etc.)
+        ProcessorRegistry.register_modules(DEFAULT_MODULES)
+
+        # Load the semantiva_imaging extension to register all imaging processors,
+        # data types, probes, and I/O components
+        load_extensions("semantiva_imaging")
     except Exception:
         # Don't fail tests if semantiva isn't importable here; let the test run and
         # surface import errors normally.

@@ -33,6 +33,10 @@ classes from OpenCV functions. The factory handles several complex requirements:
 4. **Type Safety**: The generated processors validate input types and provide
    proper type annotations for Semantiva's introspection system.
 
+5. **Registry Integration**: The generated classes are properly configured for
+   automatic discovery by Semantiva's ProcessorRegistry, including correct
+   __module__ attribution for filtering during registration.
+
 The main entry point is `_create_opencv_processor()` which creates a new DataOperation
 class that wraps an OpenCV function with all the necessary adaptations.
 
@@ -616,6 +620,16 @@ def _create_opencv_processor(
 
     # Step 6: Dynamically create the new processor class
     generated_cls = type(name, (base_cls,), attrs)
+
+    # Step 6a: Set the __module__ attribute to the caller's module for proper registry detection
+    # The ProcessorRegistry filters classes by __module__ to ensure they belong to the
+    # module being registered. Since dynamically created classes don't get the proper
+    # __module__ set by default, we need to explicitly set it to the caller's module.
+    current_frame = inspect.currentframe()
+    if current_frame is not None:
+        caller_frame = current_frame.f_back
+        if caller_frame and caller_frame.f_globals.get("__name__"):
+            generated_cls.__module__ = caller_frame.f_globals["__name__"]
 
     # Step 7: Attach the synthesized signature to the _process_logic method
     # This enables Semantiva's introspection system to discover the correct parameters
