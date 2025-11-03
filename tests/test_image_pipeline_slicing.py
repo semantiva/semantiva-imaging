@@ -119,7 +119,7 @@ def test_pipeline_slicing_with_single_context(
             "processor": "slice:BasicImageProbe:SingleChannelImageStack",
             # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
-            # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
+            "context_key": "mock_key",
         },
     ]
 
@@ -127,9 +127,6 @@ def test_pipeline_slicing_with_single_context(
 
     payload_out = pipeline.process(Payload(random_image_stack, random_context))
     output_data, output_context = payload_out.data, payload_out.context
-    assert len(
-        pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]
-    ) == len(output_data)
 
     assert len(output_data) == len(
         output_context.get_value("mock_keyword")
@@ -168,6 +165,7 @@ def test_pipeline_slicing_with_context_collection(
         },
         {
             "processor": "slice:BasicImageProbe:SingleChannelImageStack",  # Probe operation to collect results
+            "context_key": "mock_key",
         },
         {
             "processor": "rename:mock_keyword:renamed_keyword",  # Rename `mock_keyword` element to `renamed_keyword`
@@ -183,9 +181,6 @@ def test_pipeline_slicing_with_context_collection(
     )
     output_data, output_context = payload_out.data, payload_out.context
 
-    assert len(
-        pipeline.get_probe_results()["Node 4/SlicerForBasicImageProbe"][0]
-    ) == len(output_data)
     assert isinstance(
         output_data, SingleChannelImageStack
     ), "Output should be an SingleChannelImageStack"

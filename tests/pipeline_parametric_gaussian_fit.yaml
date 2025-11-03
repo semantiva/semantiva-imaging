@@ -2,18 +2,20 @@ extensions:  ["semantiva-imaging"]
 
 pipeline:
   nodes:
-    - processor: "sweep:TwoDGaussianSingleChannelImageGenerator:SingleChannelImageStack"
+    - processor: TwoDGaussianSingleChannelImageGenerator
+      derive:
+        parameter_sweep:
+          parameters:
+            x_0: "50 + 5 * t"
+            y_0: "50 + 5 * t + 5 * t ** 2"
+            std_dev: "(50 + 20 * t, 20)"
+            angle: "60 + 5 * t"
+          variables:
+            t: {lo: -1, hi: 2, steps: 3}
+          collection: SingleChannelImageStack
       parameters:
-        vars:
-          t: {lo: -1, hi: 2, steps: 3}
-        parametric_expressions:
-          x_0: "50 + 5 * t"
-          y_0: "50 + 5 * t + 5 * t ** 2"
-          "std_dev": "(50 + 20 * t, 20)"
-          amplitude: "100"
-          angle: "60 + 5 * t"
-        static_params:
-          image_size: [128, 128]
+        image_size: [128, 128]
+        amplitude: 100
 
     - processor: "slice:TwoDTiltedGaussianFitterProbe:SingleChannelImageStack"
       context_key: "gaussian_fit_parameters"
