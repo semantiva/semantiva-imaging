@@ -15,6 +15,7 @@
 """Loaders and savers for image data."""
 
 from typing import List
+from pathlib import Path
 from PIL import Image, ImageSequence
 import numpy as np
 import cv2
@@ -118,6 +119,10 @@ class NpzSingleChannelImageDataSaver(SingleChannelImageDataSink):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
 
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".npz"
             # Save the data to an .npz file
             np.savez(path, image=data.data)
         except Exception as e:
@@ -198,6 +203,10 @@ class NpzSingleChannelImageStackDataSaver(SingleChannelImageStackSink):
             )
 
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".npz"
             # Save the data to an .npz file
             np.savez(path, image_stack=data.data)
         except Exception as e:
@@ -263,6 +272,10 @@ class PngSingleChannelImageSaver(SingleChannelImageDataSink):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
 
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".png"
             # Convert the NumPy array to a PIL image
             img = Image.fromarray(data.data.astype(np.uint8))
             # Save the image as a PNG
@@ -294,6 +307,10 @@ class JpgSingleChannelImageSaver(SingleChannelImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".jpg"
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="JPEG")
         except Exception as e:
@@ -323,6 +340,10 @@ class TiffSingleChannelImageSaver(SingleChannelImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".tiff"
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="TIFF")
         except Exception as e:
@@ -355,6 +376,10 @@ class JpgRGBImageSaver(RGBImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".jpg"
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="JPEG")
         except Exception as e:
@@ -387,6 +412,10 @@ class PngRGBImageSaver(RGBImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".png"
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="PNG")
         except Exception as e:
@@ -419,6 +448,10 @@ class TiffRGBImageSaver(RGBImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".tiff"
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="TIFF")
         except Exception as e:
@@ -448,6 +481,10 @@ class PngRGBAImageSaver(RGBAImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImage.")
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".png"
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="PNG")
         except Exception as e:
@@ -487,8 +524,11 @@ class PNGSingleChannelImageStackSaver(SingleChannelImageStackSink):
             for i, frame in enumerate(data.data):
                 # Convert the frame to a PIL image
                 img = Image.fromarray(frame.astype(np.uint8))
-                # Generate a filename with sequential numbering
-                file_path = f"{base_path}_{i:03d}.png"
+                base = Path(base_path)
+                if base.suffix == "":
+                    file_path = f"{base_path}_{i:03d}.png"
+                else:
+                    file_path = f"{str(base.with_suffix(''))}_{i:03d}{base.suffix}"
                 # Save the image as a PNG
                 img.save(file_path, format="PNG")
         except Exception as e:
@@ -536,6 +576,11 @@ class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
         h, w = data.data.shape[1:]
         writer = None
         last_error = None
+
+        # Ensure extension
+        p = Path(path)
+        if p.suffix == "":
+            path = path + ".avi"
 
         for fourcc_str in fourcc_options:
             try:
@@ -630,6 +675,11 @@ class RGBImageStackAVISaver(RGBImageStackSink):
         h, w = data.data.shape[1:3]
         writer = None
         last_error = None
+
+        # Ensure extension
+        p = Path(path)
+        if p.suffix == "":
+            path = path + ".avi"
 
         for fourcc_str in fourcc_options:
             try:
@@ -741,6 +791,11 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
             # on the saver instance before calling to override.
             loop = getattr(cls, "loop", 0)
             duration = getattr(cls, "duration", None)
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".gif"
+
             if duration is not None:
                 frames[0].save(
                     path,
@@ -784,6 +839,10 @@ class AnimatedGifRGBImageStackSaver(RGBImageStackSink):
             raise ValueError("Provided data is not an instance of RGBImageStack.")
         try:
             frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".gif"
             frames[0].save(path, save_all=True, append_images=frames[1:])
         except Exception as e:
             raise IOError(f"Error saving GIF to {path}: {e}") from e
@@ -972,6 +1031,10 @@ class TiffRGBAImageSaver(RGBAImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImage.")
         try:
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".tiff"
             img = Image.fromarray(data.data.astype(np.uint8), mode="RGBA")
             img.save(path, format="TIFF")
         except Exception as e:
@@ -1007,6 +1070,10 @@ class AnimatedGifRGBAImageStackSaver(RGBAImageStackSink):
             raise ValueError("Provided data is not an instance of RGBAImageStack.")
         try:
             frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]
+            # Ensure extension
+            p = Path(path)
+            if p.suffix == "":
+                path = path + ".gif"
             frames[0].save(path, save_all=True, append_images=frames[1:])
         except Exception as e:
             raise IOError(f"Error saving GIF to {path}: {e}") from e
