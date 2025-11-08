@@ -525,9 +525,25 @@ class PNGSingleChannelImageStackSaver(SingleChannelImageStackSink):
                 # Convert the frame to a PIL image
                 img = Image.fromarray(frame.astype(np.uint8))
                 base = Path(base_path)
-                if base.suffix == "":
+                # Only treat the suffix as a real extension if it's a known image
+                # extension. This preserves user-provided dotted prefixes like
+                # "name.with.dots" and makes the saver produce
+                # "name.with.dots_000.png" instead of replacing ".dots".
+                known_image_exts = {
+                    ".png",
+                    ".jpg",
+                    ".jpeg",
+                    ".tif",
+                    ".tiff",
+                    ".gif",
+                    ".bmp",
+                }
+                suffix = base.suffix.lower()
+                if suffix == "" or suffix not in known_image_exts:
+                    # No recognized extension: append our PNG-framed suffix
                     file_path = f"{base_path}_{i:03d}.png"
                 else:
+                    # Has a recognized extension: keep it (e.g. base.png -> base_000.png)
                     file_path = f"{str(base.with_suffix(''))}_{i:03d}{base.suffix}"
                 # Save the image as a PNG
                 img.save(file_path, format="PNG")
