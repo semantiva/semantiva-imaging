@@ -14,10 +14,11 @@
 
 """Parametric plotting data source for generating matplotlib figures."""
 
-from typing import Tuple
+from __future__ import annotations
+from collections.abc import Mapping
+from typing import Any, Tuple
 import numpy as np
 import matplotlib
-import warnings
 
 matplotlib.use("Agg")  # Use non-interactive backend
 import matplotlib.pyplot as plt
@@ -27,16 +28,96 @@ from semantiva_imaging.data_types.mpl_figure import MatplotlibFigure
 from .io import MatplotlibFigureDataSource
 
 
+class ImagingExpressionEvaluator:
+    """Safe expression evaluation for imaging parametric plots.
+
+    This thin wrapper around Semantiva's core ExpressionEvaluator provides
+    a future extension point for imaging-specific mathematical functions
+    without requiring changes to the core framework.
+    """
+
+    def __init__(self) -> None:
+        self._base = ExpressionEvaluator()
+        # Future extension point for math environment (e.g., {"pi": np.pi, "sqrt": np.sqrt})
+        self._math_env: dict[str, Any] = {}
+
+    def evaluate_y(self, expr: str, x: np.ndarray) -> np.ndarray:
+        """
+        Evaluate y-expression in terms of variable x.
+
+        Parameters
+        ----------
+        expr : str
+            Mathematical expression string (e.g., "2*x + 1", "x**2")
+        x : np.ndarray
+            Array of x values to use in evaluation
+
+        Returns
+        -------
+        np.ndarray
+            Evaluated y values
+
+        Raises
+        ------
+        ValueError
+            If expression is invalid or evaluation fails
+        """
+        allowed = {"x", *self._math_env.keys()}
+        try:
+            fn = self._base.compile(expr, allowed_names=allowed)
+            value = fn(x=x, **self._math_env)
+        except ExpressionError as e:
+            raise ValueError(f"Invalid y_expression '{expr}': {e}") from e
+        except Exception as e:
+            raise ValueError(f"Failed to evaluate y_expression '{expr}': {e}") from e
+        return np.asarray(value)
+
+
 class ParametricPlotGenerator(MatplotlibFigureDataSource):
-    """Generate parametric plots as matplotlib figures from mathematical expressions."""
+    """Generate synthetic parametric plots as MatplotlibFigure.
+
+    This data source creates 2D parametric plots from a range specification
+    and a mathematical expression, providing a pure, reproducible plotting
+    primitive for Semantiva imaging pipelines.
+
+    Examples
+    --------
+    Simple linear plot:
+
+    .. code-block:: yaml
+
+       - processor: ParametricPlotGenerator
+         parameters:
+           x_range: {lo: 0, hi: 10, steps: 50}
+           y_expression: "2*x + 1"
+           x_label: "x"
+           y_label: "y"
+           title: "Linear function"
+
+    With parameter sweep:
+
+    .. code-block:: yaml
+
+       - processor: ParametricPlotGenerator
+         parameters:
+           x_range: {lo: -1, hi: 2, steps: 50}
+         derive:
+           parameter_sweep:
+             parameters:
+               y_expression: "equation"
+               title: "title"
+             variables:
+               equation: ["2*x", "x**2", "x**3"]
+               title: ["Linear", "Quadratic", "Cubic"]
+             mode: by_position
+             collection: MatplotlibFigureCollection
+    """
 
     @classmethod
     def _get_data(
         cls,
         *,
-        x_values: list | tuple | None = None,
-        t: list | tuple | np.ndarray | None = None,
-        x_expression: str | None = None,
+        x_range: Mapping[str, Any],
         y_expression: str,
         x_label: str = "x",
         y_label: str = "y",
@@ -47,68 +128,38 @@ class ParametricPlotGenerator(MatplotlibFigureDataSource):
         marker_size: float = 8.0,
         grid: bool = True,
         grid_alpha: float = 0.3,
-        show_via_qt: bool = False,
-        ion: bool = False,
     ) -> MatplotlibFigure:
         """
-        Generate a parametric plot from x values and a y expression.
+        Generate a parametric plot from a range specification and y expression.
 
         Parameters
         ----------
-        x_values : list | tuple | np.ndarray | None
-            X-axis values as raw data. Use with derive.parameter_sweep:
-
-            .. code-block:: yaml
-
-               variables:
-                 t: { lo: -1, hi: 2, steps: 50 }
-               parameters:
-                 x_values: t
-
-        t : list | tuple | np.ndarray | None
-            Alternative parameter name for x-axis values. Used with x_expression
-            to compute x from t via safe evaluation. Common in run_space:
-
-            .. code-block:: yaml
-
-               run_space:
-                 context:
-                   t: [generated from Range]
-               parameters:
-                 x_expression: "t"
-
-        x_expression : str | None
-            Safe mathematical expression to compute x-axis values from variable 't'.
-            Available variable: t
-            Examples: ``"t"``, ``"2*t"``, ``"t**2"``
-            Used in run_space patterns where t comes from context.
-
+        x_range : Mapping[str, Any]
+            Range specification with keys 'lo', 'hi', 'steps'.
+            Interpreted identically to derive.parameter_sweep.variables ranges.
+            Example: ``{lo: -1, hi: 2, steps: 50}``
         y_expression : str
-            Expression to compute y-axis values from x.
-            Available variables: x, t (alias for x)
-            Example: ``"2*x + 1"``, ``"x**2"``, ``"50 + 5*t"``
-        x_label : str
+            Mathematical expression in variable 'x' for computing y values.
+            Uses safe evaluation (ExpressionEvaluator) to prevent code injection.
+            Examples: ``"2*x + 1"``, ``"x**2"``, ``"50 + 5*x"``
+        x_label : str, default "x"
             X-axis label.
-        y_label : str
+        y_label : str, default "y"
             Y-axis label.
-        title : str
+        title : str, default ""
             Plot title.
-        figure_size : Tuple[float, float]
+        figure_size : Tuple[float, float], default (8.0, 6.0)
             Figure dimensions (width, height) in inches.
-        line_style : str
-            Matplotlib line style.
-        line_width : float
-            Line width.
-        marker_size : float
-            Marker size.
-        grid : bool
+        line_style : str, default "b-o"
+            Matplotlib line style (e.g., "b-o", "r-s", "g-^").
+        line_width : float, default 2.0
+            Line width in points.
+        marker_size : float, default 8.0
+            Marker size in points.
+        grid : bool, default True
             Enable grid display.
-        grid_alpha : float
-            Grid transparency.
-        show_via_qt : bool
-            Attempt to show via Qt (best-effort).
-        ion : bool
-            Enable interactive mode.
+        grid_alpha : float, default 0.3
+            Grid transparency (0.0 = invisible, 1.0 = opaque).
 
         Returns
         -------
@@ -118,48 +169,38 @@ class ParametricPlotGenerator(MatplotlibFigureDataSource):
         Raises
         ------
         ValueError
-            If neither x_values nor (t + x_expression) are provided,
-            or if expressions are invalid.
+            If x_range is missing required keys, steps <= 1, or y_expression is invalid.
+
+        Notes
+        -----
+        The generated figure uses the Agg backend (non-interactive). For interactive
+        visualization, use separate viewer components or Semantiva Studio.
+
+        The figure is NOT automatically closed. Use FigureToRGBAImage or
+        FigureCollectionToRGBAStack with close_after=True to render and free resources,
+        or rely on the automatic weakref finalizer in MatplotlibFigure.
         """
-        # Create safe evaluator
-        evaluator = ExpressionEvaluator()
-
-        # Determine x values from available parameters
-        if x_values is not None:
-            # Direct x_values provided (from parameter sweep or direct call)
-            x = np.array(x_values)
-        elif t is not None and x_expression is not None:
-            # Compute x from t using x_expression (run_space pattern)
-            t_array = np.array(t)
-            try:
-                x_fn = evaluator.compile(x_expression, allowed_names={"t"})
-                x = x_fn(t=t_array)
-                if not isinstance(x, np.ndarray):
-                    x = np.array(x)
-            except ExpressionError as e:
-                raise ValueError(f"Invalid x_expression '{x_expression}': {e}")
-            except Exception as e:
-                raise ValueError(
-                    f"Failed to evaluate x_expression '{x_expression}': {e}"
-                )
-        elif t is not None:
-            # t provided without x_expression, use t directly as x
-            x = np.array(t)
-        else:
-            raise ValueError(
-                "Must provide either 'x_values' or 't' (with optional 'x_expression')"
-            )
-
-        # Evaluate y expression safely (with x and t available)
+        # Decode x_range
         try:
-            y_fn = evaluator.compile(y_expression, allowed_names={"x", "t"})
-            y = y_fn(x=x, t=x)
-            if not isinstance(y, np.ndarray):
-                y = np.array(y)
-        except ExpressionError as e:
-            raise ValueError(f"Invalid y_expression '{y_expression}': {e}")
-        except Exception as e:
-            raise ValueError(f"Failed to evaluate y_expression '{y_expression}': {e}")
+            lo = float(x_range["lo"])
+            hi = float(x_range["hi"])
+            steps = int(x_range["steps"])
+        except KeyError as e:
+            raise ValueError(
+                f"x_range must define 'lo', 'hi', 'steps': missing {e}"
+            ) from e
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"x_range values must be numeric: {e}") from e
+
+        if steps <= 1:
+            raise ValueError("x_range.steps must be > 1")
+
+        # Generate x values
+        x = np.linspace(lo, hi, steps)
+
+        # Evaluate y expression
+        evaluator = ImagingExpressionEvaluator()
+        y = evaluator.evaluate_y(y_expression, x=x)
 
         # Validate dimensions
         if x.shape != y.shape:
@@ -184,16 +225,5 @@ class ParametricPlotGenerator(MatplotlibFigureDataSource):
         if grid:
             ax.grid(True, alpha=grid_alpha)
 
-        if ion:
-            plt.ion()
-
-        if show_via_qt:
-            try:
-                fig.show()
-                if ion:
-                    plt.pause(0.01)
-            except Exception as e:
-                warnings.warn(f"Interactive show failed: {e}")
-
-        # Wrap in MatplotlibFigure
+        # Wrap in MatplotlibFigure (lifecycle managed by weakref finalizer)
         return MatplotlibFigure(fig)

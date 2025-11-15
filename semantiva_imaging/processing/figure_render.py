@@ -16,9 +16,7 @@
 
 from __future__ import annotations
 from typing import Tuple, List
-import warnings
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
@@ -82,12 +80,14 @@ class FigureToRGBAImage(DataOperation):
         size_px: Tuple[int, int],
         dpi: int = 100,
         transparent: bool = False,
-        show_via_qt: bool = False,
-        ion: bool = False,
-        close_after: bool = False,
+        close_after: bool = True,
     ) -> RGBAImage:
         """
-        Rasterize a Matplotlib figure to an RGBA image.
+        Rasterize a Matplotlib figure to an RGBA image using Agg backend.
+
+        This processor renders figures in a non-interactive, headless-safe manner.
+        Interactive visualization should be handled by separate viewer components
+        or tools such as Semantiva Studio.
 
         Parameters
         ----------
@@ -99,12 +99,10 @@ class FigureToRGBAImage(DataOperation):
             Dots per inch for rendering.
         transparent : bool, default False
             If True, make background transparent.
-        show_via_qt : bool, default False
-            If True, attempt to show figure in Qt window (best-effort).
-        ion : bool, default False
-            If True, enable interactive mode.
-        close_after : bool, default False
+        close_after : bool, default True
             If True, close figure after rendering to free memory.
+            Combined with the weakref finalizer in MatplotlibFigure,
+            this ensures proper resource cleanup.
 
         Returns
         -------
@@ -112,26 +110,10 @@ class FigureToRGBAImage(DataOperation):
             The rasterized RGBA image.
         """
         fig: Figure = data.data
-        if show_via_qt:
-            try:
-                matplotlib.use("QtAgg", force=True)  # best-effort
-            except Exception as e:
-                warnings.warn(f"QtAgg backend not available: {e}")
-
-        if ion:
-            plt.ion()
 
         _apply_size(fig, size_px=size_px, dpi=dpi)
         _apply_transparent(fig, transparent=transparent)
         rgba = _render_rgba(fig)
-
-        if show_via_qt:
-            try:
-                fig.show()
-                if ion:
-                    plt.pause(0.01)
-            except Exception as e:
-                warnings.warn(f"Interactive show failed: {e}")
 
         if close_after:
             plt.close(fig)
@@ -157,12 +139,13 @@ class FigureCollectionToRGBAStack(DataOperation):
         size_px: Tuple[int, int],
         dpi: int = 100,
         transparent: bool = False,
-        show_via_qt: bool = False,
-        ion: bool = False,
-        close_after: bool = False,
+        close_after: bool = True,
     ) -> RGBAImageStack:
         """
         Rasterize a collection of Matplotlib figures to an RGBA image stack.
+
+        This processor renders figures in a non-interactive, headless-safe manner.
+        All figures are rendered with uniform size and DPI settings.
 
         Parameters
         ----------
@@ -174,11 +157,7 @@ class FigureCollectionToRGBAStack(DataOperation):
             Dots per inch for rendering.
         transparent : bool, default False
             If True, make background transparent.
-        show_via_qt : bool, default False
-            If True, attempt to show figures in Qt window (best-effort).
-        ion : bool, default False
-            If True, enable interactive mode.
-        close_after : bool, default False
+        close_after : bool, default True
             If True, close figures after rendering to free memory.
 
         Returns
@@ -197,8 +176,6 @@ class FigureCollectionToRGBAStack(DataOperation):
                 size_px=size_px,
                 dpi=dpi,
                 transparent=transparent,
-                show_via_qt=show_via_qt,
-                ion=ion,
                 close_after=close_after,
             ).data
             arrays.append(rgba)

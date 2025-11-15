@@ -17,38 +17,37 @@ pipeline:
     # This processor will be executed ONCE, but creates FIVE figures (one per sweep)
     - processor: ParametricPlotGenerator
       parameters:
-          show_via_qt: "True"                  # STATIC: no interactive display
+        # STATIC PARAMETER: x_range defines the domain for all plots
+        x_range:
+          lo: -1
+          hi: 2
+          steps: 50
+        x_label: "t"                    # STATIC: same label for all plots
 
       derive:
         parameter_sweep:
           # SWEPT PARAMETERS: These map processor parameters to sweep variables
-          # Format: processor_param_name: "variable_name"
-          # - y_expression varies over 'equation' variable (5 different math expressions)
-          # - y_label varies over 'y_label' variable (5 different axis labels)
-          # - title varies over 'title' variable (5 different plot titles)
-          # - line_style varies over 'line_style' variable (5 different plot styles)
-          # - Other params are STATIC (quoted literals): same for all sweeps
+          # Each parameter will take values from the corresponding variable list
           parameters:
-            x_values: t                               # SWEPT: uses t variable values
-            y_expression: "equation"                    # SWEPT: varies per sweep
-            x_label: "t"                              # STATIC: same for all plots
-            y_label: "y_label"                          # SWEPT: varies per sweep
-            title: "title"                              # SWEPT: varies per sweep
-            line_style: "line_style"                    # SWEPT: varies per sweep
+            y_expression: "equation"     # SWEPT: varies per sweep
+            y_label: "y_label"           # SWEPT: varies per sweep
+            title: "title"               # SWEPT: varies per sweep
+            line_style: "line_style"     # SWEPT: varies per sweep
           
           # VARIABLE DEFINITIONS: Lists that define the sweep space
           # Mode by_position zips these together, so all must have same length
           variables:
             # Range variable for x-axis (generates 50 evenly-spaced points)
-            t: { lo: -1, hi: 2, steps: 50 }
+
             
+
             # 5 mathematical equations for the y-axis
             equation:
-              - "50 + 5*t"              # Linear: Center X position
-              - "50 + 5*t + 5*t**2"     # Quadratic: Center Y position
-              - "50 + 20*t"             # Linear: Std Dev X
-              - "20 + 0*t"              # Constant: Std Dev Y
-              - "60 + 5*t"              # Linear: Rotation angle
+              - "50 + 5*x"              # Linear: Center X position
+              - "50 + 5*x + 5*x**2"     # Quadratic: Center Y position
+              - "50 + 20*x"             # Linear: Std Dev X
+              - "20 + 0*x"              # Constant: Std Dev Y
+              - "60 + 5*x"              # Linear: Rotation angle
             
             # 5 corresponding y-axis labels
             y_label:
@@ -99,9 +98,6 @@ pipeline:
     # Input: RGBAImageStack (from Node 2)
     # Output: Individual numbered PNG files in param_sweep_outputs/ directory
     # Example output: param_sweep_outputs/frame_000.png, frame_001.png, etc.
-    # Note: Since this is a single-execution pipeline (derive.parameter_sweep),
-    #       all frames are saved to the same base path with automatic numbering.
-    #       For per-sweep frame organization, see run_space_plot_pipeline.yaml example.
     - processor: PNGRGBAImageStackSaver
       parameters:
         base_path: "param_sweep_outputs/frame"
