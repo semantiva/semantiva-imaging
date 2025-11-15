@@ -23,7 +23,17 @@ from ..data_types import (
     RGBImageStack,
     RGBAImage,
     RGBAImageStack,
+    MatplotlibFigure,
 )
+
+
+class MatplotlibFigureDataSource(DataSource):
+    """Abstract base class for matplotlib figure data sources."""
+
+    @classmethod
+    def output_data_type(cls) -> type[MatplotlibFigure]:
+        """Returns the expected output data type: MatplotlibFigure."""
+        return MatplotlibFigure
 
 
 class SingleChannelImageDataSource(DataSource):

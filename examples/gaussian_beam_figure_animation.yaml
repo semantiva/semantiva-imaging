@@ -1,0 +1,45 @@
+extensions:  ["semantiva-imaging"]
+
+pipeline:
+  nodes:
+    - processor: TwoDGaussianSingleChannelImageGenerator
+      derive:
+        parameter_sweep:
+          parameters:
+            x_0: "50 + 55 * t"
+            y_0: "150 + 5 * t + 5 * t ** 2"
+            std_dev: "(50 + 2 * t, 20)"
+            angle: "60 + 1 * t"
+          variables:
+            t: { lo: -1, hi: 10, steps: 50 }
+          collection: SingleChannelImageStack
+      parameters:
+        amplitude: 100
+
+    - processor: SingleChannelImageStackToMatplotlibFigureCollection
+      parameters:
+        title: "Gaussian beam"
+        colorbar: true
+        cmap: "hot"
+        log_scale: false
+        xlabel: "x"
+        ylabel: "y"
+
+    - processor: FigureCollectionToRGBAStack
+      parameters:
+        size_px: [1024, 1024]
+        dpi: 100
+        transparent: false
+        show_via_qt: false
+        ion: false
+        close_after: true
+
+    - processor: AnimatedGifRGBAImageStackSaver
+      parameters: 
+        path: "gaussian_beam_animation_colored.gif"
+
+trace:
+  driver: jsonl
+  output_path: imaging/gaussian_beam_generator_trace.jsonl
+  options:
+    detail: all

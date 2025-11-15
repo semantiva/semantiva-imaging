@@ -20,6 +20,7 @@ as well as image stacks and video formats.
 """
 
 from .url_loader import UrlLoader
+from .parametric_plotter import ParametricPlotGenerator
 from .loaders_savers import (
     # Single channel image loaders/savers
     NpzSingleChannelImageLoader,
@@ -51,17 +52,20 @@ from .loaders_savers import (
     AnimatedGifSingleChannelImageStackLoader,
     AnimatedGifSingleChannelImageStackSaver,
     # RGB image stack loaders/savers
+    PNGRGBImageStackSaver,
     RGBImageStackVideoLoader,
     RGBImageStackAVISaver,
     AnimatedGifRGBImageStackLoader,
     AnimatedGifRGBImageStackSaver,
     # RGBA image stack loaders/savers
+    PNGRGBAImageStackSaver,
     AnimatedGifRGBAImageStackLoader,
     AnimatedGifRGBAImageStackSaver,
 )
 
 __all__ = [
     "UrlLoader",
+    "ParametricPlotGenerator",
     # Single channel image loaders/savers
     "NpzSingleChannelImageLoader",
     "NpzSingleChannelImageDataSaver",
@@ -92,11 +96,13 @@ __all__ = [
     "AnimatedGifSingleChannelImageStackLoader",
     "AnimatedGifSingleChannelImageStackSaver",
     # RGB image stack loaders/savers
+    "PNGRGBImageStackSaver",
     "RGBImageStackVideoLoader",
     "RGBImageStackAVISaver",
     "AnimatedGifRGBImageStackLoader",
     "AnimatedGifRGBImageStackSaver",
     # RGBA image stack loaders/savers
+    "PNGRGBAImageStackSaver",
     "AnimatedGifRGBAImageStackLoader",
     "AnimatedGifRGBAImageStackSaver",
 ]

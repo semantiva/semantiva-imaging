@@ -1,0 +1,108 @@
+extensions: ["semantiva-imaging"]
+
+# Declarative Parametric Sweep using derive.parameter_sweep
+#
+# This pipeline demonstrates COLLECTION-BASED sweep using derive.parameter_sweep.
+# Key characteristics:
+# - Single pipeline execution
+# - Processor outputs a COLLECTION (MatplotlibFigureCollection)
+# - Downstream processor receives collection as single input
+# - Output is grouped (RGBAImageStack contains all renders)
+#
+# Use case: When you want N items processed together (e.g., batch analysis)
+
+pipeline:
+  nodes:
+    # Node 1: Generate parametric plots with parameter sweep
+    # This processor will be executed ONCE, but creates FIVE figures (one per sweep)
+    - processor: ParametricPlotGenerator
+      parameters:
+          show_via_qt: "True"                  # STATIC: no interactive display
+
+      derive:
+        parameter_sweep:
+          # SWEPT PARAMETERS: These map processor parameters to sweep variables
+          # Format: processor_param_name: "variable_name"
+          # - y_expression varies over 'equation' variable (5 different math expressions)
+          # - y_label varies over 'y_label' variable (5 different axis labels)
+          # - title varies over 'title' variable (5 different plot titles)
+          # - line_style varies over 'line_style' variable (5 different plot styles)
+          # - Other params are STATIC (quoted literals): same for all sweeps
+          parameters:
+            x_values: t                               # SWEPT: uses t variable values
+            y_expression: "equation"                    # SWEPT: varies per sweep
+            x_label: "t"                              # STATIC: same for all plots
+            y_label: "y_label"                          # SWEPT: varies per sweep
+            title: "title"                              # SWEPT: varies per sweep
+            line_style: "line_style"                    # SWEPT: varies per sweep
+          
+          # VARIABLE DEFINITIONS: Lists that define the sweep space
+          # Mode by_position zips these together, so all must have same length
+          variables:
+            # Range variable for x-axis (generates 50 evenly-spaced points)
+            t: { lo: -1, hi: 2, steps: 50 }
+            
+            # 5 mathematical equations for the y-axis
+            equation:
+              - "50 + 5*t"              # Linear: Center X position
+              - "50 + 5*t + 5*t**2"     # Quadratic: Center Y position
+              - "50 + 20*t"             # Linear: Std Dev X
+              - "20 + 0*t"              # Constant: Std Dev Y
+              - "60 + 5*t"              # Linear: Rotation angle
+            
+            # 5 corresponding y-axis labels
+            y_label:
+              - "x_0(t)"
+              - "y_0(t)"
+              - "σ_x(t)"
+              - "σ_y(t)"
+              - "angle(t) [degrees]"
+            
+            # 5 descriptive plot titles
+            title:
+              - "Center X Position: x_0(t) = 50 + 5t"
+              - "Center Y Position: y_0(t) = 50 + 5t + 5t²"
+              - "Standard Deviation X: σ_x(t) = 50 + 20t"
+              - "Standard Deviation Y: σ_y(t) = 20 (constant)"
+              - "Rotation Angle: angle(t) = 60 + 5t"
+            
+            # 5 matplotlib line styles for visual distinction
+            line_style:
+              - "b-o"   # Blue circles
+              - "r-s"   # Red squares
+              - "g-^"   # Green triangles
+              - "m-d"   # Magenta diamonds
+              - "c-v"   # Cyan downward triangles
+          
+          # MODE: by_position means zip lists element-wise
+          # (Run 1: equation[0], y_label[0], title[0], line_style[0])
+          # (Run 2: equation[1], y_label[1], title[1], line_style[1]), etc.
+          # This creates 5 combinations total
+          mode: by_position
+          
+          # COLLECTION: Type to collect outputs into
+          # Each sweep iteration produces one MatplotlibFigure
+          # All 5 figures collected into MatplotlibFigureCollection
+          collection: MatplotlibFigureCollection
+
+    # Node 2: Convert figure collection to RGBA image stack
+    # Input: MatplotlibFigureCollection (5 figures as one entity)
+    # Output: RGBAImageStack (5, 900, 1200, 4) - stacked tensor
+    - processor: FigureCollectionToRGBAStack
+      parameters:
+        size_px: [1200, 900]       # Output image dimensions (width, height)
+        dpi: 100                    # Rendering resolution (dots per inch)
+        transparent: false          # Background color (false = white)
+        close_after: true           # Free memory by closing figures after render
+
+    # Node 3: Save RGBA image stack as individual PNG frames
+    # Input: RGBAImageStack (from Node 2)
+    # Output: Individual numbered PNG files in param_sweep_outputs/ directory
+    # Example output: param_sweep_outputs/frame_000.png, frame_001.png, etc.
+    # Note: Since this is a single-execution pipeline (derive.parameter_sweep),
+    #       all frames are saved to the same base path with automatic numbering.
+    #       For per-sweep frame organization, see run_space_plot_pipeline.yaml example.
+    - processor: PNGRGBAImageStackSaver
+      parameters:
+        base_path: "param_sweep_outputs/frame"
+

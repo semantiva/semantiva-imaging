@@ -11,3 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Convenience exports for Semantiva imaging processing."""
+
+from .figure_render import (
+    FigureToRGBAImage,
+    FigureCollectionToRGBAStack,
+    SingleChannelImageToMatplotlibFigure,
+    SingleChannelImageStackToMatplotlibFigureCollection,
+)
+from ..data_io import ParametricPlotGenerator
+
+__all__ = [
+    "FigureToRGBAImage",
+    "FigureCollectionToRGBAStack",
+    "SingleChannelImageToMatplotlibFigure",
+    "SingleChannelImageStackToMatplotlibFigureCollection",
+    "ParametricPlotGenerator",
+]
