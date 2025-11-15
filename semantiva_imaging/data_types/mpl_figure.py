@@ -15,13 +15,26 @@
 """Matplotlib figure data types for Semantiva imaging pipelines."""
 
 from __future__ import annotations
+import weakref
 from typing import Any, Iterator, List
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 from semantiva.data_types import BaseDataType, DataCollectionType
 
 
 class MatplotlibFigure(BaseDataType):
-    """Semantiva data type wrapping a matplotlib Figure."""
+    """Semantiva data type wrapping a matplotlib Figure with lifecycle safety net.
+
+    This wrapper automatically closes the underlying matplotlib figure when the
+    wrapper is garbage-collected, preventing resource leaks. This complements,
+    but does not replace, explicit close_after logic in rendering processors.
+    """
+
+    def __init__(self, data: Figure) -> None:
+        super().__init__(data)
+        # Safety net: when this wrapper is GC'd, close the figure.
+        # This complements explicit close_after=True in processors.
+        self._finalizer = weakref.finalize(self, plt.close, data)
 
     def validate(self, data: Any) -> bool:
         assert isinstance(

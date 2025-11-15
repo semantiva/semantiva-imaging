@@ -13,11 +13,11 @@ extensions: ["semantiva-imaging"]
 #           (e.g., parameter studies, distributed jobs, independent analysis)
 #
 # Execution Flow:
-# Run 1: PlotGen(eq1) → RenderFig → Template(path1) → SavePNG → plot_x_0(t).png
-# Run 2: PlotGen(eq2) → RenderFig → Template(path2) → SavePNG → plot_y_0(t).png
-# Run 3: PlotGen(eq3) → RenderFig → Template(path3) → SavePNG → plot_σ_x(t).png
-# Run 4: PlotGen(eq4) → RenderFig → Template(path4) → SavePNG → plot_σ_y(t).png
-# Run 5: PlotGen(eq5) → RenderFig → Template(path5) → SavePNG → plot_angle(t).png
+# Run 1: PlotGen(eq1) → RenderFig → SavePNG → plot_x_0(t).png
+# Run 2: PlotGen(eq2) → RenderFig → SavePNG → plot_y_0(t).png
+# Run 3: PlotGen(eq3) → RenderFig → SavePNG → plot_σ_x(t).png
+# Run 4: PlotGen(eq4) → RenderFig → SavePNG → plot_σ_y(t).png
+# Run 5: PlotGen(eq5) → RenderFig → SavePNG → plot_angle(t).png
 
 pipeline:
   nodes:
@@ -27,12 +27,14 @@ pipeline:
     # Output: MatplotlibFigure (single figure, not collection)
     - processor: ParametricPlotGenerator
       parameters:
-        # X-AXIS COMPUTATION: Use safe expression with 't' from context
-        # 't' is provided by run_space.context below (generated from Range)
-        x_expression: "t"                        # Safe expression: use t directly as x-axis
-        x_label: "t"                             # X-axis label
+        # X_RANGE: Domain specification (same for all runs)
+        x_range:
+          lo: -1
+          hi: 2
+          steps: 50
         
         # STATIC PARAMETERS: Same for all runs in the run_space
+        x_label: "t"                             # X-axis label
         figure_size: [8.0, 6.0]                  # Figure dimensions in inches
         line_width: 2.0                          # Line thickness
         marker_size: 8.0                         # Marker size for plot points
@@ -40,18 +42,13 @@ pipeline:
         grid_alpha: 0.3                          # Grid transparency
         
         # CONTEXT-INJECTED PARAMETERS: From run_space.context
-        # Semantiva automatically provides these from matching context keys:
-        # - t: from run_space.context.t (numeric array generated from Range)
-        # - y_expression: from run_space.context.y_expression (per run)
-        # - y_label: from run_space.context.y_label (per run)
-        # - title: from run_space.context.title (per run)
-        # - line_style: from run_space.context.line_style (per run)
+        # Semantiva automatically provides these from matching context keys.
+        # These parameters are not explicitly set here; they come from run_space.context
+        # and are automatically injected by the framework.
 
     # Node 2: Convert single figure to RGBA image
     # Input: MatplotlibFigure (from Node 1)
     # Output: RGBAImage (single image, not stack)
-    # Note: This is NOT FigureCollectionToRGBAStack (which expects collections)
-    #       This is FigureToRGBAImage (which handles single figures)
     - processor: FigureToRGBAImage
       parameters:
         size_px: [1200, 900]       # Output image dimensions (width, height)
@@ -77,18 +74,14 @@ run_space:
     # Each set becomes the context for one complete pipeline execution
     - mode: by_position
       context:
-        # INDEPENDENT VARIABLE 't': Shared across all runs
-        # Generated using Range specification (same as derive.parameter_sweep)
-        t: { lo: -1, hi: 2, steps: 50 }
-        
         # 5 MATHEMATICAL EQUATIONS for the dependent variable
         # Represents different Gaussian parameter trajectories
         y_expression:
-          - "50 + 5*t"              # Equation 1: Linear (Center X)
-          - "50 + 5*t + 5*t**2"     # Equation 2: Quadratic (Center Y)
-          - "50 + 20*t"             # Equation 3: Linear (Std Dev X)
-          - "20 + 0*t"              # Equation 4: Constant (Std Dev Y)
-          - "60 + 5*t"              # Equation 5: Linear (Rotation angle)
+          - "50 + 5*x"              # Equation 1: Linear (Center X)
+          - "50 + 5*x + 5*x**2"     # Equation 2: Quadratic (Center Y)
+          - "50 + 20*x"             # Equation 3: Linear (Std Dev X)
+          - "20 + 0*x"              # Equation 4: Constant (Std Dev Y)
+          - "60 + 5*x"              # Equation 5: Linear (Rotation angle)
         
         # 5 Y-AXIS LABELS corresponding to each equation
         # Used in plot titles and in template path generation
