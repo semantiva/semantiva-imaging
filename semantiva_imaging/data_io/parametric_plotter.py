@@ -18,12 +18,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, Tuple
 import numpy as np
-import matplotlib
+from matplotlib.figure import Figure
 
-matplotlib.use("Agg")  # Use non-interactive backend
-import matplotlib.pyplot as plt
-
-from semantiva.utils.safe_eval import ExpressionEvaluator, ExpressionError
+import ast
+from typing import Callable
 from semantiva_imaging.data_types.mpl_figure import MatplotlibFigure
 from .io import MatplotlibFigureDataSource
 
@@ -37,9 +35,122 @@ class ImagingExpressionEvaluator:
     """
 
     def __init__(self) -> None:
-        self._base = ExpressionEvaluator()
-        # Future extension point for math environment (e.g., {"pi": np.pi, "sqrt": np.sqrt})
-        self._math_env: dict[str, Any] = {}
+        # Built-in safe callables
+        builtins: dict[str, Callable] = {
+            "abs": abs,
+            "min": min,
+            "max": max,
+            "round": round,
+            "float": float,
+            "int": int,
+            "str": str,
+            "bool": bool,
+        }
+        # Whitelist a small, safe subset of NumPy math for vectorized evaluation
+        numpy_funcs: dict[str, Callable] = {
+            "sin": np.sin,
+            "cos": np.cos,
+            "tan": np.tan,
+            "arcsin": np.arcsin,
+            "arccos": np.arccos,
+            "arctan": np.arctan,
+            "arctan2": np.arctan2,
+            "sinh": np.sinh,
+            "cosh": np.cosh,
+            "tanh": np.tanh,
+            "exp": np.exp,
+            "log": np.log,
+            "log10": np.log10,
+            "sqrt": np.sqrt,
+            "floor": np.floor,
+            "ceil": np.ceil,
+            "clip": np.clip,
+            "deg2rad": np.deg2rad,
+            "rad2deg": np.rad2deg,
+        }
+
+        # Environment used during evaluation (no modules, just names → callables)
+        self._env: dict[str, Callable] = {**builtins, **numpy_funcs}
+        self._allowed_func_names: set[str] = set(self._env.keys())
+
+        # Constants exposed as variables
+        self._math_env: dict[str, Any] = {
+            "pi": float(np.pi),
+            "e": float(np.e),
+        }
+
+    class _SafeVisitor(ast.NodeVisitor):
+        """AST validator allowing simple math with whitelisted names only."""
+
+        _ALLOWED_NODES = {
+            ast.Expression,
+            ast.Module,
+            ast.Expr,
+            ast.Load,
+            ast.BinOp,
+            ast.UnaryOp,
+            ast.BoolOp,
+            ast.Compare,
+            ast.IfExp,
+            ast.Call,
+            ast.Name,
+            ast.Constant,
+            ast.Tuple,
+            ast.Add,
+            ast.Sub,
+            ast.Mult,
+            ast.Div,
+            ast.FloorDiv,
+            ast.Mod,
+            ast.Pow,
+            ast.USub,
+            ast.UAdd,
+            ast.And,
+            ast.Or,
+            ast.Eq,
+            ast.NotEq,
+            ast.Lt,
+            ast.LtE,
+            ast.Gt,
+            ast.GtE,
+        }
+
+        def __init__(self, allowed_names: set[str], allowed_funcs: set[str]):
+            self.allowed_names = allowed_names
+            self.allowed_funcs = allowed_funcs
+
+        def visit_Name(self, node: ast.Name) -> Any:  # pragma: no cover - trivial
+            if node.id not in self.allowed_names and node.id not in self.allowed_funcs:
+                raise ValueError(f"Unknown variable '{node.id}' in expression.")
+
+        def visit_Call(self, node: ast.Call) -> Any:  # pragma: no cover - trivial
+            if (
+                not isinstance(node.func, ast.Name)
+                or node.func.id not in self.allowed_funcs
+            ):
+                raise ValueError(
+                    "Only calls to whitelisted math functions are allowed."
+                )
+            for arg in node.args:
+                self.visit(arg)
+
+        def generic_visit(self, node: ast.AST) -> Any:  # pragma: no cover - trivial
+            if type(node) not in self._ALLOWED_NODES:
+                raise ValueError(f"Disallowed syntax: {type(node).__name__}")
+            super().generic_visit(node)
+
+    def _compile(self, expr: str, allowed_names: set[str]) -> Callable[..., Any]:
+        try:
+            tree = ast.parse(expr, mode="eval")
+        except SyntaxError as exc:
+            raise ValueError(f"Invalid y_expression '{expr}': {exc.msg}") from exc
+        self._SafeVisitor(allowed_names, self._allowed_func_names).visit(tree)
+        code = compile(tree, filename="<expr>", mode="eval")
+
+        def _fn(**kwargs: Any) -> Any:
+            return eval(code, self._env, kwargs)
+
+        return _fn
 
     def evaluate_y(self, expr: str, x: np.ndarray) -> np.ndarray:
         """
@@ -64,9 +175,10 @@ class ImagingExpressionEvaluator:
         """
         allowed = {"x", *self._math_env.keys()}
         try:
-            fn = self._base.compile(expr, allowed_names=allowed)
+            fn = self._compile(expr, allowed_names=allowed)
             value = fn(x=x, **self._math_env)
-        except ExpressionError as e:
+        except ValueError as e:
+            # Propagate with standardized message expected by tests
             raise ValueError(f"Invalid y_expression '{expr}': {e}") from e
         except Exception as e:
             raise ValueError(f"Failed to evaluate y_expression '{expr}': {e}") from e
@@ -173,8 +285,10 @@ class ParametricPlotGenerator(MatplotlibFigureDataSource):
 
         Notes
         -----
-        The generated figure uses the Agg backend (non-interactive). For interactive
-        visualization, use separate viewer components or Semantiva Studio.
+        The figure is created without binding a GUI/backend-specific canvas.
+        Rasterization processors attach an Agg canvas as needed for headless
+        rendering. For interactive visualization, use dedicated viewers or
+        Semantiva Studio.
 
         The figure is NOT automatically closed. Use FigureToRGBAImage or
         FigureCollectionToRGBAStack with close_after=True to render and free resources,
@@ -208,8 +322,8 @@ class ParametricPlotGenerator(MatplotlibFigureDataSource):
                 f"Shape mismatch: x has shape {x.shape}, y has shape {y.shape}"
             )
 
-        # Create figure
-        fig = plt.figure(figsize=figure_size)
+        # Create a Figure instance directly (avoid pyplot state machine/backends)
+        fig = Figure(figsize=figure_size)
         ax = fig.add_subplot(111)
 
         # Plot data
