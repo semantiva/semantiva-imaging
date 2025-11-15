@@ -49,10 +49,7 @@ from ..data_types import (
 
 class NpzSingleChannelImageLoader(SingleChannelImageDataSource):
     """
-    Concrete implementation of ImageDataTypeSource for loading image data from .npz files.
-
-    This class provides functionality to load a single array from a `.npz` file
-    as a :class:`SingleChannelImage`.
+    Loads a SingleChannelImage from a .npz file.
     """
 
     @classmethod
@@ -131,10 +128,7 @@ class NpzSingleChannelImageDataSaver(SingleChannelImageDataSink):
 
 class NpzSingleChannelImageStackDataLoader(SingleChannelImageStackSource):
     """
-    Concrete implementation of ImageStackSource for loading image stacks from .npz files.
-
-    This class provides functionality to load a single 3D array from a `.npz` file
-    as a :class:`SingleChannelImageStack`.
+    Loads a SingleChannelImageStack from a .npz file.
     """
 
     @classmethod
@@ -215,9 +209,7 @@ class NpzSingleChannelImageStackDataSaver(SingleChannelImageStackSink):
 
 class PngSingleChannelImageLoader(SingleChannelImageDataSource):
     """
-    Concrete implementation of ImageDataTypeSource for loading image data from PNG files.
-
-    This class provides functionality to load a PNG image as a :class:`SingleChannelImage`.
+    Loads a SingleChannelImage from a PNG file.
     """
 
     @classmethod
@@ -250,9 +242,7 @@ class PngSingleChannelImageLoader(SingleChannelImageDataSource):
 
 class PngSingleChannelImageSaver(SingleChannelImageDataSink):
     """
-    Concrete implementation of ImageDataTypeSink for saving image data to PNG files.
-
-    This class provides functionality to save a ``SingleChannelImage`` object as a PNG image.
+    Saves a SingleChannelImage as a PNG file.
     """
 
     @classmethod
@@ -276,6 +266,11 @@ class PngSingleChannelImageSaver(SingleChannelImageDataSink):
             p = Path(path)
             if p.suffix == "":
                 path = path + ".png"
+
+            # Create parent directories if they don't exist
+            p = Path(path)
+            p.parent.mkdir(parents=True, exist_ok=True)
+
             # Convert the NumPy array to a PIL image
             img = Image.fromarray(data.data.astype(np.uint8))
             # Save the image as a PNG
@@ -285,7 +280,7 @@ class PngSingleChannelImageSaver(SingleChannelImageDataSink):
 
 
 class JpgSingleChannelImageLoader(SingleChannelImageDataSource):
-    """Load a :class:`SingleChannelImage` from a JPEG file."""
+    """Load a SingleChannelImage from a JPEG file."""
 
     @classmethod
     def _get_data(cls, path: str) -> SingleChannelImage:
@@ -300,7 +295,7 @@ class JpgSingleChannelImageLoader(SingleChannelImageDataSource):
 
 
 class JpgSingleChannelImageSaver(SingleChannelImageDataSink):
-    """Save a :class:`SingleChannelImage` to a JPEG file."""
+    """Saves a SingleChannelImage to a JPEG file."""
 
     @classmethod
     def _send_data(cls, data: SingleChannelImage, path: str) -> None:
@@ -318,7 +313,7 @@ class JpgSingleChannelImageSaver(SingleChannelImageDataSink):
 
 
 class TiffSingleChannelImageLoader(SingleChannelImageDataSource):
-    """Load a :class:`SingleChannelImage` from a TIFF file."""
+    """Loads a SingleChannelImage from a TIFF file."""
 
     @classmethod
     def _get_data(cls, path: str) -> SingleChannelImage:
@@ -333,7 +328,7 @@ class TiffSingleChannelImageLoader(SingleChannelImageDataSource):
 
 
 class TiffSingleChannelImageSaver(SingleChannelImageDataSink):
-    """Save a :class:`SingleChannelImage` to a TIFF file."""
+    """Saves a SingleChannelImage to a TIFF file."""
 
     @classmethod
     def _send_data(cls, data: SingleChannelImage, path: str) -> None:
@@ -351,7 +346,7 @@ class TiffSingleChannelImageSaver(SingleChannelImageDataSink):
 
 
 class JpgRGBImageLoader(RGBImageDataSource):
-    """Load an :class:`RGBImage` from a JPEG file."""
+    """Loads an RGBImage from a JPEG file."""
 
     @classmethod
     def _get_data(cls, path: str) -> RGBImage:
@@ -369,7 +364,7 @@ class JpgRGBImageLoader(RGBImageDataSource):
 
 
 class JpgRGBImageSaver(RGBImageDataSink):
-    """Save an :class:`RGBImage` to a JPEG file."""
+    """Saves an RGBImage to a JPEG file."""
 
     @classmethod
     def _send_data(cls, data: RGBImage, path: str) -> None:
@@ -387,7 +382,7 @@ class JpgRGBImageSaver(RGBImageDataSink):
 
 
 class PngRGBImageLoader(RGBImageDataSource):
-    """Load an :class:`RGBImage` from a PNG file."""
+    """Loads an RGBImage from a PNG file."""
 
     @classmethod
     def _get_data(cls, path: str) -> RGBImage:
@@ -405,7 +400,7 @@ class PngRGBImageLoader(RGBImageDataSource):
 
 
 class PngRGBImageSaver(RGBImageDataSink):
-    """Save an :class:`RGBImage` to a PNG file."""
+    """Saves an RGBImage to a PNG file."""
 
     @classmethod
     def _send_data(cls, data: RGBImage, path: str) -> None:
@@ -416,6 +411,11 @@ class PngRGBImageSaver(RGBImageDataSink):
             p = Path(path)
             if p.suffix == "":
                 path = path + ".png"
+
+            # Create parent directories if they don't exist
+            p = Path(path)
+            p.parent.mkdir(parents=True, exist_ok=True)
+
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="PNG")
         except Exception as e:
@@ -423,7 +423,7 @@ class PngRGBImageSaver(RGBImageDataSink):
 
 
 class TiffRGBImageLoader(RGBImageDataSource):
-    """Load an :class:`RGBImage` from a TIFF file."""
+    """Loads an RGBImage from a TIFF file."""
 
     @classmethod
     def _get_data(cls, path: str) -> RGBImage:
@@ -441,7 +441,7 @@ class TiffRGBImageLoader(RGBImageDataSource):
 
 
 class TiffRGBImageSaver(RGBImageDataSink):
-    """Save an :class:`RGBImage` to a TIFF file."""
+    """Saves an RGBImage to a TIFF file."""
 
     @classmethod
     def _send_data(cls, data: RGBImage, path: str) -> None:
@@ -459,7 +459,7 @@ class TiffRGBImageSaver(RGBImageDataSink):
 
 
 class PngRGBAImageLoader(RGBAImageDataSource):
-    """Load an :class:`RGBAImage` from a PNG file."""
+    """Loads an RGBAImage from a PNG file."""
 
     @classmethod
     def _get_data(cls, path: str) -> RGBAImage:
@@ -474,7 +474,7 @@ class PngRGBAImageLoader(RGBAImageDataSource):
 
 
 class PngRGBAImageSaver(RGBAImageDataSink):
-    """Save an :class:`RGBAImage` to a PNG file."""
+    """Saves an RGBAImage to a PNG file."""
 
     @classmethod
     def _send_data(cls, data: RGBAImage, path: str) -> None:
@@ -485,19 +485,90 @@ class PngRGBAImageSaver(RGBAImageDataSink):
             p = Path(path)
             if p.suffix == "":
                 path = path + ".png"
+
+            # Create parent directories if they don't exist
+            p = Path(path)
+            p.parent.mkdir(parents=True, exist_ok=True)
+
             img = Image.fromarray(data.data.astype(np.uint8))
             img.save(path, format="PNG")
         except Exception as e:
             raise IOError(f"Error saving PNG RGBA image to {path}: {e}") from e
 
 
+# ============================================================================
+# Helper Functions for Image Stack Savers
+# ============================================================================
+
+
+def _get_numbered_frame_path(base_path: str, frame_index: int) -> str:
+    """
+    Generate a numbered file path for a frame in an image stack.
+
+    Intelligently handles file extensions: if the base_path has a recognized
+    image extension, it keeps that extension and inserts the frame number
+    before it. Otherwise, it appends the frame number and .png extension.
+
+    Examples:
+        >>> _get_numbered_frame_path("output/frame", 0)
+        'output/frame_000.png'
+        >>> _get_numbered_frame_path("output/frame.png", 5)
+        'output/frame_005.png'
+        >>> _get_numbered_frame_path("output/frame.with.dots", 3)
+        'output/frame.with.dots_003.png'
+
+    Parameters:
+        base_path (str): The base file path (with or without extension).
+        frame_index (int): The frame number to insert.
+
+    Returns:
+        str: The numbered file path with proper extension handling.
+    """
+    base = Path(base_path)
+    known_image_exts = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".gif", ".bmp"}
+    suffix = base.suffix.lower()
+
+    if suffix == "" or suffix not in known_image_exts:
+        # No recognized extension: append frame number and .png
+        return f"{base_path}_{frame_index:03d}.png"
+    else:
+        # Has recognized extension: insert frame number before extension
+        # (e.g., "frame.png" -> "frame_000.png")
+        return f"{str(base.with_suffix(''))}_{frame_index:03d}{base.suffix}"
+
+
+def _save_image_stack_frames(stack_data: np.ndarray, base_path: str) -> None:
+    """
+    Save all frames from an image stack as individually numbered PNG files.
+
+    This helper function is shared by SingleChannel, RGB, and RGBA image
+    stack savers to avoid code duplication. It handles:
+    - Directory creation (including parent directories)
+    - Frame enumeration and numbering
+    - File path generation with intelligent extension handling
+    - PIL Image conversion and PNG saving
+
+    Parameters:
+        stack_data (np.ndarray): The image stack array to save.
+        base_path (str): The base file path for the output files.
+
+    Raises:
+        IOError: If any frame cannot be saved.
+    """
+    # Create parent directories if they don't exist
+    base = Path(base_path)
+    base.parent.mkdir(parents=True, exist_ok=True)
+
+    # Save each frame with a numbered filename
+    for frame_index, frame in enumerate(stack_data):
+        file_path = _get_numbered_frame_path(base_path, frame_index)
+        img = Image.fromarray(frame.astype(np.uint8))
+        img.save(file_path, format="PNG")
+
+
 class PNGSingleChannelImageStackSaver(SingleChannelImageStackSink):
     """
-    Concrete implementation of ImageDataSink for saving multi-frame image data (``SingleChannelImageStack``)
-    as sequentially numbered PNG files.
-
-    Each frame in the ``SingleChannelImageStack`` is saved as a separate PNG
-    file with filenames numbered sequentially (e.g., ``frame_000.png``).
+    Saves multi-frame SingleChannelImageStack data as sequentially numbered PNG files.
     """
 
     @classmethod
@@ -520,39 +591,71 @@ class PNGSingleChannelImageStackSaver(SingleChannelImageStackSink):
             )
 
         try:
-            # Iterate through each frame in the stack
-            for i, frame in enumerate(data.data):
-                # Convert the frame to a PIL image
-                img = Image.fromarray(frame.astype(np.uint8))
-                base = Path(base_path)
-                # Only treat the suffix as a real extension if it's a known image
-                # extension. This preserves user-provided dotted prefixes like
-                # "name.with.dots" and makes the saver produce
-                # "name.with.dots_000.png" instead of replacing ".dots".
-                known_image_exts = {
-                    ".png",
-                    ".jpg",
-                    ".jpeg",
-                    ".tif",
-                    ".tiff",
-                    ".gif",
-                    ".bmp",
-                }
-                suffix = base.suffix.lower()
-                if suffix == "" or suffix not in known_image_exts:
-                    # No recognized extension: append our PNG-framed suffix
-                    file_path = f"{base_path}_{i:03d}.png"
-                else:
-                    # Has a recognized extension: keep it (e.g. base.png -> base_000.png)
-                    file_path = f"{str(base.with_suffix(''))}_{i:03d}{base.suffix}"
-                # Save the image as a PNG
-                img.save(file_path, format="PNG")
+            _save_image_stack_frames(data.data, base_path)
         except Exception as e:
             raise IOError(f"Error saving PNG image stack: {e}") from e
 
 
+class PNGRGBImageStackSaver(RGBImageStackSink):
+    """
+    Saves multi-frame RGB image data (``RGBImageStack``) as sequentially
+    numbered PNG files.
+    """
+
+    @classmethod
+    def _send_data(cls, data: RGBImageStack, base_path: str) -> None:
+        """
+        Saves the ``RGBImageStack`` as sequentially numbered PNG files.
+
+        Parameters:
+            data (RGBImageStack): The RGB image stack data to be saved.
+            base_path (str): The base file path to save PNG files. A number will
+                             be appended to this path for each frame.
+
+        Raises:
+            ValueError: If the provided data is not a ``RGBImageStack``.
+            IOError: If any frame cannot be saved.
+        """
+        if not isinstance(data, cls.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBImageStack.")
+
+        try:
+            _save_image_stack_frames(data.data, base_path)
+        except Exception as e:
+            raise IOError(f"Error saving PNG RGB image stack: {e}") from e
+
+
+class PNGRGBAImageStackSaver(RGBAImageStackSink):
+    """
+    Saves multi-frame RGBA image data (``RGBAImageStack``) as sequentially
+    numbered PNG files.
+    """
+
+    @classmethod
+    def _send_data(cls, data: RGBAImageStack, base_path: str) -> None:
+        """
+        Saves the ``RGBAImageStack`` as sequentially numbered PNG files.
+
+        Parameters:
+            data (RGBAImageStack): The RGBA image stack data to be saved.
+            base_path (str): The base file path to save PNG files. A number will
+                             be appended to this path for each frame.
+
+        Raises:
+            ValueError: If the provided data is not a ``RGBAImageStack``.
+            IOError: If any frame cannot be saved.
+        """
+        if not isinstance(data, cls.input_data_type()):
+            raise ValueError("Provided data is not an instance of RGBAImageStack.")
+
+        try:
+            _save_image_stack_frames(data.data, base_path)
+        except Exception as e:
+            raise IOError(f"Error saving PNG RGBA image stack: {e}") from e
+
+
 class SingleChannelImageStackVideoLoader(SingleChannelImageStackSource):
-    """Load a :class:`SingleChannelImageStack` from an AVI video."""
+    """Loads a SingleChannelImageStack from an AVI video."""
 
     @classmethod
     def _get_data(cls, path: str) -> SingleChannelImageStack:
@@ -573,7 +676,7 @@ class SingleChannelImageStackVideoLoader(SingleChannelImageStackSource):
 
 
 class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
-    """Save a :class:`SingleChannelImageStack` to an AVI video."""
+    """Saves a SingleChannelImageStack to an AVI video."""
 
     @classmethod
     def _send_data(cls, data: SingleChannelImageStack, path: str) -> None:
@@ -653,7 +756,7 @@ class SingleChannelImageStackAVISaver(SingleChannelImageStackSink):
 
 
 class RGBImageStackVideoLoader(RGBImageStackSource):
-    """Load a :class:`RGBImageStack` from an AVI video."""
+    """Loads an RGBImageStack from an AVI video."""
 
     @classmethod
     def _get_data(cls, path: str) -> RGBImageStack:
@@ -674,7 +777,7 @@ class RGBImageStackVideoLoader(RGBImageStackSource):
 
 
 class RGBImageStackAVISaver(RGBImageStackSink):
-    """Save an :class:`RGBImageStack` to an AVI video."""
+    """Saves an RGBImageStack to an AVI video."""
 
     @classmethod
     def _send_data(cls, data: RGBImageStack, path: str) -> None:
@@ -751,11 +854,7 @@ class RGBImageStackAVISaver(RGBImageStackSink):
 
 
 class AnimatedGifSingleChannelImageStackLoader(SingleChannelImageStackSource):
-    """Load a :class:`SingleChannelImageStack` from an animated GIF.
-
-    Loads animated GIF files and converts them to grayscale single channel image stacks.
-    Each frame of the GIF is converted to grayscale using PIL's "L" mode conversion.
-    """
+    """Loads a SingleChannelImageStack from an animated GIF."""
 
     @classmethod
     def output_data_type(cls) -> type[SingleChannelImageStack]:
@@ -779,18 +878,47 @@ class AnimatedGifSingleChannelImageStackLoader(SingleChannelImageStackSource):
 
 
 class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
-    """Save a :class:`SingleChannelImageStack` to an animated GIF.
-
-    Saves single channel image stacks as animated GIF files. Each frame is converted
-    from grayscale to RGB by replicating the single channel across R, G, and B channels.
-    """
+    """Saves a SingleChannelImageStack to an animated GIF."""
 
     @classmethod
     def input_data_type(cls) -> type[SingleChannelImageStack]:  # type: ignore
         return SingleChannelImageStack
 
     @classmethod
-    def _send_data(cls, data: SingleChannelImageStack, path: str) -> None:
+    def _send_data(
+        cls,
+        data: SingleChannelImageStack,
+        path: str,
+        loop: int = 0,
+        duration: int | None = None,
+    ) -> None:
+        """
+        Save a SingleChannelImageStack to an animated GIF.
+
+        Parameters
+        ----------
+        data : SingleChannelImageStack
+            The image stack to save.
+        path : str
+            Output file path. If no extension provided, `.gif` is appended.
+        loop : int, default 0
+            Number of times the animation should loop.
+            - 0 (default): infinite looping
+            - 1: play once then stop
+            - N > 1: repeat N times
+        duration : int | None, default None
+            Duration of each frame in milliseconds.
+            - None (default): all frames have equal display time (PIL default ~100ms)
+            - int: all frames display for this many milliseconds
+                   (e.g., 200 = 5 FPS, 50 = 20 FPS)
+
+        Raises
+        ------
+        ValueError
+            If data is not a SingleChannelImageStack.
+        IOError
+            If the file cannot be written.
+        """
         if not isinstance(data, cls.input_data_type()):
             raise ValueError(
                 "Provided data is not an instance of SingleChannelImageStack."
@@ -802,11 +930,7 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
                 # Convert single channel to RGB by stacking 3 times
                 rgb_frame = np.stack([frame, frame, frame], axis=-1)
                 frames.append(Image.fromarray(rgb_frame.astype(np.uint8)))
-            # Allow instances to control loop and optional duration for animated GIFs.
-            # Default: loop=0 (infinite). You can set `saver.loop` and/or `saver.duration`
-            # on the saver instance before calling to override.
-            loop = getattr(cls, "loop", 0)
-            duration = getattr(cls, "duration", None)
+
             # Ensure extension
             p = Path(path)
             if p.suffix == "":
@@ -827,7 +951,7 @@ class AnimatedGifSingleChannelImageStackSaver(SingleChannelImageStackSink):
 
 
 class AnimatedGifRGBImageStackLoader(RGBImageStackSource):
-    """Load an :class:`RGBImageStack` from an animated GIF."""
+    """Loads an RGBImageStack from an animated GIF."""
 
     @classmethod
     def _get_data(cls, path: str) -> RGBImageStack:
@@ -847,19 +971,63 @@ class AnimatedGifRGBImageStackLoader(RGBImageStackSource):
 
 
 class AnimatedGifRGBImageStackSaver(RGBImageStackSink):
-    """Save an :class:`RGBImageStack` to an animated GIF."""
+    """Saves an RGBImageStack to an animated GIF."""
 
     @classmethod
-    def _send_data(cls, data: RGBImageStack, path: str) -> None:
+    def _send_data(
+        cls,
+        data: RGBImageStack,
+        path: str,
+        loop: int = 0,
+        duration: int | None = None,
+    ) -> None:
+        """
+        Save an RGBImageStack to an animated GIF.
+
+        Parameters
+        ----------
+        data : RGBImageStack
+            The image stack to save.
+        path : str
+            Output file path. If no extension provided, `.gif` is appended.
+        loop : int, default 0
+            Number of times the animation should loop.
+            - 0 (default): infinite looping
+            - 1: play once then stop
+            - N > 1: repeat N times
+        duration : int | None, default None
+            Duration of each frame in milliseconds.
+            - None (default): all frames have equal display time (PIL default ~100ms)
+            - int: all frames display for this many milliseconds
+                   (e.g., 200 = 5 FPS, 50 = 20 FPS)
+
+        Raises
+        ------
+        ValueError
+            If data is not an RGBImageStack.
+        IOError
+            If the file cannot be written.
+        """
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImageStack.")
         try:
             frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]
+
             # Ensure extension
             p = Path(path)
             if p.suffix == "":
                 path = path + ".gif"
-            frames[0].save(path, save_all=True, append_images=frames[1:])
+
+            if duration is not None:
+                frames[0].save(
+                    path,
+                    save_all=True,
+                    append_images=frames[1:],
+                    loop=loop,
+                    duration=duration,
+                )
+            else:
+                frames[0].save(path, save_all=True, append_images=frames[1:], loop=loop)
         except Exception as e:
             raise IOError(f"Error saving GIF to {path}: {e}") from e
 
@@ -1081,15 +1249,59 @@ class AnimatedGifRGBAImageStackSaver(RGBAImageStackSink):
     """Save an :class:`RGBAImageStack` to an animated GIF."""
 
     @classmethod
-    def _send_data(cls, data: RGBAImageStack, path: str) -> None:
+    def _send_data(
+        cls,
+        data: RGBAImageStack,
+        path: str,
+        loop: int = 0,
+        duration: int | None = None,
+    ) -> None:
+        """
+        Save an RGBAImageStack to an animated GIF.
+
+        Parameters
+        ----------
+        data : RGBAImageStack
+            The image stack to save.
+        path : str
+            Output file path. If no extension provided, `.gif` is appended.
+        loop : int, default 0
+            Number of times the animation should loop.
+            - 0 (default): infinite looping
+            - 1: play once then stop
+            - N > 1: repeat N times
+        duration : int | None, default None
+            Duration of each frame in milliseconds.
+            - None (default): all frames have equal display time (PIL default ~100ms)
+            - int: all frames display for this many milliseconds
+                   (e.g., 200 = 5 FPS, 50 = 20 FPS)
+
+        Raises
+        ------
+        ValueError
+            If data is not an RGBAImageStack.
+        IOError
+            If the file cannot be written.
+        """
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImageStack.")
         try:
             frames = [Image.fromarray(f.astype(np.uint8)) for f in data.data]
+
             # Ensure extension
             p = Path(path)
             if p.suffix == "":
                 path = path + ".gif"
-            frames[0].save(path, save_all=True, append_images=frames[1:])
+
+            if duration is not None:
+                frames[0].save(
+                    path,
+                    save_all=True,
+                    append_images=frames[1:],
+                    loop=loop,
+                    duration=duration,
+                )
+            else:
+                frames[0].save(path, save_all=True, append_images=frames[1:], loop=loop)
         except Exception as e:
             raise IOError(f"Error saving GIF to {path}: {e}") from e

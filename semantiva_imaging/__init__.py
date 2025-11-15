@@ -41,7 +41,10 @@ class ImagingExtension(SemantivaExtension):
         ProcessorRegistry.register_modules(
             [
                 "semantiva_imaging.data_types.data_types",
+                "semantiva_imaging.data_types.mpl_figure",
                 "semantiva_imaging.processing.operations",
+                "semantiva_imaging.data_io.parametric_plotter",
+                "semantiva_imaging.processing.figure_render",
                 "semantiva_imaging.probes.probes",
                 "semantiva_imaging.data_io.loaders_savers",
                 "semantiva_imaging.adapters.opencv_library.builders",

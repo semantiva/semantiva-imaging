@@ -13,7 +13,7 @@ pdm install --dev
 
 # Step 2: Run linting (Pylint)
 echo "Running pylint..."
-pdm run pylint semantiva --fail-under=7.5
+pdm run pylint semantiva_imaging --fail-under=7.5
 
 # Step 3: Run ruff (PEP 8 checks)
 echo "Running ruff..."

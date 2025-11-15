@@ -1,0 +1,118 @@
+extensions: ["semantiva-imaging"]
+
+# Execution-Based Parametric Sweep using run_space
+#
+# This pipeline demonstrates REPETITION-BASED sweep using run_space.
+# Key characteristics:
+# - ENTIRE PIPELINE repeats N times (5 times, one per equation)
+# - Each repetition processes SINGLE ITEMS (not collections)
+# - Each run has different parameter values from run_space.context
+# - Outputs are independent (each run produces one PNG file)
+#
+# Use case: When you want N independent runs with different configurations
+#           (e.g., parameter studies, distributed jobs, independent analysis)
+#
+# Execution Flow:
+# Run 1: PlotGen(eq1) → RenderFig → Template(path1) → SavePNG → plot_x_0(t).png
+# Run 2: PlotGen(eq2) → RenderFig → Template(path2) → SavePNG → plot_y_0(t).png
+# Run 3: PlotGen(eq3) → RenderFig → Template(path3) → SavePNG → plot_σ_x(t).png
+# Run 4: PlotGen(eq4) → RenderFig → Template(path4) → SavePNG → plot_σ_y(t).png
+# Run 5: PlotGen(eq5) → RenderFig → Template(path5) → SavePNG → plot_angle(t).png
+
+pipeline:
+  nodes:
+    # Node 1: Generate parametric plot
+    # Each run receives one equation from run_space.context
+    # Input: NoDataType (data source)
+    # Output: MatplotlibFigure (single figure, not collection)
+    - processor: ParametricPlotGenerator
+      parameters:
+        # X-AXIS COMPUTATION: Use safe expression with 't' from context
+        # 't' is provided by run_space.context below (generated from Range)
+        x_expression: "t"                        # Safe expression: use t directly as x-axis
+        x_label: "t"                             # X-axis label
+        
+        # STATIC PARAMETERS: Same for all runs in the run_space
+        figure_size: [8.0, 6.0]                  # Figure dimensions in inches
+        line_width: 2.0                          # Line thickness
+        marker_size: 8.0                         # Marker size for plot points
+        grid: true                               # Enable grid lines
+        grid_alpha: 0.3                          # Grid transparency
+        
+        # CONTEXT-INJECTED PARAMETERS: From run_space.context
+        # Semantiva automatically provides these from matching context keys:
+        # - t: from run_space.context.t (numeric array generated from Range)
+        # - y_expression: from run_space.context.y_expression (per run)
+        # - y_label: from run_space.context.y_label (per run)
+        # - title: from run_space.context.title (per run)
+        # - line_style: from run_space.context.line_style (per run)
+
+    # Node 2: Convert single figure to RGBA image
+    # Input: MatplotlibFigure (from Node 1)
+    # Output: RGBAImage (single image, not stack)
+    # Note: This is NOT FigureCollectionToRGBAStack (which expects collections)
+    #       This is FigureToRGBAImage (which handles single figures)
+    - processor: FigureToRGBAImage
+      parameters:
+        size_px: [1200, 900]       # Output image dimensions (width, height)
+        dpi: 100                    # Rendering resolution
+        transparent: false          # Background color (false = white)
+        close_after: true           # Free memory after rendering
+
+    # Node 3: Generate output path using template
+    # Input: RGBAImage (from Node 2)
+    # Generates unique filename using run_space context values
+    # Template uses {y_label} which gets substituted from run_space.context
+    - processor: template:"run_space_plot_outputs/plot_{y_label}.png":path
+
+    # Node 4: Save image to disk
+    # Input: Path + RGBAImage (from previous nodes)
+    # Output: File written to disk
+    - processor: PngRGBAImageSaver
+
+# RUN SPACE DEFINITION: Specifies parameter values for each pipeline repetition
+run_space:
+  blocks:
+    # Define one block with 5 context parameter sets
+    # Each set becomes the context for one complete pipeline execution
+    - mode: by_position
+      context:
+        # INDEPENDENT VARIABLE 't': Shared across all runs
+        # Generated using Range specification (same as derive.parameter_sweep)
+        t: { lo: -1, hi: 2, steps: 50 }
+        
+        # 5 MATHEMATICAL EQUATIONS for the dependent variable
+        # Represents different Gaussian parameter trajectories
+        y_expression:
+          - "50 + 5*t"              # Equation 1: Linear (Center X)
+          - "50 + 5*t + 5*t**2"     # Equation 2: Quadratic (Center Y)
+          - "50 + 20*t"             # Equation 3: Linear (Std Dev X)
+          - "20 + 0*t"              # Equation 4: Constant (Std Dev Y)
+          - "60 + 5*t"              # Equation 5: Linear (Rotation angle)
+        
+        # 5 Y-AXIS LABELS corresponding to each equation
+        # Used in plot titles and in template path generation
+        y_label:
+          - "x_0(t)"
+          - "y_0(t)"
+          - "σ_x(t)"
+          - "σ_y(t)"
+          - "angle(t) [degrees]"
+        
+        # 5 PLOT TITLES describing each equation
+        # Provides human-readable title for each generated plot
+        title:
+          - "Center X Position: x_0(t) = 50 + 5t"
+          - "Center Y Position: y_0(t) = 50 + 5t + 5t²"
+          - "Standard Deviation X: σ_x(t) = 50 + 20t"
+          - "Standard Deviation Y: σ_y(t) = 20 (constant)"
+          - "Orientation Angle: angle(t) = 60 + 5t"
+        
+        # 5 MATPLOTLIB LINE STYLES for visual distinction
+        # Each plot gets a unique color and marker style
+        line_style:
+          - "b-o"   # Blue line with circles
+          - "r-s"   # Red line with squares
+          - "g-^"   # Green line with triangles
+          - "m-d"   # Magenta line with diamonds
+          - "c-v"   # Cyan line with downward triangles

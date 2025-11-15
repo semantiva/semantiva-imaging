@@ -24,6 +24,7 @@ from .data_types import (
     RGBAImage,
     RGBAImageStack,
 )
+from .mpl_figure import MatplotlibFigure, MatplotlibFigureCollection
 
 __all__ = [
     "SingleChannelImage",
@@ -34,4 +35,6 @@ __all__ = [
     "RGBImageStack",
     "RGBAImage",
     "RGBAImageStack",
+    "MatplotlibFigure",
+    "MatplotlibFigureCollection",
 ]
