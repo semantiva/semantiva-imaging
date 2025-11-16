@@ -1,19 +1,11 @@
 extensions: ["semantiva-imaging"]
 
-# 1D Traveling Wave Animation using ParametricLinePlotGenerator
-#
-# This example demonstrates parametric animations with mathematical expressions.
-# Each frame evaluates sin(x - 2*pi*n/24) where n varies from 0 to 23.
-#
-# Physics:
-# - Wave equation: y(x) = sin(x - phase) where phase = 2π·n/24
-# - Wavelength λ = 2π
-# - Domain shows 2 wavelengths: x ∈ [-2π, 2π]
-# - Animation: 24 frames covering one complete wave cycle
+# Traveling wave animation (1D)
+# Produces a 48-frame animation of sin(k*x - w*t) saved as a GIF.
 
 pipeline:
   nodes:
-    # Node 1: Generate parametric line plots for a traveling wave sin(k*x - w*t)
+  # Node 1: Generate frames for traveling wave by sweeping t
     - processor: ParametricLinePlotGenerator
       derive:
         parameter_sweep:
@@ -55,7 +47,7 @@ pipeline:
         grid: true
         grid_alpha: 0.3
 
-    # Node 2: Render figure collection to RGBA image stack
+  # Node 2: Render figures to an RGBA image stack
     - processor: FigureCollectionToRGBAStack
       parameters:
         size_px: [1200, 480]
@@ -63,7 +55,7 @@ pipeline:
         transparent: false
         close_after: true
 
-    # Node 3: Save as animated GIF
+  # Node 3: Save stack as animated GIF
     - processor: AnimatedGifRGBAImageStackSaver
       parameters:
         path: "wave_animation.gif"
