@@ -262,13 +262,13 @@ class PngSingleChannelImageSaver(SingleChannelImageDataSink):
             raise ValueError("Provided data is not an instance of SingleChannelImage.")
 
         try:
-            # Ensure extension
+            # Ensure extension; use Path.with_suffix to avoid recreating Path
             p = Path(path)
             if p.suffix == "":
-                path = path + ".png"
+                p = p.with_suffix(".png")
+                path = str(p)
 
             # Create parent directories if they don't exist
-            p = Path(path)
             p.parent.mkdir(parents=True, exist_ok=True)
 
             # Convert the NumPy array to a PIL image
@@ -407,13 +407,13 @@ class PngRGBImageSaver(RGBImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBImage.")
         try:
-            # Ensure extension
+            # Ensure extension; update Path object in-place when needed
             p = Path(path)
             if p.suffix == "":
-                path = path + ".png"
+                p = p.with_suffix(".png")
+                path = str(p)
 
             # Create parent directories if they don't exist
-            p = Path(path)
             p.parent.mkdir(parents=True, exist_ok=True)
 
             img = Image.fromarray(data.data.astype(np.uint8))
@@ -481,13 +481,13 @@ class PngRGBAImageSaver(RGBAImageDataSink):
         if not isinstance(data, cls.input_data_type()):
             raise ValueError("Provided data is not an instance of RGBAImage.")
         try:
-            # Ensure extension
+            # Ensure extension; update Path object in-place when needed
             p = Path(path)
             if p.suffix == "":
-                path = path + ".png"
+                p = p.with_suffix(".png")
+                path = str(p)
 
             # Create parent directories if they don't exist
-            p = Path(path)
             p.parent.mkdir(parents=True, exist_ok=True)
 
             img = Image.fromarray(data.data.astype(np.uint8))

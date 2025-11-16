@@ -178,8 +178,12 @@ class ExpressionEnv:
                     f"Only calls to whitelisted math functions are allowed. "
                     f"Available: {sorted(self.allowed_funcs)}"
                 )
+            # Validate positional arguments
             for arg in node.args:
                 self.visit(arg)
+            # Validate keyword arguments (security: prevent injection via kwargs)
+            for keyword in node.keywords:
+                self.visit(keyword.value)
 
         def generic_visit(self, node: ast.AST) -> Any:
             if type(node) not in self._ALLOWED_NODES:

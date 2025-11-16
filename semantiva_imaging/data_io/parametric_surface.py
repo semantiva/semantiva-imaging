@@ -214,16 +214,19 @@ class ParametricSurfacePlotGenerator(MatplotlibFigureDataSource):
 
         z_expr = expressions["z"]
 
-        # Prepare scalars (empty dict if None), then overlay top-level params
+        # Prepare scalars (empty dict if None), then overlay top-level params.
+        # Top-level convenience parameters take precedence over entries in
+        # the `scalars` mapping (consistent with ParametricLinePlotGenerator
+        # and the documented behavior).
         scalar_params = dict(scalars) if scalars else {}
         if t is not None:
-            scalar_params.setdefault("t", t)
+            scalar_params["t"] = t
         if kx is not None:
-            scalar_params.setdefault("kx", kx)
+            scalar_params["kx"] = kx
         if ky is not None:
-            scalar_params.setdefault("ky", ky)
+            scalar_params["ky"] = ky
         if w is not None:
-            scalar_params.setdefault("w", w)
+            scalar_params["w"] = w
 
         # Evaluate z expression
         try:
