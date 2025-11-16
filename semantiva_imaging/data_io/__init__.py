@@ -20,7 +20,8 @@ as well as image stacks and video formats.
 """
 
 from .url_loader import UrlLoader
-from .parametric_plotter import ParametricPlotGenerator
+from .parametric_line import ParametricLinePlotGenerator
+from .parametric_surface import ParametricSurfacePlotGenerator
 from .loaders_savers import (
     # Single channel image loaders/savers
     NpzSingleChannelImageLoader,
@@ -65,7 +66,8 @@ from .loaders_savers import (
 
 __all__ = [
     "UrlLoader",
-    "ParametricPlotGenerator",
+    "ParametricLinePlotGenerator",
+    "ParametricSurfacePlotGenerator",
     # Single channel image loaders/savers
     "NpzSingleChannelImageLoader",
     "NpzSingleChannelImageDataSaver",

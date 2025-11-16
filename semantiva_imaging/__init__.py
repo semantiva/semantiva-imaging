@@ -44,6 +44,8 @@ class ImagingExtension(SemantivaExtension):
                 "semantiva_imaging.data_types.mpl_figure",
                 "semantiva_imaging.processing.operations",
                 "semantiva_imaging.data_io.parametric_plotter",
+                "semantiva_imaging.data_io.parametric_line",
+                "semantiva_imaging.data_io.parametric_surface",
                 "semantiva_imaging.processing.figure_render",
                 "semantiva_imaging.probes.probes",
                 "semantiva_imaging.data_io.loaders_savers",

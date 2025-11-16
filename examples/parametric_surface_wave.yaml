@@ -1,0 +1,70 @@
+extensions: ["semantiva-imaging"]
+
+# 2D Standing Wave Animation using ParametricSurfacePlotGenerator
+#
+# This example demonstrates 2D parametric surface animation. A 2D standing wave
+# pattern oscillates in time, showing the interference of perpendicular wave modes.
+#
+# Physics:
+# - Surface equation: z(x, y, n) = sin(2x) · sin(3y) · cos(2πn/24)
+# - Wavenumbers: kx = 2, ky = 3 (different spatial frequencies)
+# - Domain: x, y ∈ [-π, π] (captures standing wave nodes)
+# - Animation: 24 frames covering one full oscillation period
+
+pipeline:
+  nodes:
+    # Node 1: Generate parametric surface plots for each time step
+    - processor: ParametricSurfacePlotGenerator
+      derive:
+        parameter_sweep:
+          parameters:
+            t: "t"
+          variables:
+            # Time samples over one full period [0, 2π]
+            t:
+              lo: 0.0
+              hi: 6.283185307179586   # 2π
+              steps: 24
+          mode: by_position
+          collection: MatplotlibFigureCollection
+
+      parameters:
+        # Domain: 2D spatial grid
+        domain:
+          x:
+            lo: -3.141592653589793   # -π
+            hi:  3.141592653589793   #  π
+            steps: 150
+          y:
+            lo: -3.141592653589793   # -π
+            hi:  3.141592653589793   #  π
+            steps: 150
+
+        # Expression and styling
+        expressions:
+          z: "sin(2*x) * sin(3*y) * cos(t)"
+
+        # Styling
+        x_label: "x"
+        y_label: "y"
+        title: "2D Standing Wave: sin(2x)·sin(3y)·cos(t)"
+        figure_size: [8.0, 7.0]
+        cmap: "RdBu_r"        # Diverging colormap (red-white-blue)
+        colorbar: true
+        vmin: -1.0            # Fixed color scale for consistent animation
+        vmax: 1.0
+        shading: "auto"
+        aspect: "equal"
+
+    # Node 2: Render figure collection to RGBA image stack
+    - processor: FigureCollectionToRGBAStack
+      parameters:
+        size_px: [800, 700]
+        dpi: 100
+        transparent: false
+        close_after: true
+
+    # Node 3: Save as animated GIF
+    - processor: AnimatedGifRGBAImageStackSaver
+      parameters:
+        path: "parametric_surface_wave.gif"
