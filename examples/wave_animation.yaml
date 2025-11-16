@@ -1,72 +1,69 @@
 extensions: ["semantiva-imaging"]
 
+# 1D Traveling Wave Animation using ParametricLinePlotGenerator
+#
+# This example demonstrates parametric animations with mathematical expressions.
+# Each frame evaluates sin(x - 2*pi*n/24) where n varies from 0 to 23.
+#
+# Physics:
+# - Wave equation: y(x) = sin(x - phase) where phase = 2π·n/24
+# - Wavelength λ = 2π
+# - Domain shows 2 wavelengths: x ∈ [-2π, 2π]
+# - Animation: 24 frames covering one complete wave cycle
+
 pipeline:
   nodes:
-    # Node 1: Generate frames of a traveling sine wave sin(kx - omega*t)
-    # We sweep one full period with 24 frames (24 frames per period)
-    - processor: ParametricPlotGenerator
-      parameters:
-        # X-range shows exactly two wavelengths: choose k = 2π / L with L = x_range.hi - x_range.lo
-        # Here we pick L = 2π so that a single wavelength spans [-π, π]; two wavelengths are [-2π, 2π].
-        x_range:
-          lo: -6.283185307179586   # -2π
-          hi:  6.283185307179586   #  2π (two wavelengths total)
-          steps: 400
-        x_label: "x"
-        y_label: "sin(kx - omega*t)"
-        figure_size: [8.0, 4.5]
-        line_style: "b-"
-        line_width: 2.0
-        grid: true
-
+    # Node 1: Generate parametric line plots for a traveling wave sin(k*x - w*t)
+    - processor: ParametricLinePlotGenerator
       derive:
         parameter_sweep:
-          # We sweep index n = 0..23 and compute a time parameter t_n for each frame
-          # to cover exactly one period with 24 frames.
           parameters:
-            y_expression: "equation"
+            t: "t"   # Sweep the top-level scalar t
           variables:
-            # Single wave equation, parameterized by discrete frame index n.
-            # One full period is 2*pi, so delta = 2*pi/24.
-            # We keep k = 1 so wavelength = 2*pi and show two wavelengths in x.
-            equation:
-              - "sin(x - (2*pi*0/24))"
-              - "sin(x - (2*pi*1/24))"
-              - "sin(x - (2*pi*2/24))"
-              - "sin(x - (2*pi*3/24))"
-              - "sin(x - (2*pi*4/24))"
-              - "sin(x - (2*pi*5/24))"
-              - "sin(x - (2*pi*6/24))"
-              - "sin(x - (2*pi*7/24))"
-              - "sin(x - (2*pi*8/24))"
-              - "sin(x - (2*pi*9/24))"
-              - "sin(x - (2*pi*10/24))"
-              - "sin(x - (2*pi*11/24))"
-              - "sin(x - (2*pi*12/24))"
-              - "sin(x - (2*pi*13/24))"
-              - "sin(x - (2*pi*14/24))"
-              - "sin(x - (2*pi*15/24))"
-              - "sin(x - (2*pi*16/24))"
-              - "sin(x - (2*pi*17/24))"
-              - "sin(x - (2*pi*18/24))"
-              - "sin(x - (2*pi*19/24))"
-              - "sin(x - (2*pi*20/24))"
-              - "sin(x - (2*pi*21/24))"
-              - "sin(x - (2*pi*22/24))"
-              - "sin(x - (2*pi*23/24))"
-
+            # Time samples over one full period [0, 2π]
+            t:
+              lo: 0.0
+              hi: 6.283185307179586   # 2π
+              steps: 48
           mode: by_position
           collection: MatplotlibFigureCollection
+
+      parameters:
+        # Domain: spatial axis showing two wavelengths (λ = 2π, x ∈ [-2π, 2π])
+        domain:
+          x:
+            lo: -6.283185307179586   # -2π
+            hi:  6.283185307179586   #  2π
+            steps: 400
+
+        # Expression with scalar parameters k, w, and t
+        expressions:
+          y: "sin(k*x - w*t)"
+
+        # Scalar values (k, w). t will be overridden by the sweep.
+        k: 1.0
+        w: 1.0
+        t: 0.0
+
+        # Styling
+        x_label: "x"
+        y_label: "sin(kx - wt)"
+        title: "Traveling sine wave"
+        figure_size: [10.0, 4.0]
+        line_style: "b-"
+        line_width: 2.5
+        grid: true
+        grid_alpha: 0.3
 
     # Node 2: Render figure collection to RGBA image stack
     - processor: FigureCollectionToRGBAStack
       parameters:
-        size_px: [1200, 600]
+        size_px: [1200, 480]
         dpi: 100
         transparent: false
         close_after: true
 
-    # Node 3: Save the stack as an animated GIF
+    # Node 3: Save as animated GIF
     - processor: AnimatedGifRGBAImageStackSaver
       parameters:
         path: "wave_animation.gif"

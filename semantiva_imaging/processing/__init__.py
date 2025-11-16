@@ -20,12 +20,10 @@ from .figure_render import (
     SingleChannelImageToMatplotlibFigure,
     SingleChannelImageStackToMatplotlibFigureCollection,
 )
-from ..data_io import ParametricPlotGenerator
 
 __all__ = [
     "FigureToRGBAImage",
     "FigureCollectionToRGBAStack",
     "SingleChannelImageToMatplotlibFigure",
     "SingleChannelImageStackToMatplotlibFigureCollection",
-    "ParametricPlotGenerator",
 ]
